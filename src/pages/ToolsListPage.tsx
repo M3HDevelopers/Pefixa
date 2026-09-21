@@ -97,13 +97,13 @@ export function ToolsListPage() {
                   </div>
                   <p className="text-xs text-gray-500 mb-2">{tool.description}</p>
                   <div className="flex items-center gap-2">
-                    {tool.acceptsMultiple && (
+                    {tool.inputMode === 'multiple' && (
                       <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">Batch</span>
                     )}
                     {tool.supportsChaining && (
                       <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">Chainable</span>
                     )}
-                    {tool.outputMultiple && (
+                    {tool.output.multiple && (
                       <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">Multi-output</span>
                     )}
                   </div>

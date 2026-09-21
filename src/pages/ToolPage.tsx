@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useCallback } from 'react';
-import { getToolBySlug } from '../lib/tools/registry';
+import { getToolBySlug, getNextSteps } from '../lib/tools/registry';
 import { processTool } from '../lib/processors/local';
 import { useAppStore } from '../store';
 import { ToolOutput } from '../types/tool';
@@ -20,6 +20,7 @@ import {
   Server,
   Brain,
   Cpu,
+  Sparkles,
 } from 'lucide-react';
 
 export function ToolPage() {
@@ -40,11 +41,12 @@ export function ToolPage() {
     setDragOver(false);
     const droppedFiles = Array.from(e.dataTransfer.files);
     const validFiles = droppedFiles.filter(f => {
+      if (tool?.inputMode === 'any') return true;
       if (tool?.acceptedTypes.includes(f.type)) return true;
       if (f.type === 'application/pdf' && tool?.acceptedTypes.includes('application/pdf')) return true;
       return false;
     });
-    if (tool?.acceptsMultiple) {
+    if (tool?.inputMode === 'multiple') {
       setFiles(prev => [...prev, ...validFiles]);
     } else {
       setFiles(validFiles.slice(0, 1));
@@ -53,7 +55,7 @@ export function ToolPage() {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
-    if (tool?.acceptsMultiple) {
+    if (tool?.inputMode === 'multiple') {
       setFiles(prev => [...prev, ...selectedFiles]);
     } else {
       setFiles(selectedFiles.slice(0, 1));
@@ -155,14 +157,14 @@ export function ToolPage() {
       >
         <Upload size={32} className="mx-auto text-gray-300 mb-3" />
         <p className="text-sm text-gray-600 mb-1">
-          Drag & drop {tool.acceptsMultiple ? 'PDF files' : 'a PDF file'} here
+          Drag & drop {tool.inputMode === 'multiple' ? 'PDF files' : 'a PDF file'} here
         </p>
         <p className="text-xs text-gray-400 mb-3">or</p>
         <label className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-700 transition-colors">
           <input
             type="file"
             accept={tool.acceptedTypes.join(',')}
-            multiple={tool.acceptsMultiple}
+            multiple={tool.inputMode === 'multiple'}
             onChange={handleFileSelect}
             className="hidden"
           />
@@ -356,24 +358,41 @@ export function ToolPage() {
             </div>
           )}
 
-          {/* Chain to another tool */}
-          {tool.supportsChaining && output.files.length > 0 && (
+          {/* Smart Next Step Engine (§19) */}
+          {output.files.length > 0 && (
             <div className="mt-4 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500 mb-2">Continue with another tool:</p>
+              <p className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                <Sparkles size={10} className="text-purple-500" />
+                Suggested next steps:
+              </p>
               <div className="flex flex-wrap gap-2">
-                {['merge-pdf', 'compress-pdf', 'rotate-pages', 'encrypt-pdf', 'split-pdf'].map(slug => {
-                  const t = getToolBySlug(slug);
-                  if (!t || t.slug === tool.slug) return null;
-                  return (
-                    <Link
-                      key={slug}
-                      to={`/tools/${slug}`}
-                      className="px-2 py-1 bg-gray-100 hover:bg-blue-50 hover:text-blue-700 rounded text-xs text-gray-600 transition-colors"
-                    >
-                      {t.title}
-                    </Link>
-                  );
-                })}
+                {getNextSteps(tool.slug).map(nextTool => (
+                  <Link
+                    key={nextTool.slug}
+                    to={`/tools/${nextTool.slug}`}
+                    className="group px-2.5 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border border-blue-100 rounded-lg text-xs text-gray-700 transition-all flex items-center gap-1"
+                  >
+                    <span>{nextTool.title}</span>
+                    <ArrowRight size={10} className="text-gray-400 group-hover:text-blue-500" />
+                  </Link>
+                ))}
+                {getNextSteps(tool.slug).length === 0 && tool.supportsChaining && (
+                  <>
+                    {['compress-pdf', 'encrypt-pdf', 'flatten-pdf'].map(slug => {
+                      const t = getToolBySlug(slug);
+                      if (!t || t.slug === tool.slug) return null;
+                      return (
+                        <Link
+                          key={slug}
+                          to={`/tools/${slug}`}
+                          className="px-2 py-1 bg-gray-100 hover:bg-blue-50 hover:text-blue-700 rounded text-xs text-gray-600 transition-colors"
+                        >
+                          {t.title}
+                        </Link>
+                      );
+                    })}
+                  </>
+                )}
               </div>
             </div>
           )}

@@ -23,6 +23,9 @@ import {
   Zap,
   Plus,
   Code,
+  GitCompare,
+  Bookmark,
+  Settings,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -92,6 +95,51 @@ export function Sidebar() {
           >
             <GitBranch size={16} />
             <span>Workflows</span>
+          </Link>
+          <Link
+            to="/viewer"
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              location.pathname === '/viewer' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <Search size={16} />
+            <span>Viewer</span>
+          </Link>
+          <Link
+            to="/compare"
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              location.pathname === '/compare' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <GitCompare size={16} />
+            <span>Compare</span>
+          </Link>
+          <Link
+            to="/inspect"
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              location.pathname === '/inspect' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <Search size={16} />
+            <span>Inspect</span>
+          </Link>
+          <Link
+            to="/presets"
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              location.pathname === '/presets' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <Bookmark size={16} />
+            <span>Presets</span>
+          </Link>
+          <Link
+            to="/settings"
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              location.pathname === '/settings' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <Settings size={16} />
+            <span>Settings</span>
           </Link>
         </div>
 

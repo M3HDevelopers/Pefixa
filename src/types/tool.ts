@@ -16,15 +16,27 @@ export type ToolCategory =
   | 'create'
   | 'developer';
 
+export type InputMode = 'single' | 'multiple' | 'any';
+
 export interface ToolOption {
   key: string;
   label: string;
-  type: 'select' | 'number' | 'boolean' | 'text' | 'range';
+  description?: string;
+  type: 'select' | 'number' | 'boolean' | 'text' | 'range' | 'file' | 'color';
   default: any;
   options?: { value: string; label: string }[];
   min?: number;
   max?: number;
   step?: number;
+  required?: boolean;
+  group?: string;
+}
+
+export interface OutputContract {
+  mime: string;
+  extension: string;
+  multiple: boolean;
+  zipAllowed: boolean;
 }
 
 export interface ToolDefinition {
@@ -32,25 +44,41 @@ export interface ToolDefinition {
   title: string;
   description: string;
   category: ToolCategory;
+  tags: string[];
+  aliases: string[];
   icon: string;
   capability: CapabilityState;
-  acceptsMultiple: boolean;
+  inputMode: InputMode;
   acceptedTypes: string[];
   maxFileSizeMB: number;
   options: ToolOption[];
-  outputType: string;
-  outputMultiple: boolean;
+  output: OutputContract;
   supportsBatch: boolean;
   supportsChaining: boolean;
+  supportsPreview: boolean;
+  processorId: string;
+  progressType: 'indeterminate' | 'percentage';
+  errorCodes: string[];
+  storeInHistory: boolean;
+  localOnlyCapable: boolean;
 }
 
 export interface ToolInput {
   files: File[];
   options: Record<string, any>;
+  signal?: AbortSignal;
 }
 
 export interface ToolOutput {
   files: { name: string; blob: Blob; url?: string }[];
   warnings: string[];
   metadata?: Record<string, any>;
+}
+
+export interface ToolError {
+  code: string;
+  message: string;
+  userMessage: string;
+  detail?: string;
+  recoverable: boolean;
 }

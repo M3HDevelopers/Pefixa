@@ -714,7 +714,7 @@ class MockProcessor implements ProcessorAdapter {
   async process(tool: ToolDefinition, input: ToolInput): Promise<ToolOutput> {
     const capLabel = tool.capability === 'ai-required' ? 'AI backend' : tool.capability === 'backend-required' ? 'server processing' : 'browser engine';
     return {
-      files: [{ name: `result-${tool.slug}.pdf`, blob: new Blob(['mock-output'], { type: tool.outputType || 'application/pdf' }) }],
+      files: [{ name: `result-${tool.slug}.${tool.output.extension}`, blob: new Blob(['mock-output'], { type: tool.output.mime }) }],
       warnings: [`⚡ ${tool.title} requires ${capLabel}. This is a placeholder result. Full processing will be available when connected.`],
       metadata: { mock: true, capability: tool.capability, inputFiles: input.files.length, tool: tool.slug },
     };
