@@ -13,13 +13,11 @@ import {
   CheckCircle2,
   Loader2,
   ArrowRight,
-  Trash2,
   X,
   Info,
   Zap,
   Server,
-  Brain,
-  Cpu,
+  Code,
   Sparkles,
 } from 'lucide-react';
 
@@ -105,45 +103,45 @@ export function ToolPage() {
 
   if (!tool) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <p className="text-gray-500 text-lg">Tool not found</p>
-          <Link to="/tools" className="text-blue-600 hover:underline text-sm mt-2 inline-block">Browse all tools</Link>
+          <p className="text-[#888] text-lg">Tool not found</p>
+          <Link to="/tools" className="text-[#4da6ff] hover:underline text-sm mt-2 inline-block">Browse all tools</Link>
         </div>
       </div>
     );
   }
 
   const capabilityInfo = {
-    'browser-ready': { icon: Cpu, label: 'Browser Ready', color: 'green', desc: 'Fully processed in your browser' },
-    'browser-partial': { icon: Zap, label: 'Browser Partial', color: 'yellow', desc: 'Partially processed locally' },
-    'backend-required': { icon: Server, label: 'Backend Required', color: 'blue', desc: 'Requires server processing' },
-    'ai-required': { icon: Brain, label: 'AI Required', color: 'purple', desc: 'Requires AI backend' },
+    'browser-ready': { icon: Zap, label: 'Browser Ready', badgeClass: 'badge-ready', desc: 'Fully processed in your browser' },
+    'browser-partial': { icon: Zap, label: 'Hybrid', badgeClass: 'badge-partial', desc: 'Partially processed locally' },
+    'backend-required': { icon: Server, label: 'Cloud Required', badgeClass: 'badge-backend', desc: 'Requires server processing' },
+    'ai-required': { icon: Code, label: 'AI Required', badgeClass: 'badge-ai', desc: 'Requires AI backend' },
   };
 
   const cap = capabilityInfo[tool.capability];
   const CapIcon = cap.icon;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto px-6 py-10 animate-fade-in">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-          <Link to="/tools" className="hover:text-gray-600">Tools</Link>
+        <div className="flex items-center gap-2 text-[11px] text-[#555] mb-3">
+          <Link to="/tools" className="hover:text-white transition-colors">Tools</Link>
           <ArrowRight size={10} />
-          <span className="text-gray-600">{tool.title}</span>
+          <span className="text-[#888]">{tool.title}</span>
         </div>
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">{tool.title}</h1>
-            <p className="text-gray-600">{tool.description}</p>
+            <h1 className="text-2xl font-bold text-white mb-1.5">{tool.title}</h1>
+            <p className="text-[#888] text-[13px]">{tool.description}</p>
           </div>
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-${cap.color}-50 text-${cap.color}-700`}>
-            <CapIcon size={12} />
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[11px] font-medium ${cap.badgeClass}`}>
+            <CapIcon size={11} />
             <span>{cap.label}</span>
           </div>
         </div>
-        <p className="text-xs text-gray-400 mt-1">{cap.desc}</p>
+        <p className="text-[11px] text-[#444] mt-1.5">{cap.desc}</p>
       </div>
 
       {/* File Upload Area */}
@@ -151,16 +149,16 @@ export function ToolPage() {
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-xl p-8 text-center transition-all mb-6 ${
-          dragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+        className={`border border-dashed rounded-sm p-10 text-center transition-all mb-6 ${
+          dragOver ? 'border-[#4da6ff] bg-[#0a0a0a]' : 'border-[#2a2a2a] hover:border-[#333]'
         }`}
       >
-        <Upload size={32} className="mx-auto text-gray-300 mb-3" />
-        <p className="text-sm text-gray-600 mb-1">
-          Drag & drop {tool.inputMode === 'multiple' ? 'PDF files' : 'a PDF file'} here
+        <Upload size={28} className="mx-auto text-[#333] mb-3" />
+        <p className="text-[13px] text-[#888] mb-1">
+          Drag & drop {tool.inputMode === 'multiple' ? 'files' : 'a file'} here
         </p>
-        <p className="text-xs text-gray-400 mb-3">or</p>
-        <label className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-700 transition-colors">
+        <p className="text-[11px] text-[#444] mb-4">or</p>
+        <label className="inline-flex items-center gap-2 px-4 py-2 btn-primary text-[12px] cursor-pointer">
           <input
             type="file"
             accept={tool.acceptedTypes.join(',')}
@@ -170,8 +168,8 @@ export function ToolPage() {
           />
           Select Files
         </label>
-        <p className="text-[10px] text-gray-400 mt-2">
-          Accepted: {tool.acceptedTypes.join(', ')} • Max: {tool.maxFileSizeMB}MB
+        <p className="text-[10px] text-[#333] mt-3">
+          {tool.acceptedTypes.join(', ')} • Max {tool.maxFileSizeMB}MB
         </p>
       </div>
 
@@ -179,19 +177,19 @@ export function ToolPage() {
       {files.length > 0 && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-700">{files.length} file(s) selected</p>
-            <button onClick={() => setFiles([])} className="text-xs text-red-500 hover:text-red-700">Clear all</button>
+            <p className="text-[12px] font-medium text-[#888]">{files.length} file(s) selected</p>
+            <button onClick={() => setFiles([])} className="text-[11px] text-[#f87171] hover:text-red-400 transition-colors">Clear all</button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {files.map((file, i) => (
-              <div key={i} className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-3 py-2">
-                <FileText size={16} className="text-red-500" />
+              <div key={i} className="flex items-center gap-3 bg-[#0d0d0d] border border-[#1f1f1f] rounded-sm px-3 py-2">
+                <FileText size={14} className="text-[#555]" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 truncate">{file.name}</p>
-                  <p className="text-[10px] text-gray-400">{(file.size / 1024).toFixed(1)} KB</p>
+                  <p className="text-[12px] text-white truncate">{file.name}</p>
+                  <p className="text-[10px] text-[#444]">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
-                <button onClick={() => removeFile(i)} className="p-1 hover:bg-gray-100 rounded">
-                  <X size={14} className="text-gray-400" />
+                <button onClick={() => removeFile(i)} className="p-1 hover:bg-[#1a1a1a] rounded-sm transition-colors">
+                  <X size={12} className="text-[#555]" />
                 </button>
               </div>
             ))}
@@ -201,17 +199,17 @@ export function ToolPage() {
 
       {/* Options */}
       {tool.options.length > 0 && (
-        <div className="mb-6 bg-white border border-gray-200 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-gray-900 mb-3">Options</h3>
+        <div className="mb-6 bg-[#0d0d0d] border border-[#1f1f1f] rounded-sm p-4">
+          <h3 className="text-[12px] font-semibold text-white mb-3 uppercase tracking-wider">Options</h3>
           <div className="grid grid-cols-2 gap-4">
             {tool.options.map(opt => (
               <div key={opt.key}>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{opt.label}</label>
+                <label className="block text-[11px] font-medium text-[#888] mb-1.5">{opt.label}</label>
                 {opt.type === 'select' && (
                   <select
                     value={options[opt.key] ?? opt.default}
                     onChange={e => setOptions(prev => ({ ...prev, [opt.key]: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                    className="w-full px-3 py-2 input-dark text-[12px]"
                   >
                     {opt.options?.map(o => (
                       <option key={o.value} value={o.value}>{o.label}</option>
@@ -223,7 +221,7 @@ export function ToolPage() {
                     type="text"
                     value={options[opt.key] ?? opt.default}
                     onChange={e => setOptions(prev => ({ ...prev, [opt.key]: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                    className="w-full px-3 py-2 input-dark text-[12px]"
                   />
                 )}
                 {opt.type === 'number' && (
@@ -231,7 +229,7 @@ export function ToolPage() {
                     type="number"
                     value={options[opt.key] ?? opt.default}
                     onChange={e => setOptions(prev => ({ ...prev, [opt.key]: parseInt(e.target.value) }))}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                    className="w-full px-3 py-2 input-dark text-[12px]"
                   />
                 )}
                 {opt.type === 'range' && (
@@ -242,18 +240,18 @@ export function ToolPage() {
                     step={opt.step}
                     value={options[opt.key] ?? opt.default}
                     onChange={e => setOptions(prev => ({ ...prev, [opt.key]: parseFloat(e.target.value) }))}
-                    className="w-full"
+                    className="w-full accent-white"
                   />
                 )}
                 {opt.type === 'boolean' && (
-                  <label className="flex items-center gap-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={options[opt.key] ?? opt.default}
                       onChange={e => setOptions(prev => ({ ...prev, [opt.key]: e.target.checked }))}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded-sm border-[#333] bg-[#0a0a0a] text-white focus:ring-0"
                     />
-                    <span className="text-xs text-gray-600">Enabled</span>
+                    <span className="text-[11px] text-[#888]">Enabled</span>
                   </label>
                 )}
               </div>
@@ -266,16 +264,16 @@ export function ToolPage() {
       <button
         onClick={handleProcess}
         disabled={files.length === 0 || processing}
-        className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium text-sm hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+        className="w-full py-3 btn-primary text-[13px] disabled:bg-[#1a1a1a] disabled:text-[#444] disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {processing ? (
           <>
-            <Loader2 size={16} className="animate-spin" />
+            <Loader2 size={14} className="animate-spin" />
             Processing...
           </>
         ) : (
           <>
-            <Play size={16} />
+            <Play size={14} />
             Process {tool.title}
           </>
         )}
@@ -283,29 +281,29 @@ export function ToolPage() {
 
       {/* Error */}
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-          <AlertCircle size={16} className="text-red-500 mt-0.5" />
+        <div className="mt-4 p-3 bg-[#1a0a0a] border border-[#331111] rounded-sm flex items-start gap-2">
+          <AlertCircle size={14} className="text-[#f87171] mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm text-red-700 font-medium">Processing Error</p>
-            <p className="text-xs text-red-600">{error}</p>
+            <p className="text-[12px] text-[#f87171] font-medium">Processing Error</p>
+            <p className="text-[11px] text-[#cc5555]">{error}</p>
           </div>
         </div>
       )}
 
       {/* Output */}
       {output && (
-        <div className="mt-6 bg-white border border-gray-200 rounded-xl p-4">
+        <div className="mt-6 bg-[#0d0d0d] border border-[#1f1f1f] rounded-sm p-4 animate-fade-in-up">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-500" />
-              <h3 className="text-sm font-medium text-gray-900">Processing Complete</h3>
+              <CheckCircle2 size={14} className="text-[#4ade80]" />
+              <h3 className="text-[12px] font-medium text-white">Processing Complete</h3>
             </div>
             {output.files.length > 1 && (
               <button
                 onClick={handleDownloadAll}
-                className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700"
+                className="flex items-center gap-1 px-3 py-1.5 btn-primary text-[11px]"
               >
-                <Download size={12} />
+                <Download size={11} />
                 Download All
               </button>
             )}
@@ -313,10 +311,10 @@ export function ToolPage() {
 
           {/* Warnings */}
           {output.warnings.length > 0 && (
-            <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="mb-3 p-2.5 bg-[#1a1500] border border-[#332a00] rounded-sm">
               {output.warnings.map((w, i) => (
-                <div key={i} className="flex items-center gap-1.5 text-xs text-yellow-700">
-                  <Info size={12} />
+                <div key={i} className="flex items-center gap-1.5 text-[11px] text-[#fbbf24]">
+                  <Info size={11} />
                   <span>{w}</span>
                 </div>
               ))}
@@ -324,19 +322,19 @@ export function ToolPage() {
           )}
 
           {/* Output Files */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {output.files.map((file, i) => (
-              <div key={i} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                <FileText size={16} className="text-gray-400" />
+              <div key={i} className="flex items-center gap-3 p-2.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-sm">
+                <FileText size={14} className="text-[#555]" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 truncate">{file.name}</p>
-                  <p className="text-[10px] text-gray-400">{(file.blob.size / 1024).toFixed(1)} KB</p>
+                  <p className="text-[12px] text-white truncate">{file.name}</p>
+                  <p className="text-[10px] text-[#444]">{(file.blob.size / 1024).toFixed(1)} KB</p>
                 </div>
                 <button
                   onClick={() => handleDownload(file)}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700"
+                  className="flex items-center gap-1 px-3 py-1.5 btn-secondary text-[11px]"
                 >
-                  <Download size={12} />
+                  <Download size={11} />
                   Download
                 </button>
               </div>
@@ -345,35 +343,35 @@ export function ToolPage() {
 
           {/* Metadata */}
           {output.metadata && Object.keys(output.metadata as Record<string, unknown>).length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Details</p>
+            <div className="mt-3 pt-3 border-t border-[#1a1a1a]">
+              <p className="text-[10px] uppercase tracking-wider text-[#444] font-semibold mb-1.5">Details</p>
               <div className="grid grid-cols-2 gap-1">
                 {Object.entries(output.metadata).map(([key, value]) => (
-                  <div key={key} className="text-xs">
-                    <span className="text-gray-400">{key}: </span>
-                    <span className="text-gray-700">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
+                  <div key={key} className="text-[11px]">
+                    <span className="text-[#555]">{key}: </span>
+                    <span className="text-[#888]">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Smart Next Step Engine (§19) */}
+          {/* Smart Next Step Engine */}
           {output.files.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500 mb-2 flex items-center gap-1">
-                <Sparkles size={10} className="text-purple-500" />
+            <div className="mt-4 pt-3 border-t border-[#1a1a1a]">
+              <p className="text-[11px] text-[#555] mb-2 flex items-center gap-1">
+                <Sparkles size={10} className="text-[#a78bfa]" />
                 Suggested next steps:
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {getNextSteps(tool.slug).map(nextTool => (
                   <Link
                     key={nextTool.slug}
                     to={`/tools/${nextTool.slug}`}
-                    className="group px-2.5 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border border-blue-100 rounded-lg text-xs text-gray-700 transition-all flex items-center gap-1"
+                    className="group px-2.5 py-1.5 bg-[#0a0a0a] border border-[#1f1f1f] hover:border-[#333] rounded-sm text-[11px] text-[#888] hover:text-white transition-all flex items-center gap-1"
                   >
                     <span>{nextTool.title}</span>
-                    <ArrowRight size={10} className="text-gray-400 group-hover:text-blue-500" />
+                    <ArrowRight size={9} className="text-[#333] group-hover:text-white" />
                   </Link>
                 ))}
                 {getNextSteps(tool.slug).length === 0 && tool.supportsChaining && (
@@ -385,7 +383,7 @@ export function ToolPage() {
                         <Link
                           key={slug}
                           to={`/tools/${slug}`}
-                          className="px-2 py-1 bg-gray-100 hover:bg-blue-50 hover:text-blue-700 rounded text-xs text-gray-600 transition-colors"
+                          className="px-2 py-1 bg-[#0a0a0a] border border-[#1f1f1f] hover:border-[#333] rounded-sm text-[11px] text-[#888] hover:text-white transition-all"
                         >
                           {t.title}
                         </Link>
