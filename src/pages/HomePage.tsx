@@ -27,7 +27,7 @@ const iconMap: Record<string, any> = {
   Download, Search, GitCompare, FileText, Brain, Zap, Eye,
 };
 
-const featuredTools = ['merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-image', 'rotate-pdf', 'protect-pdf'];
+const featuredTools = ['merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-jpg', 'rotate-pages', 'encrypt-pdf'];
 
 export function HomePage() {
   const addRecentTool = useAppStore(s => s.addRecentTool);
@@ -53,7 +53,7 @@ export function HomePage() {
       {/* Quick Stats */}
       <div className="grid grid-cols-4 gap-4 mb-10">
         <div className="bg-white rounded-xl p-4 border border-gray-200 text-center">
-          <p className="text-2xl font-bold text-gray-900">{toolRegistry.length}</p>
+          <p className="text-2xl font-bold text-gray-900">{toolRegistry.length}+</p>
           <p className="text-xs text-gray-500">PDF Tools</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-gray-200 text-center">

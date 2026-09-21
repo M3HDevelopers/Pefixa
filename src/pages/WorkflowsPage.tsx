@@ -21,7 +21,7 @@ const presetWorkflows: Workflow[] = [
     description: 'Compress and protect PDF for email sharing',
     steps: [
       { id: '1', toolSlug: 'compress-pdf', options: { level: 'recommended' }, order: 0 },
-      { id: '2', toolSlug: 'protect-pdf', options: { userPassword: '', permissions: 'no-edit' }, order: 1 },
+      { id: '2', toolSlug: 'encrypt-pdf', options: { userPassword: '', ownerPassword: '' }, order: 1 },
     ],
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -33,7 +33,7 @@ const presetWorkflows: Workflow[] = [
     description: 'Split large PDF and rotate pages',
     steps: [
       { id: '1', toolSlug: 'split-pdf', options: { mode: 'ranges', ranges: '1-5' }, order: 0 },
-      { id: '2', toolSlug: 'rotate-pdf', options: { angle: '90', pages: 'all' }, order: 1 },
+      { id: '2', toolSlug: 'rotate-pages', options: { angle: '90', pages: 'all' }, order: 1 },
     ],
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -45,8 +45,21 @@ const presetWorkflows: Workflow[] = [
     description: 'Merge, add watermark, and compress',
     steps: [
       { id: '1', toolSlug: 'merge-pdf', options: {}, order: 0 },
-      { id: '2', toolSlug: 'add-watermark', options: { text: 'DRAFT', opacity: 0.3 }, order: 1 },
+      { id: '2', toolSlug: 'watermark-text', options: { text: 'DRAFT', opacity: 0.3 }, order: 1 },
       { id: '3', toolSlug: 'compress-pdf', options: { level: 'recommended' }, order: 2 },
+    ],
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    isPreset: true,
+  },
+  {
+    id: 'preset-4',
+    name: 'Sanitize & Share',
+    description: 'Remove metadata, flatten, and compress',
+    steps: [
+      { id: '1', toolSlug: 'remove-metadata', options: {}, order: 0 },
+      { id: '2', toolSlug: 'flatten-pdf', options: {}, order: 1 },
+      { id: '3', toolSlug: 'compress-pdf', options: { level: 'high' }, order: 2 },
     ],
     createdAt: Date.now(),
     updatedAt: Date.now(),

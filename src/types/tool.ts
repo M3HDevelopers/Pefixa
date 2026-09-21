@@ -1,20 +1,20 @@
 export type CapabilityState = 'browser-ready' | 'browser-partial' | 'backend-required' | 'ai-required';
 
 export type ToolCategory =
-  | 'merge-split'
-  | 'convert'
-  | 'compress'
-  | 'edit'
-  | 'security'
   | 'organize'
-  | 'ocr'
-  | 'extract'
-  | 'inspect'
-  | 'compare'
+  | 'edit'
   | 'forms'
+  | 'convert-from'
+  | 'convert-to'
+  | 'compress'
+  | 'ocr'
+  | 'security'
+  | 'inspect'
+  | 'extract'
   | 'ai'
-  | 'optimize'
-  | 'accessibility';
+  | 'workflows'
+  | 'create'
+  | 'developer';
 
 export interface ToolOption {
   key: string;
@@ -52,5 +52,5 @@ export interface ToolInput {
 export interface ToolOutput {
   files: { name: string; blob: Blob; url?: string }[];
   warnings: string[];
-  metadata: Record<string, any>;
+  metadata?: Record<string, any>;
 }

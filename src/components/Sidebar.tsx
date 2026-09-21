@@ -7,34 +7,33 @@ import {
   Wrench,
   History,
   GitBranch,
-  Edit3,
   ChevronDown,
   ChevronRight,
-  Merge,
-  ArrowLeftRight,
-  Minimize2,
-  FileType,
-  Shield,
   Layout,
-  ScanText,
-  Download,
-  Search,
-  GitCompare,
+  Edit3,
   FileText,
+  ArrowRight,
+  ArrowLeft,
+  Minimize2,
+  ScanText,
+  Shield,
+  Search,
+  Download,
   Brain,
   Zap,
-  Eye,
+  Plus,
+  Code,
 } from 'lucide-react';
 import { useState } from 'react';
 
 const iconMap: Record<string, any> = {
-  Merge, ArrowLeftRight, Minimize2, Edit3, Shield, Layout, ScanText,
-  Download, Search, GitCompare, FileText, Brain, Zap, Eye,
+  Layout, Edit3, FileText, ArrowRight, ArrowLeft, Minimize2, ScanText,
+  Shield, Search, Download, Brain, Zap, GitBranch, Plus, Code,
 };
 
 export function Sidebar() {
   const location = useLocation();
-  const [expandedCats, setExpandedCats] = useState<string[]>(['merge-split', 'convert']);
+  const [expandedCats, setExpandedCats] = useState<string[]>([]);
 
   const toggleCategory = (slug: string) => {
     setExpandedCats(prev =>
@@ -111,16 +110,16 @@ export function Sidebar() {
                 >
                   <Icon size={14} className="text-gray-400" />
                   <span className="flex-1 text-left">{cat.title}</span>
-                  <span className="text-[10px] text-gray-400">{tools.length}</span>
+                  <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{tools.length}</span>
                   {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                 </button>
                 {isExpanded && (
-                  <div className="ml-4 border-l border-gray-100 pl-2">
-                    {tools.map(tool => (
+                  <div className="ml-4 border-l border-gray-100 pl-2 max-h-48 overflow-y-auto">
+                    {tools.slice(0, 20).map(tool => (
                       <Link
                         key={tool.slug}
                         to={`/tools/${tool.slug}`}
-                        className={`block px-3 py-1 rounded text-xs transition-colors ${
+                        className={`block px-3 py-1 rounded text-xs transition-colors truncate ${
                           location.pathname === `/tools/${tool.slug}`
                             ? 'text-blue-700 font-medium bg-blue-50'
                             : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
@@ -129,6 +128,14 @@ export function Sidebar() {
                         {tool.title}
                       </Link>
                     ))}
+                    {tools.length > 20 && (
+                      <Link
+                        to={`/tools?category=${cat.slug}`}
+                        className="block px-3 py-1 text-xs text-blue-600 hover:text-blue-800"
+                      >
+                        +{tools.length - 20} more...
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>
@@ -139,7 +146,7 @@ export function Sidebar() {
 
       <div className="p-3 border-t border-gray-200 bg-gray-50">
         <div className="text-[10px] text-gray-400 text-center">
-          Pefixa v1.0 — Frontend Phase
+          Pefixa v1.0 — 280+ PDF Tools
         </div>
       </div>
     </aside>

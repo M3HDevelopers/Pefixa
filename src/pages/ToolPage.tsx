@@ -342,7 +342,7 @@ export function ToolPage() {
           </div>
 
           {/* Metadata */}
-          {output.metadata && Object.keys(output.metadata).length > 0 && (
+          {output.metadata && Object.keys(output.metadata as Record<string, unknown>).length > 0 && (
             <div className="mt-3 pt-3 border-t border-gray-100">
               <p className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Details</p>
               <div className="grid grid-cols-2 gap-1">
@@ -361,7 +361,7 @@ export function ToolPage() {
             <div className="mt-4 pt-3 border-t border-gray-100">
               <p className="text-xs text-gray-500 mb-2">Continue with another tool:</p>
               <div className="flex flex-wrap gap-2">
-                {['merge-pdf', 'compress-pdf', 'rotate-pdf', 'protect-pdf', 'split-pdf'].map(slug => {
+                {['merge-pdf', 'compress-pdf', 'rotate-pages', 'encrypt-pdf', 'split-pdf'].map(slug => {
                   const t = getToolBySlug(slug);
                   if (!t || t.slug === tool.slug) return null;
                   return (
