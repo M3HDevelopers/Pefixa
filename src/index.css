@@ -19,33 +19,40 @@
     --accent-dim: #d4d4d4;
   }
 
-  /* Custom Scrollbar */
+  /* Custom Scrollbar - Glossy */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #333333 #0a0a0a;
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.3);
   }
 
   *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   *::-webkit-scrollbar-track {
-    background: #0a0a0a;
-    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 5px;
   }
 
   *::-webkit-scrollbar-thumb {
-    background: #333333;
-    border-radius: 4px;
-    border: 2px solid #0a0a0a;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background: #444444;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
   }
 
-  html { background-color: #000000; color-scheme: dark; }
+  html { 
+    background-color: #000000; 
+    color-scheme: dark;
+    background-image: 
+      radial-gradient(at 20% 30%, rgba(30, 30, 30, 0.4) 0px, transparent 50%),
+      radial-gradient(at 80% 70%, rgba(40, 40, 40, 0.3) 0px, transparent 50%);
+  }
 
   html.menu-open {
     overflow: hidden;
@@ -53,14 +60,14 @@
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background-color: #000000;
+    background-color: transparent;
     color: #ffffff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
   }
 
-  ::selection { background-color: rgba(255, 255, 255, 0.15); color: #ffffff; }
+  ::selection { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; }
 }
 
 @layer components {
@@ -84,83 +91,126 @@
     animation: fadeIn 0.15s ease-out forwards;
   }
 
-  /* Top bar - simple, solid */
+  /* Top bar - High contrast glossy */
   .top-bar {
-    background-color: #000000;
-    border-bottom: 1px solid #1a1a1a;
+    background: linear-gradient(180deg, rgba(20, 20, 20, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   }
 
-  /* Card - simple, solid */
+  /* Card - Very glossy with high contrast */
   .card {
-    background-color: #0a0a0a;
-    border: 1px solid #1a1a1a;
-    border-radius: 6px;
-    transition: border-color 0.15s ease;
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.6) 0%, rgba(15, 15, 15, 0.8) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .card:hover {
-    border-color: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 
+      0 12px 48px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
   }
 
-  /* Buttons - simple, solid */
+  /* Buttons - Very glossy */
   .btn-primary {
-    background-color: #ffffff;
+    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
     color: #000000;
-    border-radius: 4px;
-    font-weight: 500;
+    border-radius: 8px;
+    font-weight: 600;
     font-size: 12px;
-    transition: background-color 0.15s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 4px 16px rgba(255, 255, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: all 0.2s ease;
   }
 
-  .btn-primary:hover { background-color: #e5e5e5; }
+  .btn-primary:hover { 
+    background: linear-gradient(135deg, #f5f5f5 0%, #d0d0d0 100%);
+    box-shadow: 
+      0 6px 24px rgba(255, 255, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
 
   .btn-secondary {
-    background-color: #111111;
+    background: linear-gradient(135deg, rgba(40, 40, 40, 0.8) 0%, rgba(20, 20, 20, 0.9) 100%);
+    backdrop-filter: blur(10px);
     color: #ffffff;
-    border: 1px solid #262626;
-    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
     font-size: 12px;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    box-shadow: 
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
   }
 
-  .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
+  .btn-secondary:hover { 
+    background: linear-gradient(135deg, rgba(50, 50, 50, 0.9) 0%, rgba(30, 30, 30, 0.95) 100%);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 
+      0 6px 24px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
 
-  /* Inputs - simple, solid */
+  /* Inputs - Very glossy */
   .input-dark {
-    background-color: #050505;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
     color: #ffffff;
     font-size: 12px;
-    transition: border-color 0.15s ease;
+    box-shadow: 
+      inset 0 2px 4px rgba(0, 0, 0, 0.3),
+      0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
   }
 
   .input-dark:focus {
-    border-color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
     outline: none;
+    box-shadow: 
+      inset 0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 0 3px rgba(255, 255, 255, 0.1);
   }
 
-  .input-dark::placeholder { color: #404040; }
+  .input-dark::placeholder { color: #555555; }
 
-  /* Mega menu - simple, solid */
+  /* Mega menu - Very glossy */
   .mega-menu {
-    background-color: #0a0a0a;
-    border: 1px solid #1a1a1a;
-    border-radius: 6px;
-    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8);
+    background: linear-gradient(135deg, rgba(25, 25, 25, 0.95) 0%, rgba(15, 15, 15, 0.98) 100%);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   .mega-menu-item {
-    transition: background-color 0.1s ease;
+    transition: all 0.15s ease;
     position: relative;
+    border-radius: 6px;
   }
 
-  .mega-menu-item:hover { background-color: #141414; }
+  .mega-menu-item:hover { 
+    background: linear-gradient(135deg, rgba(40, 40, 40, 0.6) 0%, rgba(25, 25, 25, 0.8) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-  /* Nav tab - simple underline */
+  /* Nav tab - glossy underline */
   .nav-tab {
     position: relative;
-    transition: color 0.15s ease;
+    transition: all 0.2s ease;
   }
 
   .nav-tab::after {
@@ -169,10 +219,11 @@
     bottom: -1px;
     left: 0;
     right: 0;
-    height: 1px;
-    background-color: #ffffff;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
     transform: scaleX(0);
-    transition: transform 0.15s ease;
+    transition: transform 0.2s ease;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
   }
 
   .nav-tab:hover::after,
@@ -180,66 +231,84 @@
     transform: scaleX(1);
   }
 
-  /* Badges - simple, solid */
+  /* Badges - Very glossy */
   .badge-ready {
-    background-color: rgba(255, 255, 255, 0.06);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    backdrop-filter: blur(10px);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
   }
 
   .badge-partial {
-    background-color: rgba(255, 255, 255, 0.04);
-    color: #a3a3a3;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(10px);
+    color: #cccccc;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
   }
 
   .badge-backend {
-    background-color: rgba(255, 255, 255, 0.03);
-    color: #666666;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .badge-ai {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #d4d4d4;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(10px);
+    color: #888888;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Progress bar */
+  .badge-ai {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+    backdrop-filter: blur(10px);
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.08);
+  }
+
+  /* Progress bar - glossy */
   .progress-bar {
-    background-color: #1a1a1a;
-    border-radius: 2px;
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(20, 20, 20, 0.9) 100%);
+    border-radius: 4px;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   .progress-fill {
-    background-color: #ffffff;
+    background: linear-gradient(90deg, #ffffff 0%, #d0d0d0 100%);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     transition: width 0.3s ease;
   }
 
-  /* Icon container - simple, solid */
+  /* Icon container - Very glossy */
   .icon-box {
-    background-color: #111111;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(40, 40, 40, 0.8) 0%, rgba(20, 20, 20, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
-  /* Popular badge */
+  /* Popular badge - Very glossy */
   .popular-badge {
     position: absolute;
     top: 8px;
     right: 8px;
-    background-color: #ffffff;
+    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
     color: #000000;
     font-size: 9px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 2px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 4px 12px rgba(255, 255, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
   }
 }
