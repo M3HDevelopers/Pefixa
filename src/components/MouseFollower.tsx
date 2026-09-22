@@ -93,12 +93,10 @@ export function MouseFollower() {
       ref={cursorRef}
       className="fixed top-0 left-0 pointer-events-none z-[9999]"
       style={{
-        width: '50px',
-        height: '50px',
+        width: '60px',
+        height: '60px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.1) 100%)',
-        boxShadow: '0 0 20px rgba(255, 255, 255, 0.15), 0 0 40px rgba(255, 255, 255, 0.08)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
+        background: '#ffffff',
         willChange: 'transform, opacity',
         mixBlendMode: 'difference',
         transition: 'opacity 0.15s ease'
