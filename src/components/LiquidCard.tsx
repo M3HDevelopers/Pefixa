@@ -1,8 +1,8 @@
-import { useRef, useState, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 interface LiquidCardProps {
-  children: ReactNode;
+  children: React.ReactNode;
   className?: string;
 }
 
@@ -10,106 +10,116 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [fillOrigin, setFillOrigin] = useState({ x: 50, y: 50 });
-  const animationRef = useRef<gsap.core.Tween | null>(null);
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || !fillRef.current) return;
-    
-    setIsHovered(true);
-    
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    
-    setFillOrigin({ x, y });
-    
-    // Kill any existing animation
-    if (animationRef.current) {
-      animationRef.current.kill();
-    }
-    
-    // Animate fill from entry point with liquid splash effect
-    animationRef.current = gsap.fromTo(fillRef.current, 
-      {
-        scale: 0,
-        opacity: 0
-      },
-      {
-        scale: 3,
-        opacity: 1,
-        duration: 0.8,
-        ease: 'power4.out'
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const handleCursorEnter = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { x, y } = customEvent.detail;
+      
+      setIsHovered(true);
+      
+      if (fillRef.current) {
+        // Set the fill origin
+        fillRef.current.style.left = `${x}%`;
+        fillRef.current.style.top = `${y}%`;
+        
+        // Trigger water drop animation
+        gsap.fromTo(fillRef.current, 
+          {
+            scale: 0,
+            opacity: 0
+          },
+          {
+            scale: 3,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power4.out'
+          }
+        );
       }
-    );
-  };
+    };
 
-  const handleMouseLeave = () => {
-    if (!fillRef.current) return;
-    
-    setIsHovered(false);
-    
-    // Kill any existing animation
-    if (animationRef.current) {
-      animationRef.current.kill();
-    }
-    
-    // Immediately reverse the animation
-    animationRef.current = gsap.to(fillRef.current, {
-      scale: 0,
-      opacity: 0,
-      duration: 0.4,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        // Ensure fill is completely hidden
-        if (fillRef.current) {
-          gsap.set(fillRef.current, { scale: 0, opacity: 0 });
+    const handleMouseEnter = (e: MouseEvent) => {
+      if (!card || !fillRef.current) return;
+      
+      setIsHovered(true);
+      
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      
+      // Set the fill origin
+      fillRef.current.style.left = `${x}%`;
+      fillRef.current.style.top = `${y}%`;
+      
+      // Trigger water drop animation
+      gsap.fromTo(fillRef.current, 
+        {
+          scale: 0,
+          opacity: 0
+        },
+        {
+          scale: 3,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power4.out'
         }
-      }
-    });
-  };
+      );
+    };
 
-  // Handle mouse out for child elements
-  const handleMouseOut = (e: React.MouseEvent<HTMLDivElement>) => {
-    const relatedTarget = e.relatedTarget as Node;
-    if (!cardRef.current || !relatedTarget) return;
-    
-    // If mouse is leaving the card completely
-    if (!cardRef.current.contains(relatedTarget)) {
-      handleMouseLeave();
-    }
-  };
+    const handleMouseLeave = () => {
+      setIsHovered(false);
+      
+      if (fillRef.current) {
+        gsap.to(fillRef.current, {
+          scale: 0,
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.inOut'
+        });
+      }
+    };
+
+    // Listen for custom cursor event
+    card.addEventListener('cursor-enter', handleCursorEnter);
+    card.addEventListener('mouseenter', handleMouseEnter);
+    card.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      card.removeEventListener('cursor-enter', handleCursorEnter);
+      card.removeEventListener('mouseenter', handleMouseEnter);
+      card.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
 
   return (
     <div
       ref={cardRef}
-      className={`liquid-card relative overflow-hidden ${className}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseOut={handleMouseOut}
+      className={`relative overflow-hidden ${className}`}
       style={{
         background: isHovered ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.03)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
-        transition: 'background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease',
+        transition: 'background 0.4s ease, border-color 0.4s ease',
         boxShadow: isHovered 
-          ? '0 0 40px rgba(255, 255, 255, 0.1), inset 0 0 30px rgba(255, 255, 255, 0.05)' 
+          ? '0 0 30px rgba(255, 255, 255, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.05)' 
           : 'none'
       }}
     >
-      {/* Liquid fill effect - hidden by default */}
+      {/* Liquid fill effect */}
       <div
         ref={fillRef}
         className="absolute pointer-events-none"
         style={{
-          left: `${fillOrigin.x}%`,
-          top: `${fillOrigin.y}%`,
           width: '100%',
           height: '100%',
-          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           borderRadius: '50%',
           transform: 'translate(-50%, -50%) scale(0)',
           opacity: 0,
@@ -117,72 +127,20 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
         }}
       />
       
-      {/* Content with adaptive colors */}
-      <div 
-        className={`relative z-10 ${isHovered ? 'liquid-card-hovered' : 'liquid-card-content'}`}
-        style={{
-          color: '#ffffff',
-          transition: 'color 0.4s ease'
-        }}
-      >
+      {/* Content */}
+      <div className="relative z-10">
         {children}
-        
-        {/* Adaptive styling for inputs and interactive elements */}
-        <style>{`
-          .liquid-card-hovered input,
-          .liquid-card-hovered textarea,
-          .liquid-card-hovered select {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: #ffffff !important;
-            border-color: rgba(255, 255, 255, 0.25) !important;
-            backdrop-filter: blur(8px);
-          }
-          
-          .liquid-card-hovered input::placeholder,
-          .liquid-card-hovered textarea::placeholder {
-            color: rgba(255, 255, 255, 0.6) !important;
-          }
-          
-          .liquid-card-content input,
-          .liquid-card-content textarea,
-          .liquid-card-content select {
-            background: rgba(255, 255, 255, 0.05) !important;
-            color: #ffffff !important;
-            border-color: rgba(255, 255, 255, 0.15) !important;
-          }
-          
-          .liquid-card-content input::placeholder,
-          .liquid-card-content textarea::placeholder {
-            color: rgba(255, 255, 255, 0.4) !important;
-          }
-          
-          .liquid-card-hovered .icon-box {
-            background: rgba(255, 255, 255, 0.12) !important;
-            border-color: rgba(255, 255, 255, 0.25) !important;
-          }
-          
-          .liquid-card-content .icon-box {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-          }
-          
-          .liquid-card-hovered svg,
-          .liquid-card-content svg {
-            color: #ffffff !important;
-            transition: color 0.4s ease;
-          }
-        `}</style>
       </div>
       
       {/* Border glow effect */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
           borderRadius: 'inherit',
           opacity: isHovered ? 1 : 0,
           transition: 'opacity 0.4s ease',
-          boxShadow: 'inset 0 0 40px rgba(255, 255, 255, 0.08)'
+          boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.05)'
         }}
       />
     </div>

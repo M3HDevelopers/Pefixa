@@ -282,6 +282,22 @@
     }
   }
 
+  /* Text elements for cursor inversion */
+  h1, h2, h3, h4, h5, h6, p, span, a, button {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Ensure liquid cards work properly */
+  .liquid-card {
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .liquid-card:hover {
+    transform: translateY(-2px);
+  }
+
   /* Text inversion when cursor passes over */
   [data-text-invert] {
     position: relative;
