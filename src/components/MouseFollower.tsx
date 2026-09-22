@@ -24,9 +24,9 @@ export function MouseFollower() {
   const wobblePhase = useRef(0);
   const wobbleIntensity = useRef(0);
   
-  // Physics parameters (smooth, not bouncy)
-  const STIFFNESS = 0.08;
-  const DAMPING = 0.92;
+  // Physics parameters (smooth follow, no overshoot)
+  const STIFFNESS = 0.1;   // Moderate - smooth follow
+  const DAMPING = 0.85;    // Prevents overshoot/bounce
   
   // Morph parameters
   const MORPH_SENSITIVITY = 0.015; // Reduced for less stretch at normal speeds
@@ -104,16 +104,16 @@ export function MouseFollower() {
           // Sides - compress perpendicular to movement
           radius *= 1 - stretchAmount * 0.4 * Math.abs(sinAngle);
           
-          // Add teardrop point at front (only when morph is strong) - subtle
+          // Add teardrop point at front (only when morph is strong)
           if (cosAngle > 0.7 && morphIntensity > 0.3) {
             const pointiness = (cosAngle - 0.7) / 0.3;
-            radius += pointiness * morphIntensity * BASE_RADIUS * 0.15;
+            radius += pointiness * morphIntensity * BASE_RADIUS * 0.3;
           }
         }
         
-        // Add organic wobble (only when stopping) - subtle
+        // Add organic wobble (only when stopping)
         if (wobble > 0.01) {
-          const wobbleOffset = Math.sin(wobblePhase.current + i * 1.5) * wobble * BASE_RADIUS * 0.025;
+          const wobbleOffset = Math.sin(wobblePhase.current + i * 1.5) * wobble * BASE_RADIUS * 0.05;
           radius += wobbleOffset;
         }
         
@@ -189,14 +189,14 @@ export function MouseFollower() {
       }
       
       // Only trigger wobble when coming from high speed
-      if (speed < 0.3 && currentMorph.current > 0.5) {
-        wobbleIntensity.current = Math.min(wobbleIntensity.current + 0.08, 0.35);
+      if (speed < 0.3 && currentMorph.current > 0.3) {
+        wobbleIntensity.current = Math.min(wobbleIntensity.current + 0.2, 0.8);
       }
       
-      // Update wobble - slower, gentler
+      // Update wobble
       if (wobbleIntensity.current > 0.01) {
-        wobblePhase.current += 0.15;
-        wobbleIntensity.current *= 0.96;
+        wobblePhase.current += 0.25;
+        wobbleIntensity.current *= 0.94;
       } else {
         wobbleIntensity.current = 0;
       }
