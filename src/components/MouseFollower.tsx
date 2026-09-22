@@ -63,11 +63,20 @@ export function MouseFollower() {
     const generateShape = (speed: number, angle: number, morphIntensity: number, wobble: number): string => {
       const points: Array<[number, number]> = [];
       
+      // If morph is very low, just return perfect circle
+      if (morphIntensity < 0.01 && wobble < 0.01) {
+        for (let i = 0; i < NUM_POINTS; i++) {
+          const baseAngle = (i / NUM_POINTS) * Math.PI * 2;
+          points.push([
+            Math.cos(baseAngle) * BASE_RADIUS,
+            Math.sin(baseAngle) * BASE_RADIUS
+          ]);
+        }
+        return generateSmoothPath(points);
+      }
+      
       // Calculate stretch factors
       const stretchAmount = Math.min(morphIntensity * speed * MORPH_SENSITIVITY, MAX_MORPH);
-      const stretchFront = 1 + stretchAmount; // Front stretches more
-      const stretchBack = 1 - stretchAmount * 0.3; // Back compresses
-      const stretchSide = 1 - stretchAmount * 0.5; // Sides compress
       
       for (let i = 0; i < NUM_POINTS; i++) {
         const t = i / NUM_POINTS;
@@ -76,33 +85,37 @@ export function MouseFollower() {
         // Rotate angle to align with movement direction
         const relativeAngle = baseAngle - angle;
         
-        // Calculate radius based on position relative to movement direction
+        // Start with base radius
         let radius = BASE_RADIUS;
         const cosAngle = Math.cos(relativeAngle);
         const sinAngle = Math.sin(relativeAngle);
         
-        // Front of shape (direction of movement) - stretch more
-        if (cosAngle > 0) {
-          radius *= stretchFront * (0.5 + cosAngle * 0.5);
-          radius += (1 - Math.abs(sinAngle)) * stretchAmount * BASE_RADIUS * 0.3;
-        }
-        // Back of shape - compress
-        else {
-          radius *= stretchBack;
+        // Only apply stretch if morph intensity is significant
+        if (stretchAmount > 0.01) {
+          // Front of shape (direction of movement) - stretch
+          if (cosAngle > 0) {
+            radius *= 1 + stretchAmount * cosAngle;
+          }
+          // Back of shape - compress slightly
+          else {
+            radius *= 1 - stretchAmount * 0.3 * Math.abs(cosAngle);
+          }
+          
+          // Sides - compress perpendicular to movement
+          radius *= 1 - stretchAmount * 0.4 * Math.abs(sinAngle);
+          
+          // Add teardrop point at front (only when morph is strong)
+          if (cosAngle > 0.7 && morphIntensity > 0.3) {
+            const pointiness = (cosAngle - 0.7) / 0.3;
+            radius += pointiness * morphIntensity * BASE_RADIUS * 0.3;
+          }
         }
         
-        // Sides - compress perpendicular to movement
-        radius *= 1 - Math.abs(sinAngle) * stretchAmount * 0.3;
-        
-        // Add teardrop point at front
-        if (cosAngle > 0.7 && morphIntensity > 0.3) {
-          const pointiness = (cosAngle - 0.7) / 0.3;
-          radius += pointiness * morphIntensity * BASE_RADIUS * 0.4;
+        // Add organic wobble (only when stopping)
+        if (wobble > 0.01) {
+          const wobbleOffset = Math.sin(wobblePhase.current + i * 1.5) * wobble * BASE_RADIUS * 0.05;
+          radius += wobbleOffset;
         }
-        
-        // Add organic wobble
-        const wobbleOffset = Math.sin(wobblePhase.current + i * 1.5) * wobble * BASE_RADIUS * 0.08;
-        radius += wobbleOffset;
         
         // Convert to cartesian
         const x = Math.cos(baseAngle) * radius;
