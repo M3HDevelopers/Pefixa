@@ -281,4 +281,43 @@
       transform: translateY(0);
     }
   }
+
+  /* Text inversion when cursor passes over */
+  [data-text-invert] {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  /* Ensure text remains readable */
+  .liquid-card h1,
+  .liquid-card h2,
+  .liquid-card h3,
+  .liquid-card h4,
+  .liquid-card h5,
+  .liquid-card h6,
+  .liquid-card p,
+  .liquid-card span,
+  .liquid-card div {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Button and link hover effects */
+  button, a {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  button:hover, a:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Smooth liquid card transitions */
+  .liquid-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .liquid-card:hover {
+    transform: translateY(-2px);
+  }
 }

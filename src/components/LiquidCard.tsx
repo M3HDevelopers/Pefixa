@@ -29,7 +29,7 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
       animationRef.current.kill();
     }
     
-    // Animate fill from entry point with water splash effect
+    // Animate fill from entry point with liquid splash effect
     animationRef.current = gsap.fromTo(fillRef.current, 
       {
         scale: 0,
@@ -83,7 +83,7 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
   return (
     <div
       ref={cardRef}
-      className={`relative overflow-hidden ${className}`}
+      className={`liquid-card relative overflow-hidden ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseOut={handleMouseOut}
@@ -92,9 +92,9 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
-        transition: 'background 0.4s ease, border-color 0.4s ease',
+        transition: 'background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease',
         boxShadow: isHovered 
-          ? '0 0 30px rgba(255, 255, 255, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.03)' 
+          ? '0 0 40px rgba(255, 255, 255, 0.1), inset 0 0 30px rgba(255, 255, 255, 0.05)' 
           : 'none'
       }}
     >
@@ -107,9 +107,9 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
           top: `${fillOrigin.y}%`,
           width: '100%',
           height: '100%',
-          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           borderRadius: '50%',
           transform: 'translate(-50%, -50%) scale(0)',
           opacity: 0,
@@ -121,7 +121,7 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
       <div 
         className={`relative z-10 ${isHovered ? 'liquid-card-hovered' : 'liquid-card-content'}`}
         style={{
-          color: isHovered ? '#ffffff' : '#ffffff',
+          color: '#ffffff',
           transition: 'color 0.4s ease'
         }}
       >
@@ -132,15 +132,15 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
           .liquid-card-hovered input,
           .liquid-card-hovered textarea,
           .liquid-card-hovered select {
-            background: rgba(255, 255, 255, 0.08) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
             color: #ffffff !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
             backdrop-filter: blur(8px);
           }
           
           .liquid-card-hovered input::placeholder,
           .liquid-card-hovered textarea::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
+            color: rgba(255, 255, 255, 0.6) !important;
           }
           
           .liquid-card-content input,
@@ -157,8 +157,8 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
           }
           
           .liquid-card-hovered .icon-box {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
+            background: rgba(255, 255, 255, 0.12) !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
           }
           
           .liquid-card-content .icon-box {
@@ -178,11 +178,11 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          border: '1px solid rgba(255, 255, 255, 0.15)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
           borderRadius: 'inherit',
           opacity: isHovered ? 1 : 0,
           transition: 'opacity 0.4s ease',
-          boxShadow: 'inset 0 0 30px rgba(255, 255, 255, 0.05)'
+          boxShadow: 'inset 0 0 40px rgba(255, 255, 255, 0.08)'
         }}
       />
     </div>
