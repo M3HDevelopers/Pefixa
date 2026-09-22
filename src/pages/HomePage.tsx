@@ -4,6 +4,7 @@ import { categories } from '../lib/tools/categories';
 import { getToolsByCategory, toolRegistry } from '../lib/tools/registry';
 import { getToolIcon, getCategoryIcon } from '../lib/tools/icons';
 import { useAppStore } from '../store';
+import { LiquidCard } from '../components/LiquidCard';
 import { 
   ArrowRight, Zap, Shield, Clock, Globe, Sparkles, 
   Check, Star, Users, Award, Target, TrendingUp,
@@ -133,11 +134,11 @@ export function HomePage() {
               { value: '0$', label: 'Cost', sub: 'Free forever' },
               { value: '0', label: 'Sign-up', sub: 'No account needed' },
             ].map((stat, i) => (
-              <div key={i} className="card p-6 text-center group" data-hover="border">
-                <p className="text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-300">{stat.value}</p>
-                <p className="text-[12px] text-white font-medium mb-1 group-hover:text-black transition-colors duration-300">{stat.label}</p>
-                <p className="text-[10px] text-[#555] uppercase tracking-wider group-hover:text-black/60 transition-colors duration-300">{stat.sub}</p>
-              </div>
+              <LiquidCard key={i} className="p-6 text-center">
+                <p className="text-5xl font-bold mb-2">{stat.value}</p>
+                <p className="text-[12px] font-medium mb-1">{stat.label}</p>
+                <p className="text-[10px] uppercase tracking-wider opacity-60">{stat.sub}</p>
+              </LiquidCard>
             ))}
           </div>
         </RevealSection>
@@ -164,19 +165,20 @@ export function HomePage() {
                   key={slug}
                   to={`/tools/${slug}`}
                   onClick={() => addRecentTool(slug)}
-                  className="card group p-5 relative"
-                  data-hover="border"
+                  className="block"
                 >
-                  <div className="popular-badge">Popular</div>
-                  <div className="icon-box w-12 h-12 mb-4">
-                    <Icon size={20} className="text-[#888] group-hover:text-black transition-colors duration-300" />
-                  </div>
-                  <h3 className="font-semibold text-white text-[14px] mb-2 group-hover:text-black transition-colors duration-300">{tool.title}</h3>
-                  <p className="text-[11px] text-[#888] leading-relaxed line-clamp-2 mb-3 group-hover:text-black/70 transition-colors duration-300">{tool.description}</p>
-                  <div className="flex items-center gap-1 text-[11px] text-[#666] group-hover:text-black transition-colors duration-300">
-                    <span>Try now</span>
-                    <ArrowRight size={10} />
-                  </div>
+                  <LiquidCard className="p-5 relative h-full">
+                    <div className="popular-badge" style={{ color: '#000' }}>Popular</div>
+                    <div className="icon-box w-12 h-12 mb-4">
+                      <Icon size={20} className="text-[#888]" />
+                    </div>
+                    <h3 className="font-semibold text-[14px] mb-2">{tool.title}</h3>
+                    <p className="text-[11px] leading-relaxed line-clamp-2 mb-3 opacity-70">{tool.description}</p>
+                    <div className="flex items-center gap-1 text-[11px] opacity-60">
+                      <span>Try now</span>
+                      <ArrowRight size={10} />
+                    </div>
+                  </LiquidCard>
                 </Link>
               );
             })}
@@ -207,13 +209,13 @@ export function HomePage() {
               { icon: PenTool, title: 'Rich Editing', desc: 'Add text, images, shapes, annotations, watermarks, signatures, and more. Professional editing tools at your fingertips.' },
               { icon: ScanLine, title: 'Smart OCR', desc: 'Multi-language OCR with layout preservation, table detection, and confidence scoring. Turn scans into searchable documents.' },
             ].map((feature, i) => (
-              <div key={i} className="card p-6 group" data-hover="border">
+              <LiquidCard key={i} className="p-6">
                 <div className="icon-box w-12 h-12 mb-4">
-                  <feature.icon size={20} className="text-white group-hover:text-black transition-colors duration-300" />
+                  <feature.icon size={20} className="text-white" />
                 </div>
-                <h3 className="font-semibold text-white text-[16px] mb-2 group-hover:text-black transition-colors duration-300">{feature.title}</h3>
-                <p className="text-[12px] text-[#888] leading-relaxed group-hover:text-black/70 transition-colors duration-300">{feature.desc}</p>
-              </div>
+                <h3 className="font-semibold text-[16px] mb-2">{feature.title}</h3>
+                <p className="text-[12px] leading-relaxed opacity-70">{feature.desc}</p>
+              </LiquidCard>
             ))}
           </div>
         </RevealSection>
@@ -266,18 +268,19 @@ export function HomePage() {
                       <Link
                         key={tool.slug}
                         to={`/tools/${tool.slug}`}
-                        className="card p-4 group"
-                        data-hover="border"
+                        className="block"
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="icon-box w-9 h-9 shrink-0">
-                            <ToolIcon size={14} className="text-[#888] group-hover:text-black transition-colors duration-300" />
+                        <LiquidCard className="p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="icon-box w-9 h-9 shrink-0">
+                              <ToolIcon size={14} className="text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-[12px] mb-1 truncate">{tool.title}</h4>
+                              <p className="text-[10px] line-clamp-2 opacity-60">{tool.description}</p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-white text-[12px] mb-1 truncate group-hover:text-black transition-colors duration-300">{tool.title}</h4>
-                            <p className="text-[10px] text-[#555] line-clamp-2 group-hover:text-black/70 transition-colors duration-300">{tool.description}</p>
-                          </div>
-                        </div>
+                        </LiquidCard>
                       </Link>
                     );
                   })}
@@ -310,14 +313,14 @@ export function HomePage() {
               { step: '03', title: 'Download Results', desc: 'Get your processed files instantly. All processing happens locally in your browser.', icon: Rocket },
             ].map((item, i) => (
               <div key={i} className="relative">
-                <div className="card p-8 text-center" data-hover="border">
-                  <div className="text-6xl font-bold text-white/10 mb-4">{item.step}</div>
+                <LiquidCard className="p-8 text-center">
+                  <div className="text-6xl font-bold opacity-20 mb-4">{item.step}</div>
                   <div className="icon-box w-14 h-14 mx-auto mb-4">
                     <item.icon size={22} className="text-white" />
                   </div>
-                  <h3 className="font-semibold text-white text-[18px] mb-3">{item.title}</h3>
-                  <p className="text-[12px] text-[#888] leading-relaxed">{item.desc}</p>
-                </div>
+                  <h3 className="font-semibold text-[18px] mb-3">{item.title}</h3>
+                  <p className="text-[12px] leading-relaxed opacity-70">{item.desc}</p>
+                </LiquidCard>
                 {i < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-px bg-gradient-to-r from-white/20 to-transparent" />
                 )}
@@ -342,22 +345,22 @@ export function HomePage() {
               { icon: Target, title: 'For Developers', items: ['API integration ready', 'Webhook support', 'Automated workflows', 'Comprehensive documentation', 'JSON/CSV extraction', 'Custom tool chains'] },
               { icon: TrendingUp, title: 'For Enterprises', items: ['Enterprise-grade security', 'Bulk processing capabilities', 'Team collaboration features', 'Compliance and audit trails', 'PDF/A archiving', 'Advanced analytics'] },
             ].map((useCase, i) => (
-              <div key={i} className="card p-7" data-hover="border">
+              <LiquidCard key={i} className="p-7">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="icon-box w-12 h-12">
                     <useCase.icon size={18} className="text-white" />
                   </div>
-                  <h3 className="font-semibold text-white text-[18px]">{useCase.title}</h3>
+                  <h3 className="font-semibold text-[18px]">{useCase.title}</h3>
                 </div>
                 <ul className="grid grid-cols-2 gap-2">
                   {useCase.items.map((item, j) => (
-                    <li key={j} className="flex items-center gap-2 text-[12px] text-[#888]">
+                    <li key={j} className="flex items-center gap-2 text-[12px] opacity-70">
                       <Check size={12} className="text-white shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
+              </LiquidCard>
             ))}
           </div>
         </RevealSection>
@@ -390,7 +393,7 @@ export function HomePage() {
                 ))}
               </ul>
             </div>
-            <div className="card p-8" data-hover="border">
+            <LiquidCard className="p-8">
               <div className="space-y-4">
                 {[
                   { label: 'Files Processed', value: '10M+', bar: 95 },
@@ -400,8 +403,8 @@ export function HomePage() {
                 ].map((stat, i) => (
                   <div key={i}>
                     <div className="flex justify-between mb-2">
-                      <span className="text-[12px] text-[#888]">{stat.label}</span>
-                      <span className="text-[12px] text-white font-medium">{stat.value}</span>
+                      <span className="text-[12px] opacity-70">{stat.label}</span>
+                      <span className="text-[12px] font-medium">{stat.value}</span>
                     </div>
                     <div className="progress-bar h-1.5">
                       <div className="progress-fill h-full" style={{ width: `${stat.bar}%` }} />
@@ -409,7 +412,7 @@ export function HomePage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </LiquidCard>
           </div>
         </RevealSection>
 
@@ -429,18 +432,18 @@ export function HomePage() {
               { name: 'Lisa Anderson', role: 'Marketing Director', company: 'BrandCo', text: 'We process hundreds of PDFs weekly for campaigns. Pefixa batch processing and templates have saved us countless hours of manual work.' },
               { name: 'James Wilson', role: 'Financial Analyst', company: 'InvestBank', text: 'The data extraction and conversion tools are incredibly accurate. Converting PDF reports to Excel has never been easier or more reliable.' },
             ].map((testimonial, i) => (
-              <div key={i} className="card p-6" data-hover="border">
+              <LiquidCard key={i} className="p-6">
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (
                     <Star key={j} size={12} className="text-white fill-white" />
                   ))}
                 </div>
-                <p className="text-[12px] text-[#888] leading-relaxed mb-5">"{testimonial.text}"</p>
-                <div className="pt-4 border-t border-[#1a1a1a]">
-                  <p className="font-semibold text-white text-[13px]">{testimonial.name}</p>
-                  <p className="text-[11px] text-[#555]">{testimonial.role} • {testimonial.company}</p>
+                <p className="text-[12px] leading-relaxed mb-5 opacity-70">"{testimonial.text}"</p>
+                <div className="pt-4 border-t border-white/20">
+                  <p className="font-semibold text-[13px]">{testimonial.name}</p>
+                  <p className="text-[11px] opacity-60">{testimonial.role} • {testimonial.company}</p>
                 </div>
-              </div>
+              </LiquidCard>
             ))}
           </div>
         </RevealSection>
@@ -485,12 +488,12 @@ export function HomePage() {
           </div>
           <div className="grid grid-cols-6 gap-4">
             {['Google Drive', 'Dropbox', 'OneDrive', 'Slack', 'Notion', 'Zapier', 'GitHub', 'VS Code', 'Figma', 'Jira', 'Asana', 'Trello'].map((tool, i) => (
-              <div key={i} className="card p-4 text-center" data-hover="border">
+              <LiquidCard key={i} className="p-4 text-center">
                 <div className="icon-box w-10 h-10 mx-auto mb-2">
-                  <Layers size={16} className="text-[#888]" />
+                  <Layers size={16} className="text-white" />
                 </div>
-                <p className="text-[11px] text-[#888]">{tool}</p>
-              </div>
+                <p className="text-[11px] opacity-70">{tool}</p>
+              </LiquidCard>
             ))}
           </div>
         </RevealSection>
@@ -525,10 +528,10 @@ export function HomePage() {
 
         {/* Newsletter CTA */}
         <RevealSection className="py-20 border-t border-[#1a1a1a]">
-          <div className="card p-12 text-center" data-hover="border">
-            <Mail size={32} className="mx-auto text-white mb-4" />
-            <h2 className="text-3xl font-bold text-white mb-3">Stay Updated</h2>
-            <p className="text-[#888] text-[14px] mb-6 max-w-xl mx-auto">
+          <LiquidCard className="p-12 text-center">
+            <Mail size={32} className="mx-auto mb-4" />
+            <h2 className="text-3xl font-bold mb-3">Stay Updated</h2>
+            <p className="text-[14px] mb-6 max-w-xl mx-auto opacity-70">
               Get notified about new tools, features, and updates. No spam, unsubscribe anytime.
             </p>
             <div className="flex items-center gap-2 max-w-md mx-auto">
@@ -537,9 +540,9 @@ export function HomePage() {
                 placeholder="your@email.com"
                 className="input-dark flex-1 px-4 py-3"
               />
-              <button className="btn-primary px-6 py-3" data-hover="fill">Subscribe</button>
+              <button className="btn-primary px-6 py-3">Subscribe</button>
             </div>
-          </div>
+          </LiquidCard>
         </RevealSection>
 
         {/* Final CTA */}

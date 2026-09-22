@@ -219,9 +219,9 @@
 
   /* Icon container - simple, solid */
   .icon-box {
-    background-color: #111111;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -242,75 +242,6 @@
     border-radius: 2px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-  }
-
-  /* Advanced Hover Effects */
-  
-  /* Text invert effect */
-  [data-hover="text"] {
-    position: relative;
-    transition: color 0.3s ease;
-  }
-
-  [data-hover="text"]:hover {
-    color: #000000 !important;
-    cursor: text;
-  }
-
-  /* Fill effect for buttons */
-  [data-hover="fill"] {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  [data-hover="fill"]::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
-  }
-
-  [data-hover="fill"]:hover::before {
-    width: 300px;
-    height: 300px;
-  }
-
-  /* Border fill effect for cards */
-  [data-hover="border"] {
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  [data-hover="border"]::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    pointer-events: none;
-  }
-
-  [data-hover="border"]:hover::after {
-    opacity: 1;
-  }
-
-  [data-hover="border"]:hover {
-    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
 
   /* Page transition animation */
