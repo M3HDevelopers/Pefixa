@@ -122,13 +122,13 @@ export function TopNav() {
     <header className="fixed top-0 left-0 right-0 z-50 top-bar">
       <div className="flex items-center h-14 px-6 max-w-[1800px] mx-auto">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 mr-8 logo-container group">
-          <div className="w-9 h-9 bg-white flex items-center justify-center rounded-lg transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-white/10">
+        <Link to="/" className="flex items-center gap-3 mr-8">
+          <div className="w-9 h-9 bg-white flex items-center justify-center rounded-lg">
             <span className="text-black font-bold text-lg tracking-tighter">P</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-white font-semibold text-[15px] tracking-wide leading-none group-hover:text-white transition-colors">PEFIXA</span>
-            <span className="text-[9px] text-[#555] tracking-[0.2em] uppercase leading-none mt-0.5 group-hover:text-[#666] transition-colors">PDF WORKSPACE</span>
+            <span className="text-white font-semibold text-[15px] tracking-wide leading-none">PEFIXA</span>
+            <span className="text-[9px] text-[#555] tracking-[0.2em] uppercase leading-none mt-0.5">PDF WORKSPACE</span>
           </div>
         </Link>
 
@@ -149,19 +149,19 @@ export function TopNav() {
                   className="relative"
                 >
                   <button
-                    className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md transition-all duration-200 ${
+                    className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md ${
                       isActive || megaMenuOpen 
                         ? 'text-white bg-white/5' 
                         : 'text-[#888] hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    <Icon size={14} className="transition-transform duration-200" />
+                    <Icon size={14} />
                     <span>{tab.label}</span>
                     <svg 
                       width="8" 
                       height="8" 
                       viewBox="0 0 8 8" 
-                      className={`transition-transform duration-200 ${megaMenuOpen ? 'rotate-180' : ''}`}
+                      className={`transition-transform duration-150 ${megaMenuOpen ? 'rotate-180' : ''}`}
                     >
                       <path d="M1 3L4 6L7 3" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
                     </svg>
@@ -174,13 +174,13 @@ export function TopNav() {
               <Link
                 key={tab.path}
                 to={tab.path}
-                className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md transition-all duration-200 ${
+                className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md ${
                   isActive 
                     ? 'text-white bg-white/5' 
                     : 'text-[#888] hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Icon size={14} className="transition-transform duration-200" />
+                <Icon size={14} />
                 <span>{tab.label}</span>
               </Link>
             );
@@ -197,9 +197,9 @@ export function TopNav() {
               setMegaMenuOpen(false); 
               setTimeout(() => searchRef.current?.focus(), 50); 
             }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md text-[12px] text-[#888] hover:border-[#333] hover:bg-[#111] transition-all duration-200"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md text-[12px] text-[#888] hover:border-[#333] hover:bg-[#111] transition-colors"
           >
-            <Search size={13} className="transition-transform duration-200" />
+            <Search size={13} />
             <span className="hidden sm:inline">Search 286 tools</span>
             <kbd className="hidden sm:inline text-[9px] text-[#555] bg-[#111] px-1.5 py-0.5 rounded border border-[#1a1a1a]">⌘K</kbd>
           </button>
@@ -217,7 +217,7 @@ export function TopNav() {
                       placeholder="Search tools, categories..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 bg-[#000] border border-[#1a1a1a] rounded-md text-[13px] text-white placeholder:text-[#404040] focus:outline-none focus:border-[#333] transition-all duration-200"
+                      className="w-full pl-9 pr-3 py-2.5 bg-[#000] border border-[#1a1a1a] rounded-md text-[13px] text-white placeholder:text-[#404040] focus:outline-none focus:border-[#333]"
                       autoFocus
                     />
                   </div>
@@ -269,7 +269,7 @@ export function TopNav() {
                           <button
                             key={slug}
                             onClick={() => selectTool(slug)}
-                            className="px-2.5 py-1 bg-[#111] hover:bg-[#1a1a1a] rounded-md text-[11px] text-[#888] hover:text-white transition-all duration-200"
+                            className="px-2.5 py-1 bg-[#111] hover:bg-[#1a1a1a] rounded-md text-[11px] text-[#888] hover:text-white"
                           >
                             {tool.title}
                           </button>
@@ -287,17 +287,17 @@ export function TopNav() {
         <div className="flex items-center gap-0.5 ml-3">
           <Link 
             to="/presets" 
-            className="p-2 text-[#888] hover:text-white transition-all duration-200 rounded-md hover:bg-white/5" 
+            className="p-2 text-[#888] hover:text-white rounded-md hover:bg-white/5" 
             title="Presets"
           >
-            <Bookmark size={15} className="transition-transform duration-200" />
+            <Bookmark size={15} />
           </Link>
           <Link 
             to="/settings" 
-            className="p-2 text-[#888] hover:text-white transition-all duration-200 rounded-md hover:bg-white/5" 
+            className="p-2 text-[#888] hover:text-white rounded-md hover:bg-white/5" 
             title="Settings"
           >
-            <Settings size={15} className="transition-transform duration-200" />
+            <Settings size={15} />
           </Link>
         </div>
       </div>
@@ -331,17 +331,17 @@ export function TopNav() {
                           navigate(`/tools?category=${cat.slug}`); 
                           setMegaMenuOpen(false); 
                         }}
-                        className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-200 ${
+                        className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
                           isActive ? 'bg-[#141414]' : ''
                         }`}
                       >
-                        <div className={`icon-box w-8 h-8 shrink-0 transition-all duration-200 ${
-                          isActive ? 'bg-white border-white scale-105' : ''
+                        <div className={`icon-box w-8 h-8 shrink-0 ${
+                          isActive ? 'bg-white border-white' : ''
                         }`}>
                           <CatIcon size={14} className={isActive ? 'text-black' : 'text-[#888]'} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-[12px] font-medium truncate transition-colors duration-200 ${
+                          <p className={`text-[12px] font-medium truncate ${
                             isActive ? 'text-white' : 'text-[#ccc]'
                           }`}>
                             {cat.title}
@@ -350,9 +350,7 @@ export function TopNav() {
                         </div>
                         <ChevronRight 
                           size={12} 
-                          className={`transition-all duration-200 ${
-                            isActive ? 'text-white translate-x-0.5' : 'text-[#404040]'
-                          }`} 
+                          className={isActive ? 'text-white' : 'text-[#404040]'} 
                         />
                       </button>
                     );
@@ -380,24 +378,24 @@ export function TopNav() {
                       >
                         <button
                           onClick={() => selectTool(tool.slug)}
-                          className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-200 ${
+                          className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
                             isToolActive ? 'bg-[#141414]' : ''
                           }`}
                         >
-                          <div className={`icon-box w-8 h-8 shrink-0 transition-all duration-200 ${
-                            isToolActive ? 'bg-white border-white scale-105' : ''
+                          <div className={`icon-box w-8 h-8 shrink-0 ${
+                            isToolActive ? 'bg-white border-white' : ''
                           }`}>
                             <ToolIcon size={14} className={isToolActive ? 'text-black' : 'text-[#888]'} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className={`text-[12px] font-medium truncate transition-colors duration-200 ${
+                            <p className={`text-[12px] font-medium truncate ${
                               isToolActive ? 'text-white' : 'text-[#ccc]'
                             }`}>
                               {tool.title}
                             </p>
                             <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
                           </div>
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium shrink-0 transition-all duration-200 ${
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium shrink-0 ${
                             tool.capability === 'browser-ready' ? 'badge-ready' :
                             tool.capability === 'browser-partial' ? 'badge-partial' :
                             tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
@@ -409,8 +407,8 @@ export function TopNav() {
                           {tool.options.length > 0 && (
                             <ChevronRight 
                               size={11} 
-                              className={`text-[#404040] shrink-0 transition-all duration-200 ${
-                                isToolActive ? 'translate-x-0.5 text-white' : ''
+                              className={`text-[#404040] shrink-0 ${
+                                isToolActive ? 'text-white' : ''
                               }`} 
                             />
                           )}
@@ -422,10 +420,10 @@ export function TopNav() {
                     <Link
                       to={`/tools?category=${activeCategory}`}
                       onClick={() => setMegaMenuOpen(false)}
-                      className="text-[11px] text-white hover:text-[#ccc] transition-colors duration-200 inline-flex items-center gap-1 group"
+                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
                     >
                       View all {activeCatTools.length} tools 
-                      <ChevronRight size={10} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                      <ChevronRight size={10} />
                     </Link>
                   </div>
                 </div>
@@ -454,10 +452,10 @@ export function TopNav() {
                         setMegaMenuOpen(false); 
                         setActiveTool(null); 
                       }}
-                      className="text-[11px] text-white hover:text-[#ccc] transition-colors duration-200 inline-flex items-center gap-1 group"
+                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
                     >
                       Open full tool 
-                      <ChevronRight size={10} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                      <ChevronRight size={10} />
                     </Link>
                   </div>
                 </div>
