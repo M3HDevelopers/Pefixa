@@ -125,22 +125,37 @@
 
   .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
 
-  /* Inputs - simple, solid */
+  /* Inputs - adaptive styling */
   .input-dark {
-    background-color: #050505;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
     color: #ffffff;
     font-size: 12px;
-    transition: border-color 0.15s ease;
+    transition: all 0.3s ease;
   }
 
   .input-dark:focus {
-    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
     outline: none;
   }
 
-  .input-dark::placeholder { color: #404040; }
+  .input-dark::placeholder { 
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.3s ease;
+  }
+
+  /* Input styling for LiquidCard context */
+  .liquid-card-content input,
+  .liquid-card-content textarea {
+    transition: all 0.4s ease;
+  }
+
+  .liquid-card-content input::placeholder,
+  .liquid-card-content textarea::placeholder {
+    transition: color 0.4s ease;
+  }
 
   /* Mega menu - simple, solid */
   .mega-menu {

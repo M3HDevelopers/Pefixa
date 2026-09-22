@@ -538,7 +538,20 @@ export function HomePage() {
               <input 
                 type="email" 
                 placeholder="your@email.com"
-                className="input-dark flex-1 px-4 py-3"
+                className="flex-1 px-4 py-3 rounded-md border transition-all duration-300"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                }}
+                onFocus={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                }}
               />
               <button className="btn-primary px-6 py-3">Subscribe</button>
             </div>
