@@ -19,15 +19,31 @@
     --accent-dim: #d4d4d4;
   }
 
+  /* Custom Scrollbar */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #262626 transparent;
+    scrollbar-color: #333333 #0a0a0a;
   }
 
-  *::-webkit-scrollbar { width: 5px; height: 5px; }
-  *::-webkit-scrollbar-track { background: transparent; }
-  *::-webkit-scrollbar-thumb { background-color: #262626; border-radius: 1px; }
-  *::-webkit-scrollbar-thumb:hover { background-color: #404040; }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #0a0a0a;
+    border-radius: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 4px;
+    border: 2px solid #0a0a0a;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #444444;
+  }
 
   html { background-color: #000000; color-scheme: dark; }
 
@@ -68,69 +84,99 @@
     animation: fadeIn 0.15s ease-out forwards;
   }
 
-  /* Top bar - simple, no blur */
+  /* Top bar - Glassmorphism */
   .top-bar {
-    background-color: rgba(0, 0, 0, 0.98);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  /* Card - simple hover, no scale */
+  /* Card - Glassmorphism style */
   .card {
-    background-color: #0a0a0a;
-    border: 1px solid #1a1a1a;
-    border-radius: 6px;
-    transition: border-color 0.15s ease;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    transition: all 0.2s ease;
   }
 
   .card:hover {
-    border-color: #2a2a2a;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
   }
 
-  /* Buttons - simple transitions */
+  /* Glass effect for panels */
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+  }
+
+  /* Buttons - Glassmorphism style, no glow */
   .btn-primary {
-    background-color: #ffffff;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     color: #000000;
-    border-radius: 4px;
+    border-radius: 6px;
     font-weight: 500;
     font-size: 12px;
-    transition: background-color 0.15s ease;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .btn-primary:hover { background-color: #e5e5e5; }
+  .btn-primary:hover { 
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+  }
 
   .btn-secondary {
-    background-color: #111111;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
     color: #ffffff;
-    border: 1px solid #262626;
-    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
     font-size: 12px;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    transition: all 0.2s ease;
   }
 
-  .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
+  .btn-secondary:hover { 
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
 
-  /* Inputs */
+  /* Inputs - Glassmorphism */
   .input-dark {
-    background-color: #050505;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
     color: #ffffff;
     font-size: 12px;
-    transition: border-color 0.15s ease;
+    transition: all 0.15s ease;
   }
 
   .input-dark:focus {
-    border-color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
     outline: none;
   }
 
   .input-dark::placeholder { color: #404040; }
 
-  /* Mega menu - simple, no blur */
+  /* Mega menu - Glassmorphism */
   .mega-menu {
-    background-color: #0a0a0a;
-    border: 1px solid #1a1a1a;
-    border-radius: 6px;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
     box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8);
   }
 
@@ -139,7 +185,9 @@
     position: relative;
   }
 
-  .mega-menu-item:hover { background-color: #141414; }
+  .mega-menu-item:hover { 
+    background: rgba(255, 255, 255, 0.05);
+  }
 
   /* Nav tab - simple underline */
   .nav-tab {
@@ -164,27 +212,31 @@
     transform: scaleX(1);
   }
 
-  /* Badges - simple, no gradients */
+  /* Badges - Glassmorphism */
   .badge-ready {
-    background-color: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .badge-partial {
-    background-color: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
     color: #a3a3a3;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .badge-backend {
-    background-color: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
     color: #666666;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .badge-ai {
-    background-color: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
     color: #d4d4d4;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
@@ -201,29 +253,38 @@
     transition: width 0.3s ease;
   }
 
-  /* Icon container - NO scale on hover, stable */
+  /* Icon container - Glassmorphism, NO scale on hover, stable */
   .icon-box {
-    background-color: #111111;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: all 0.15s ease;
   }
 
-  /* Popular badge */
+  .icon-box:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Popular badge - Glassmorphism */
   .popular-badge {
     position: absolute;
     top: 8px;
     right: 8px;
-    background-color: #ffffff;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     color: #000000;
     font-size: 9px;
     font-weight: 600;
     padding: 2px 6px;
-    border-radius: 2px;
+    border-radius: 3px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }

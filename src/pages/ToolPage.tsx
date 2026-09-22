@@ -29,6 +29,7 @@ export function ToolPage() {
     const droppedFiles = Array.from(e.dataTransfer.files);
     const validFiles = droppedFiles.filter(f => {
       if (tool?.inputMode === 'any') return true;
+      if (tool?.acceptedTypes.length === 0) return true;
       if (tool?.acceptedTypes.includes(f.type)) return true;
       if (f.type === 'application/pdf' && tool?.acceptedTypes.includes('application/pdf')) return true;
       return false;
@@ -56,37 +57,51 @@ export function ToolPage() {
     setProcessing(true);
     setError(null);
     setOutput(null);
-    const jobId = addJob(tool, files, options);
-    updateJob(jobId, { status: 'processing', progress: 30 });
-    addRecentTool(tool.slug);
+    
     try {
+      const jobId = addJob(tool, files, options);
+      updateJob(jobId, { status: 'processing', progress: 30 });
+      addRecentTool(tool.slug);
+      
       updateJob(jobId, { status: 'analyzing', progress: 50 });
       const result = await processTool(tool, { files, options });
-      updateJob(jobId, { status: 'ready', progress: 100, outputFiles: result.files.map(f => ({ name: f.name, size: f.blob.size })) });
+      
+      updateJob(jobId, { 
+        status: 'ready', 
+        progress: 100, 
+        outputFiles: result.files.map(f => ({ name: f.name, size: f.blob.size })) 
+      });
       setOutput(result);
     } catch (err: any) {
-      updateJob(jobId, { status: 'failed', error: { code: 'PROCESSING_ERROR', message: err.message } });
-      setError(err.message || 'Processing failed');
+      console.error('Processing error:', err);
+      setError(err.message || 'Processing failed. Please try again.');
     } finally {
       setProcessing(false);
     }
   };
 
   const handleDownload = (file: { name: string; blob: Blob }) => {
-    const url = URL.createObjectURL(file.blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const url = URL.createObjectURL(file.blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch (err) {
+      console.error('Download error:', err);
+      setError('Download failed. Please try again.');
+    }
   };
 
   if (!tool) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <p className="text-[#888] text-lg">Tool not found</p>
-          <Link to="/tools" className="text-white underline text-sm mt-2 inline-block">Browse all tools</Link>
+        <div className="glass-strong p-8 text-center">
+          <p className="text-[#888] text-lg mb-2">Tool not found</p>
+          <Link to="/tools" className="btn-primary inline-block px-4 py-2 text-sm">Browse all tools</Link>
         </div>
       </div>
     );
@@ -119,7 +134,7 @@ export function ToolPage() {
           <div className="flex-1">
             <div className="flex items-start justify-between gap-4 mb-2">
               <h1 className="text-3xl font-bold text-white tracking-tight">{tool.title}</h1>
-              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-medium ${cap.badgeClass}`}>
+              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium ${cap.badgeClass}`}>
                 <span>{cap.label}</span>
               </div>
             </div>
@@ -134,8 +149,8 @@ export function ToolPage() {
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        className={`border border-dashed rounded-md p-12 text-center transition-all mb-6 ${
-          dragOver ? 'border-white bg-[#0a0a0a]' : 'border-[#262626] hover:border-[#404040]'
+        className={`glass-strong border-dashed p-12 text-center transition-all mb-6 ${
+          dragOver ? 'border-white/30 bg-white/5' : ''
         }`}
       >
         <Upload size={32} className="mx-auto text-[#404040] mb-3" />
@@ -146,7 +161,7 @@ export function ToolPage() {
         <label className="inline-flex items-center gap-2 px-4 py-2 btn-primary text-[12px] cursor-pointer">
           <input
             type="file"
-            accept={tool.acceptedTypes.join(',')}
+            accept={tool.acceptedTypes.length > 0 ? tool.acceptedTypes.join(',') : undefined}
             multiple={tool.inputMode === 'multiple'}
             onChange={handleFileSelect}
             className="hidden"
@@ -154,7 +169,7 @@ export function ToolPage() {
           Select Files
         </label>
         <p className="text-[10px] text-[#404040] mt-3">
-          {tool.acceptedTypes.join(', ')} • Max {tool.maxFileSizeMB}MB
+          {tool.acceptedTypes.length > 0 ? tool.acceptedTypes.join(', ') : 'Any file type'} • Max {tool.maxFileSizeMB}MB
         </p>
       </div>
 
@@ -167,13 +182,13 @@ export function ToolPage() {
           </div>
           <div className="space-y-1.5">
             {files.map((file, i) => (
-              <div key={i} className="flex items-center gap-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-3 py-2.5">
+              <div key={i} className="glass flex items-center gap-3 px-3 py-2.5">
                 <FileText size={14} className="text-[#666]" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[12px] text-white truncate">{file.name}</p>
                   <p className="text-[10px] text-[#555]">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
-                <button onClick={() => removeFile(i)} className="p-1 hover:bg-[#1a1a1a] rounded-sm transition-colors">
+                <button onClick={() => removeFile(i)} className="p-1 hover:bg-white/10 rounded transition-colors">
                   <X size={12} className="text-[#666]" />
                 </button>
               </div>
@@ -184,7 +199,7 @@ export function ToolPage() {
 
       {/* Options */}
       {tool.options.length > 0 && (
-        <div className="mb-6 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-5">
+        <div className="mb-6 glass-strong p-5">
           <h3 className="text-[11px] font-semibold text-white mb-4 uppercase tracking-[0.15em]">Options</h3>
           <div className="grid grid-cols-2 gap-4">
             {tool.options.map(opt => (
@@ -232,7 +247,7 @@ export function ToolPage() {
                       type="checkbox"
                       checked={options[opt.key] ?? opt.default}
                       onChange={e => setOptions(prev => ({ ...prev, [opt.key]: e.target.checked }))}
-                      className="rounded-sm border-[#333] bg-[#050505] text-white focus:ring-0"
+                      className="rounded border-[#333] bg-[#050505] text-white focus:ring-0"
                     />
                     <span className="text-[11px] text-[#888]">Enabled</span>
                   </label>
@@ -247,7 +262,7 @@ export function ToolPage() {
       <button
         onClick={handleProcess}
         disabled={files.length === 0 || processing}
-        className="w-full py-3.5 btn-primary text-[13px] disabled:bg-[#1a1a1a] disabled:text-[#404040] disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-3.5 btn-primary text-[13px] disabled:bg-white/5 disabled:text-[#404040] disabled:cursor-not-allowed disabled:border-white/5 flex items-center justify-center gap-2"
       >
         {processing ? (
           <>
@@ -264,10 +279,10 @@ export function ToolPage() {
 
       {/* Error */}
       {error && (
-        <div className="mt-4 p-3 bg-[#0a0a0a] border border-[#333] rounded-md flex items-start gap-2 animate-fade">
-          <AlertCircle size={14} className="text-white mt-0.5 shrink-0" />
+        <div className="mt-4 glass-strong p-3 flex items-start gap-2 animate-fade border border-red-500/20">
+          <AlertCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
           <div>
-            <p className="text-[12px] text-white font-medium">Processing Error</p>
+            <p className="text-[12px] text-white font-medium">Error</p>
             <p className="text-[11px] text-[#888]">{error}</p>
           </div>
         </div>
@@ -275,10 +290,10 @@ export function ToolPage() {
 
       {/* Output */}
       {output && (
-        <div className="mt-6 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-5 animate-scale">
+        <div className="mt-6 glass-strong p-5 animate-fade">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-white" />
+              <CheckCircle2 size={14} className="text-green-400" />
               <h3 className="text-[12px] font-medium text-white">Processing Complete</h3>
             </div>
             {output.files.length > 1 && (
@@ -293,7 +308,7 @@ export function ToolPage() {
           </div>
 
           {output.warnings.length > 0 && (
-            <div className="mb-4 p-3 bg-[#111] border border-[#262626] rounded-md">
+            <div className="mb-4 glass p-3">
               {output.warnings.map((w, i) => (
                 <div key={i} className="flex items-center gap-1.5 text-[11px] text-[#888]">
                   <Info size={11} />
@@ -305,7 +320,7 @@ export function ToolPage() {
 
           <div className="space-y-1.5">
             {output.files.map((file, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-[#050505] border border-[#1a1a1a] rounded-md">
+              <div key={i} className="glass flex items-center gap-3 p-3">
                 <FileText size={14} className="text-[#666]" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[12px] text-white truncate">{file.name}</p>
@@ -323,7 +338,7 @@ export function ToolPage() {
           </div>
 
           {output.metadata && Object.keys(output.metadata as Record<string, unknown>).length > 0 && (
-            <div className="mt-4 pt-4 border-t border-[#1a1a1a]">
+            <div className="mt-4 pt-4 border-t border-white/5">
               <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold mb-2">Details</p>
               <div className="grid grid-cols-2 gap-1.5">
                 {Object.entries(output.metadata).map(([key, value]) => (
@@ -338,7 +353,7 @@ export function ToolPage() {
 
           {/* Smart Next Step Engine */}
           {output.files.length > 0 && (
-            <div className="mt-5 pt-5 border-t border-[#1a1a1a]">
+            <div className="mt-5 pt-5 border-t border-white/5">
               <p className="text-[11px] text-[#888] mb-3 flex items-center gap-1.5">
                 <Sparkles size={11} className="text-white" />
                 Suggested next steps:
@@ -350,11 +365,11 @@ export function ToolPage() {
                     <Link
                       key={nextTool.slug}
                       to={`/tools/${nextTool.slug}`}
-                      className="group flex items-center gap-2 px-3 py-2 bg-[#050505] border border-[#1a1a1a] hover:border-[#404040] hover:bg-[#111] rounded-md text-[11px] text-[#888] hover:text-white transition-all"
+                      className="group flex items-center gap-2 glass px-3 py-2 text-[11px] text-[#888] hover:text-white hover:bg-white/5 transition-all"
                     >
                       <NextIcon size={12} />
                       <span>{nextTool.title}</span>
-                      <ArrowRight size={10} className="text-[#404040] group-hover:text-white transition-all group-hover:translate-x-0.5" />
+                      <ArrowRight size={10} className="text-[#404040] group-hover:text-white" />
                     </Link>
                   );
                 })}

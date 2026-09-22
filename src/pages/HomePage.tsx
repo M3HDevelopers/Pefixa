@@ -22,7 +22,7 @@ export function HomePage() {
 
       {/* Hero Section */}
       <div className="text-center mb-20 relative animate-fade">
-        <div className="inline-flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] px-3 py-1.5 rounded-sm text-[11px] font-medium text-[#888] mb-6">
+        <div className="inline-flex items-center gap-2 glass px-3 py-1.5 text-[11px] font-medium text-[#888] mb-6">
           <Sparkles size={11} className="text-white" />
           <span>286 PDF Tools — All in One Workspace</span>
         </div>
@@ -62,13 +62,13 @@ export function HomePage() {
               >
                 <div className="popular-badge">Popular</div>
                 <div className="icon-box w-10 h-10 mb-3">
-                  <Icon size={18} className="text-[#888] transition-colors" />
+                  <Icon size={18} className="text-[#888]" />
                 </div>
-                <h3 className="font-semibold text-white text-[13px] mb-1 group-hover:text-white">{tool.title}</h3>
+                <h3 className="font-semibold text-white text-[13px] mb-1">{tool.title}</h3>
                 <p className="text-[10px] text-[#555] leading-relaxed line-clamp-2">{tool.description}</p>
-                <div className="mt-3 flex items-center gap-1 text-[10px] text-[#666] group-hover:text-white transition-colors">
+                <div className="mt-3 flex items-center gap-1 text-[10px] text-[#666] group-hover:text-white">
                   <span>Open</span>
-                  <ArrowRight size={10} className="transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight size={10} />
                 </div>
               </Link>
             );
@@ -84,7 +84,7 @@ export function HomePage() {
           { value: categories.length, label: 'Categories' },
           { value: '100%', label: 'Private & Local' },
         ].map((stat, i) => (
-          <div key={i} className="card p-5 text-center">
+          <div key={i} className="glass p-5 text-center">
             <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
             <p className="text-[10px] text-[#555] uppercase tracking-[0.15em]">{stat.label}</p>
           </div>
@@ -107,7 +107,7 @@ export function HomePage() {
                 <Link
                   key={slug}
                   to={`/tools/${slug}`}
-                  className="flex items-center gap-2 px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#333] hover:bg-[#111] rounded-sm text-[12px] text-[#888] hover:text-white transition-all"
+                  className="flex items-center gap-2 glass px-3 py-2 text-[12px] text-[#888] hover:text-white hover:bg-white/5 transition-all"
                 >
                   <Icon size={12} />
                   <span>{tool.title}</span>
@@ -129,14 +129,14 @@ export function HomePage() {
               <Link
                 key={cat.slug}
                 to={`/tools?category=${cat.slug}`}
-                className="card group p-4"
+                className="glass group p-4"
               >
                 <div className="flex items-start gap-3">
                   <div className="icon-box w-9 h-9 shrink-0">
                     <Icon size={15} className="text-[#888]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white text-[13px] group-hover:text-white">{cat.title}</p>
+                    <p className="font-medium text-white text-[13px]">{cat.title}</p>
                     <p className="text-[10px] text-[#555] mt-0.5">{tools.length} tools</p>
                   </div>
                 </div>

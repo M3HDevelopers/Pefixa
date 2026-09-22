@@ -28,11 +28,11 @@ export function ToolsListPage() {
       </div>
 
       {/* Category Filters */}
-      <div className="flex flex-wrap gap-1.5 mb-10 pb-6 border-b border-[#1a1a1a]">
+      <div className="flex flex-wrap gap-1.5 mb-10 pb-6 border-b border-white/5">
         <Link
           to="/tools"
-          className={`px-3 py-1.5 rounded-sm text-[11px] font-medium transition-all ${
-            !categoryFilter ? 'bg-white text-black' : 'bg-[#0a0a0a] text-[#888] border border-[#1a1a1a] hover:border-[#333] hover:text-white'
+          className={`px-3 py-1.5 rounded-md text-[11px] font-medium transition-all ${
+            !categoryFilter ? 'btn-primary' : 'glass text-[#888] hover:text-white hover:bg-white/5'
           }`}
         >
           All ({toolRegistry.length})
@@ -44,8 +44,8 @@ export function ToolsListPage() {
             <Link
               key={cat.slug}
               to={`/tools?category=${cat.slug}`}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-medium transition-all ${
-                categoryFilter === cat.slug ? 'bg-white text-black' : 'bg-[#0a0a0a] text-[#888] border border-[#1a1a1a] hover:border-[#333] hover:text-white'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium transition-all ${
+                categoryFilter === cat.slug ? 'btn-primary' : 'glass text-[#888] hover:text-white hover:bg-white/5'
               }`}
             >
               <Icon size={11} />
@@ -78,7 +78,7 @@ export function ToolsListPage() {
                   <Link
                     key={tool.slug}
                     to={`/tools/${tool.slug}`}
-                    className="card group p-3"
+                    className="glass group p-3"
                   >
                     <div className="flex items-start gap-3">
                       <div className="icon-box w-9 h-9 shrink-0">
@@ -86,10 +86,10 @@ export function ToolsListPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="font-medium text-white text-[12px] group-hover:text-white truncate">
+                          <h3 className="font-medium text-white text-[12px] truncate">
                             {tool.title}
                           </h3>
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-medium shrink-0 ${
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium shrink-0 ${
                             tool.capability === 'browser-ready' ? 'badge-ready' :
                             tool.capability === 'browser-partial' ? 'badge-partial' :
                             tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
@@ -102,13 +102,13 @@ export function ToolsListPage() {
                         <p className="text-[10px] text-[#555] line-clamp-2 leading-relaxed">{tool.description}</p>
                         <div className="flex items-center gap-1.5 mt-2">
                           {tool.inputMode === 'multiple' && (
-                            <span className="text-[9px] text-[#666] bg-[#111] px-1.5 py-0.5 rounded-sm">Batch</span>
+                            <span className="text-[9px] text-[#666] glass px-1.5 py-0.5 rounded-md">Batch</span>
                           )}
                           {tool.supportsChaining && (
-                            <span className="text-[9px] text-[#666] bg-[#111] px-1.5 py-0.5 rounded-sm">Chain</span>
+                            <span className="text-[9px] text-[#666] glass px-1.5 py-0.5 rounded-md">Chain</span>
                           )}
                           {tool.output.multiple && (
-                            <span className="text-[9px] text-[#666] bg-[#111] px-1.5 py-0.5 rounded-sm">Multi</span>
+                            <span className="text-[9px] text-[#666] glass px-1.5 py-0.5 rounded-md">Multi</span>
                           )}
                         </div>
                       </div>
