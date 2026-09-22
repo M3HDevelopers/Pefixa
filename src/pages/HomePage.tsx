@@ -10,63 +10,13 @@ import {
   Lock, Eye, Cpu, Database, Code, Layers, ChevronDown,
   Mail, Github, Twitter, Linkedin, Heart, Rocket,
   FileText, Image, FileSpreadsheet, Presentation,
-  ScanLine, Key, PenTool, GitBranch, MousePointer2
+  ScanLine, Key, PenTool, GitBranch
 } from 'lucide-react';
 
 const popularTools = [
   'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word', 'pdf-to-jpg',
   'rotate-pages', 'encrypt-pdf', 'watermark-text', 'page-numbers', 'ocr-pdf',
 ];
-
-// Mouse follower component - performant
-function MouseFollower() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const pos = useRef({ x: 0, y: 0 });
-  const ringPos = useRef({ x: 0, y: 0 });
-  const rafRef = useRef<number>();
-
-  useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
-      pos.current = { x: e.clientX, y: e.clientY };
-    };
-
-    const animate = () => {
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${pos.current.x - 4}px, ${pos.current.y - 4}px, 0)`;
-      }
-      if (ringRef.current) {
-        ringPos.current.x += (pos.current.x - ringPos.current.x) * 0.15;
-        ringPos.current.y += (pos.current.y - ringPos.current.y) * 0.15;
-        ringRef.current.style.transform = `translate3d(${ringPos.current.x - 20}px, ${ringPos.current.y - 20}px, 0)`;
-      }
-      rafRef.current = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener('mousemove', handleMove, { passive: true });
-    rafRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMove);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  return (
-    <>
-      <div
-        ref={ringRef}
-        className="pointer-events-none fixed top-0 left-0 w-10 h-10 rounded-full border border-white/20 z-[1] hidden md:block"
-        style={{ willChange: 'transform', transition: 'width 0.2s, height 0.2s' }}
-      />
-      <div
-        ref={dotRef}
-        className="pointer-events-none fixed top-0 left-0 w-2 h-2 rounded-full bg-white z-[1] hidden md:block"
-        style={{ willChange: 'transform' }}
-      />
-    </>
-  );
-}
 
 // Scroll reveal hook
 function useReveal() {
@@ -104,8 +54,6 @@ export function HomePage() {
 
   return (
     <div className="relative overflow-hidden">
-      <MouseFollower />
-      
       {/* Ambient background gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-[120px]" />
@@ -134,11 +82,11 @@ export function HomePage() {
               All processing happens in your browser — your files never leave your device.
             </p>
             <div className="flex items-center justify-center gap-3">
-              <Link to="/tools" className="btn-primary px-6 py-3 text-[13px] flex items-center gap-2">
+              <Link to="/tools" className="btn-primary px-6 py-3 text-[13px] flex items-center gap-2" data-hover="fill">
                 <Rocket size={14} />
                 Explore All Tools
               </Link>
-              <Link to="/workflows" className="btn-secondary px-6 py-3 text-[13px] flex items-center gap-2">
+              <Link to="/workflows" className="btn-secondary px-6 py-3 text-[13px] flex items-center gap-2" data-hover="fill">
                 <GitBranch size={14} />
                 View Workflows
               </Link>
@@ -151,7 +99,7 @@ export function HomePage() {
               <div 
                 key={i} 
                 className="px-4 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-full text-[11px] text-[#888] flex items-center gap-2"
-                style={{ animationDelay: `${i * 100}ms` }}
+                data-hover="text"
               >
                 <Check size={11} className="text-white" />
                 {badge}
@@ -165,7 +113,7 @@ export function HomePage() {
           <p className="text-center text-[10px] text-[#555] uppercase tracking-[0.2em] mb-6">Trusted by professionals worldwide</p>
           <div className="grid grid-cols-6 gap-8 items-center opacity-60">
             {['Enterprise', 'Startup', 'Agency', 'Freelancer', 'Student', 'Developer'].map((type, i) => (
-              <div key={i} className="text-center">
+              <div key={i} className="text-center" data-hover="text">
                 <div className="text-[13px] font-semibold text-white/70">{type}</div>
               </div>
             ))}
@@ -185,10 +133,10 @@ export function HomePage() {
               { value: '0$', label: 'Cost', sub: 'Free forever' },
               { value: '0', label: 'Sign-up', sub: 'No account needed' },
             ].map((stat, i) => (
-              <div key={i} className="card p-6 text-center">
-                <p className="text-5xl font-bold text-white mb-2">{stat.value}</p>
-                <p className="text-[12px] text-white font-medium mb-1">{stat.label}</p>
-                <p className="text-[10px] text-[#555] uppercase tracking-wider">{stat.sub}</p>
+              <div key={i} className="card p-6 text-center group" data-hover="border">
+                <p className="text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-300">{stat.value}</p>
+                <p className="text-[12px] text-white font-medium mb-1 group-hover:text-black transition-colors duration-300">{stat.label}</p>
+                <p className="text-[10px] text-[#555] uppercase tracking-wider group-hover:text-black/60 transition-colors duration-300">{stat.sub}</p>
               </div>
             ))}
           </div>
@@ -202,7 +150,7 @@ export function HomePage() {
               <h2 className="text-4xl font-bold text-white mb-2">Popular Tools</h2>
               <p className="text-[#888] text-[14px]">Trusted by thousands of users worldwide</p>
             </div>
-            <Link to="/tools" className="text-[11px] text-[#666] hover:text-white transition-colors flex items-center gap-1">
+            <Link to="/tools" className="text-[11px] text-[#666] hover:text-white transition-colors flex items-center gap-1" data-hover="text">
               View all <ArrowRight size={10} />
             </Link>
           </div>
@@ -217,14 +165,15 @@ export function HomePage() {
                   to={`/tools/${slug}`}
                   onClick={() => addRecentTool(slug)}
                   className="card group p-5 relative"
+                  data-hover="border"
                 >
                   <div className="popular-badge">Popular</div>
                   <div className="icon-box w-12 h-12 mb-4">
-                    <Icon size={20} className="text-[#888]" />
+                    <Icon size={20} className="text-[#888] group-hover:text-black transition-colors duration-300" />
                   </div>
-                  <h3 className="font-semibold text-white text-[14px] mb-2">{tool.title}</h3>
-                  <p className="text-[11px] text-[#888] leading-relaxed line-clamp-2 mb-3">{tool.description}</p>
-                  <div className="flex items-center gap-1 text-[11px] text-[#666] group-hover:text-white transition-colors">
+                  <h3 className="font-semibold text-white text-[14px] mb-2 group-hover:text-black transition-colors duration-300">{tool.title}</h3>
+                  <p className="text-[11px] text-[#888] leading-relaxed line-clamp-2 mb-3 group-hover:text-black/70 transition-colors duration-300">{tool.description}</p>
+                  <div className="flex items-center gap-1 text-[11px] text-[#666] group-hover:text-black transition-colors duration-300">
                     <span>Try now</span>
                     <ArrowRight size={10} />
                   </div>
@@ -258,12 +207,12 @@ export function HomePage() {
               { icon: PenTool, title: 'Rich Editing', desc: 'Add text, images, shapes, annotations, watermarks, signatures, and more. Professional editing tools at your fingertips.' },
               { icon: ScanLine, title: 'Smart OCR', desc: 'Multi-language OCR with layout preservation, table detection, and confidence scoring. Turn scans into searchable documents.' },
             ].map((feature, i) => (
-              <div key={i} className="card p-6 group">
+              <div key={i} className="card p-6 group" data-hover="border">
                 <div className="icon-box w-12 h-12 mb-4">
-                  <feature.icon size={20} className="text-white" />
+                  <feature.icon size={20} className="text-white group-hover:text-black transition-colors duration-300" />
                 </div>
-                <h3 className="font-semibold text-white text-[16px] mb-2">{feature.title}</h3>
-                <p className="text-[12px] text-[#888] leading-relaxed">{feature.desc}</p>
+                <h3 className="font-semibold text-white text-[16px] mb-2 group-hover:text-black transition-colors duration-300">{feature.title}</h3>
+                <p className="text-[12px] text-[#888] leading-relaxed group-hover:text-black/70 transition-colors duration-300">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -290,6 +239,7 @@ export function HomePage() {
                       ? 'bg-white text-black' 
                       : 'bg-[#0a0a0a] border border-[#1a1a1a] text-[#888] hover:text-white hover:border-[#333]'
                   }`}
+                  data-hover="fill"
                 >
                   <Icon size={13} />
                   <span>{cat.title}</span>
@@ -304,7 +254,7 @@ export function HomePage() {
             if (!activeCat) return null;
             const tools = getToolsByCategory(activeTab).slice(0, 12);
             return (
-              <div>
+              <div className="animate-fade">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-white mb-2">{activeCat.title}</h3>
                   <p className="text-[#888] text-[13px]">{activeCat.description}</p>
@@ -317,14 +267,15 @@ export function HomePage() {
                         key={tool.slug}
                         to={`/tools/${tool.slug}`}
                         className="card p-4 group"
+                        data-hover="border"
                       >
                         <div className="flex items-start gap-3">
                           <div className="icon-box w-9 h-9 shrink-0">
-                            <ToolIcon size={14} className="text-[#888]" />
+                            <ToolIcon size={14} className="text-[#888] group-hover:text-black transition-colors duration-300" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-white text-[12px] mb-1 truncate">{tool.title}</h4>
-                            <p className="text-[10px] text-[#555] line-clamp-2">{tool.description}</p>
+                            <h4 className="font-medium text-white text-[12px] mb-1 truncate group-hover:text-black transition-colors duration-300">{tool.title}</h4>
+                            <p className="text-[10px] text-[#555] line-clamp-2 group-hover:text-black/70 transition-colors duration-300">{tool.description}</p>
                           </div>
                         </div>
                       </Link>
@@ -335,6 +286,7 @@ export function HomePage() {
                   <Link 
                     to={`/tools?category=${activeTab}`}
                     className="inline-flex items-center gap-1 text-[12px] text-[#888] hover:text-white"
+                    data-hover="text"
                   >
                     View all {getToolsByCategory(activeTab).length} tools in {activeCat.title} <ArrowRight size={12} />
                   </Link>
@@ -358,7 +310,7 @@ export function HomePage() {
               { step: '03', title: 'Download Results', desc: 'Get your processed files instantly. All processing happens locally in your browser.', icon: Rocket },
             ].map((item, i) => (
               <div key={i} className="relative">
-                <div className="card p-8 text-center">
+                <div className="card p-8 text-center" data-hover="border">
                   <div className="text-6xl font-bold text-white/10 mb-4">{item.step}</div>
                   <div className="icon-box w-14 h-14 mx-auto mb-4">
                     <item.icon size={22} className="text-white" />
@@ -385,12 +337,12 @@ export function HomePage() {
           </div>
           <div className="grid grid-cols-2 gap-6">
             {[
-              { icon: Users, title: 'For Students', color: 'blue', items: ['Merge lecture notes', 'Convert PDFs to study materials', 'Extract text for research', 'Compress files for email', 'Create flashcards from PDFs', 'Summarize long documents'] },
-              { icon: Award, title: 'For Professionals', color: 'purple', items: ['Sign contracts digitally', 'Redact sensitive information', 'Create professional reports', 'Batch process documents', 'Fill and submit forms', 'Add watermarks and stamps'] },
-              { icon: Target, title: 'For Developers', color: 'green', items: ['API integration ready', 'Webhook support', 'Automated workflows', 'Comprehensive documentation', 'JSON/CSV extraction', 'Custom tool chains'] },
-              { icon: TrendingUp, title: 'For Enterprises', color: 'orange', items: ['Enterprise-grade security', 'Bulk processing capabilities', 'Team collaboration features', 'Compliance and audit trails', 'PDF/A archiving', 'Advanced analytics'] },
+              { icon: Users, title: 'For Students', items: ['Merge lecture notes', 'Convert PDFs to study materials', 'Extract text for research', 'Compress files for email', 'Create flashcards from PDFs', 'Summarize long documents'] },
+              { icon: Award, title: 'For Professionals', items: ['Sign contracts digitally', 'Redact sensitive information', 'Create professional reports', 'Batch process documents', 'Fill and submit forms', 'Add watermarks and stamps'] },
+              { icon: Target, title: 'For Developers', items: ['API integration ready', 'Webhook support', 'Automated workflows', 'Comprehensive documentation', 'JSON/CSV extraction', 'Custom tool chains'] },
+              { icon: TrendingUp, title: 'For Enterprises', items: ['Enterprise-grade security', 'Bulk processing capabilities', 'Team collaboration features', 'Compliance and audit trails', 'PDF/A archiving', 'Advanced analytics'] },
             ].map((useCase, i) => (
-              <div key={i} className="card p-7">
+              <div key={i} className="card p-7" data-hover="border">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="icon-box w-12 h-12">
                     <useCase.icon size={18} className="text-white" />
@@ -429,7 +381,7 @@ export function HomePage() {
                   'Works completely offline',
                   'Military-grade encryption support',
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-[13px] text-[#ccc]">
+                  <li key={i} className="flex items-center gap-3 text-[13px] text-[#ccc]" data-hover="text">
                     <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                       <Check size={11} className="text-white" />
                     </div>
@@ -438,7 +390,7 @@ export function HomePage() {
                 ))}
               </ul>
             </div>
-            <div className="card p-8">
+            <div className="card p-8" data-hover="border">
               <div className="space-y-4">
                 {[
                   { label: 'Files Processed', value: '10M+', bar: 95 },
@@ -477,7 +429,7 @@ export function HomePage() {
               { name: 'Lisa Anderson', role: 'Marketing Director', company: 'BrandCo', text: 'We process hundreds of PDFs weekly for campaigns. Pefixa batch processing and templates have saved us countless hours of manual work.' },
               { name: 'James Wilson', role: 'Financial Analyst', company: 'InvestBank', text: 'The data extraction and conversion tools are incredibly accurate. Converting PDF reports to Excel has never been easier or more reliable.' },
             ].map((testimonial, i) => (
-              <div key={i} className="card p-6">
+              <div key={i} className="card p-6" data-hover="border">
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (
                     <Star key={j} size={12} className="text-white fill-white" />
@@ -511,7 +463,7 @@ export function HomePage() {
               { q: 'How does the AI features work?', a: 'AI-powered features like summarization and translation require backend processing. These tools clearly indicate when cloud processing is needed.' },
               { q: 'Is my data secure?', a: 'Absolutely. We use industry-standard encryption, never store your files, and all processing happens locally when possible. Your privacy is our top priority.' },
             ].map((faq, i) => (
-              <details key={i} className="card group">
+              <details key={i} className="card group" data-hover="border">
                 <summary className="p-5 cursor-pointer flex items-center justify-between list-none">
                   <span className="text-[14px] font-medium text-white">{faq.q}</span>
                   <ChevronDown size={16} className="text-[#888] group-open:rotate-180 transition-transform" />
@@ -533,7 +485,7 @@ export function HomePage() {
           </div>
           <div className="grid grid-cols-6 gap-4">
             {['Google Drive', 'Dropbox', 'OneDrive', 'Slack', 'Notion', 'Zapier', 'GitHub', 'VS Code', 'Figma', 'Jira', 'Asana', 'Trello'].map((tool, i) => (
-              <div key={i} className="card p-4 text-center">
+              <div key={i} className="card p-4 text-center" data-hover="border">
                 <div className="icon-box w-10 h-10 mx-auto mb-2">
                   <Layers size={16} className="text-[#888]" />
                 </div>
@@ -560,6 +512,7 @@ export function HomePage() {
                     key={slug}
                     to={`/tools/${slug}`}
                     className="flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-3 py-2 text-[12px] text-[#888] hover:text-white hover:border-[#333] transition-all"
+                    data-hover="fill"
                   >
                     <Icon size={12} />
                     <span>{tool.title}</span>
@@ -572,7 +525,7 @@ export function HomePage() {
 
         {/* Newsletter CTA */}
         <RevealSection className="py-20 border-t border-[#1a1a1a]">
-          <div className="card p-12 text-center">
+          <div className="card p-12 text-center" data-hover="border">
             <Mail size={32} className="mx-auto text-white mb-4" />
             <h2 className="text-3xl font-bold text-white mb-3">Stay Updated</h2>
             <p className="text-[#888] text-[14px] mb-6 max-w-xl mx-auto">
@@ -584,7 +537,7 @@ export function HomePage() {
                 placeholder="your@email.com"
                 className="input-dark flex-1 px-4 py-3"
               />
-              <button className="btn-primary px-6 py-3">Subscribe</button>
+              <button className="btn-primary px-6 py-3" data-hover="fill">Subscribe</button>
             </div>
           </div>
         </RevealSection>
@@ -595,7 +548,7 @@ export function HomePage() {
           <p className="text-[#888] text-[16px] mb-8 max-w-xl mx-auto">
             Join thousands of professionals who trust Pefixa for their PDF processing needs
           </p>
-          <Link to="/tools" className="btn-primary px-10 py-4 text-[14px] inline-flex items-center gap-2">
+          <Link to="/tools" className="btn-primary px-10 py-4 text-[14px] inline-flex items-center gap-2" data-hover="fill">
             <Rocket size={16} />
             Start Processing PDFs Now
           </Link>
@@ -620,7 +573,7 @@ export function HomePage() {
               </p>
               <div className="flex items-center gap-2">
                 {[Github, Twitter, Linkedin].map((Icon, i) => (
-                  <a key={i} href="#" className="icon-box w-9 h-9 hover:border-white/20">
+                  <a key={i} href="#" className="icon-box w-9 h-9 hover:border-white/20" data-hover="fill">
                     <Icon size={14} className="text-[#888]" />
                   </a>
                 ))}
@@ -641,7 +594,7 @@ export function HomePage() {
                   { label: 'Presets', to: '/presets' },
                 ].map((link, i) => (
                   <li key={i}>
-                    <Link to={link.to} className="text-[12px] text-[#888] hover:text-white transition-colors">
+                    <Link to={link.to} className="text-[12px] text-[#888] hover:text-white transition-colors" data-hover="text">
                       {link.label}
                     </Link>
                   </li>
@@ -655,7 +608,7 @@ export function HomePage() {
               <ul className="space-y-2.5">
                 {categories.slice(0, 8).map(cat => (
                   <li key={cat.slug}>
-                    <Link to={`/tools?category=${cat.slug}`} className="text-[12px] text-[#888] hover:text-white transition-colors">
+                    <Link to={`/tools?category=${cat.slug}`} className="text-[12px] text-[#888] hover:text-white transition-colors" data-hover="text">
                       {cat.title}
                     </Link>
                   </li>
@@ -677,7 +630,7 @@ export function HomePage() {
                   { label: 'Contact', to: '#' },
                 ].map((link, i) => (
                   <li key={i}>
-                    <Link to={link.to} className="text-[12px] text-[#888] hover:text-white transition-colors">
+                    <Link to={link.to} className="text-[12px] text-[#888] hover:text-white transition-colors" data-hover="text">
                       {link.label}
                     </Link>
                   </li>
@@ -695,6 +648,7 @@ export function HomePage() {
                   key={tool.slug} 
                   to={`/tools/${tool.slug}`}
                   className="text-[11px] text-[#888] hover:text-white px-2 py-1 hover:bg-[#111] rounded transition-colors"
+                  data-hover="text"
                 >
                   {tool.title}
                 </Link>
