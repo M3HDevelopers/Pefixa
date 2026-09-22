@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
 
 export function MouseFollower() {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -9,120 +8,100 @@ export function MouseFollower() {
   const velocityY = useRef(0);
   const lastX = useRef(0);
   const lastY = useRef(0);
-  const isOverText = useRef(false);
+  const currentScaleX = useRef(1);
+  const currentScaleY = useRef(1);
+  const currentRotation = useRef(0);
   const isOverCard = useRef(false);
+  const rafId = useRef<number>(0);
 
   useEffect(() => {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
     const handleMouseMove = (e: MouseEvent) => {
+      // Instant position update - no lag
       cursorX.current = e.clientX;
       cursorY.current = e.clientY;
+
+      // Calculate velocity for liquid stretching
+      const dx = e.clientX - lastX.current;
+      const dy = e.clientY - lastY.current;
       
-      // Calculate velocity with smoothing
-      const newVelX = e.clientX - lastX.current;
-      const newVelY = e.clientY - lastY.current;
-      
-      velocityX.current = velocityX.current * 0.7 + newVelX * 0.3;
-      velocityY.current = velocityY.current * 0.7 + newVelY * 0.3;
+      // Faster velocity response (less smoothing = more responsive)
+      velocityX.current = velocityX.current * 0.5 + dx * 0.5;
+      velocityY.current = velocityY.current * 0.5 + dy * 0.5;
       
       lastX.current = e.clientX;
       lastY.current = e.clientY;
 
-      // Check what element we're hovering
+      // Check if over card
       const target = e.target as HTMLElement;
-      const isText = target.matches('h1, h2, h3, h4, h5, h6, p, span, a, button');
-      const isCard = target.closest('.liquid-card');
-
-      // Update blend mode based on what we're hovering
-      if (isText && !isCard) {
-        if (!isOverText.current) {
-          isOverText.current = true;
-          isOverCard.current = false;
-          cursor.style.mixBlendMode = 'difference';
-          cursor.style.background = 'rgba(255, 255, 255, 0.8)';
-        }
-      } else if (isCard) {
-        if (!isOverCard.current) {
-          isOverCard.current = true;
-          isOverText.current = false;
-          cursor.style.mixBlendMode = 'normal';
-          cursor.style.background = 'rgba(255, 255, 255, 0.4)';
-          cursor.style.transform = 'scale(1.5)';
-          
-          // Trigger water drop effect on the card
-          const card = isCard as HTMLElement;
-          const rect = card.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-          
-          // Dispatch custom event for the card to handle
-          card.dispatchEvent(new CustomEvent('cursor-enter', {
-            detail: { x, y, clientX: e.clientX, clientY: e.clientY }
-          }));
-        }
-      } else {
-        if (isOverText.current || isOverCard.current) {
-          isOverText.current = false;
-          isOverCard.current = false;
-          cursor.style.mixBlendMode = 'normal';
-          cursor.style.background = 'rgba(255, 255, 255, 0.3)';
-          cursor.style.transform = 'scale(1)';
-        }
-      }
+      const card = target.closest('.liquid-card');
+      isOverCard.current = !!card;
     };
 
     const animate = () => {
       if (!cursor) return;
 
-      // Calculate stretch based on velocity (liquid deformation)
       const speed = Math.sqrt(velocityX.current ** 2 + velocityY.current ** 2);
       
-      // Organic liquid stretching
-      const stretchFactor = Math.min(speed * 0.01, 0.3);
+      // Liquid stretching - more responsive
+      const stretch = Math.min(speed * 0.02, 0.5);
       const angle = Math.atan2(velocityY.current, velocityX.current);
       
-      // Apply smooth following with GSAP
-      gsap.to(cursor, {
-        x: cursorX.current - 25, // Center the 50px cursor
-        y: cursorY.current - 25,
-        scaleX: (1 + stretchFactor) * (isOverCard.current ? 1.5 : 1),
-        scaleY: (1 - stretchFactor * 0.3) * (isOverCard.current ? 1.5 : 1),
-        rotation: angle * (180 / Math.PI),
-        duration: 0.15,
-        ease: 'power2.out',
-        overwrite: 'auto'
-      });
+      // Target scale based on state
+      const targetScaleX = isOverCard.current ? 0 : (1 + stretch);
+      const targetScaleY = isOverCard.current ? 0 : (1 - stretch * 0.4);
+      const targetRotation = isOverCard.current ? 0 : angle * (180 / Math.PI);
+      
+      // Fast spring back (high stiffness = instant snap)
+      const stiffness = 0.3; // Higher = faster response
+      const damping = 0.7;   // Lower = less sluggish
+      
+      currentScaleX.current += (targetScaleX - currentScaleX.current) * stiffness;
+      currentScaleY.current += (targetScaleY - currentScaleY.current) * stiffness;
+      currentRotation.current += (targetRotation - currentRotation.current) * stiffness;
+      
+      // Velocity damping - faster decay for quick snap-back
+      velocityX.current *= damping;
+      velocityY.current *= damping;
+      
+      // Kill tiny velocities to prevent jitter
+      if (Math.abs(velocityX.current) < 0.1) velocityX.current = 0;
+      if (Math.abs(velocityY.current) < 0.1) velocityY.current = 0;
 
-      // Damping
-      velocityX.current *= 0.85;
-      velocityY.current *= 0.85;
+      // Direct transform update - NO GSAP delay, instant positioning
+      cursor.style.transform = `translate3d(${cursorX.current - 25}px, ${cursorY.current - 25}px, 0) scale(${currentScaleX.current}, ${currentScaleY.current}) rotate(${currentRotation.current}deg)`;
+      
+      // Opacity based on card hover (merge effect)
+      cursor.style.opacity = isOverCard.current ? '0' : '1';
 
-      requestAnimationFrame(animate);
+      rafId.current = requestAnimationFrame(animate);
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    const animationFrame = requestAnimationFrame(animate);
+    rafId.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrame);
+      cancelAnimationFrame(rafId.current);
     };
   }, []);
 
   return (
     <div
       ref={cursorRef}
-      className="fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-200"
+      className="fixed top-0 left-0 pointer-events-none z-[9999]"
       style={{
         width: '50px',
         height: '50px',
         borderRadius: '50%',
-        background: 'rgba(255, 255, 255, 0.3)',
-        boxShadow: '0 0 20px rgba(255, 255, 255, 0.2), 0 0 40px rgba(255, 255, 255, 0.1)',
-        willChange: 'transform',
-        transformOrigin: 'center center'
+        background: 'radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.1) 100%)',
+        boxShadow: '0 0 20px rgba(255, 255, 255, 0.15), 0 0 40px rgba(255, 255, 255, 0.08)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        willChange: 'transform, opacity',
+        mixBlendMode: 'difference',
+        transition: 'opacity 0.15s ease'
       }}
     />
   );
