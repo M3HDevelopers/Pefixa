@@ -47,12 +47,14 @@ export function TopNav() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
-  const menuTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const menuTimeoutRef = useRef<number | undefined>(undefined);
 
   const searchResults = searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 8) : [];
 
   const handleCategoryEnter = (slug: string) => {
-    clearTimeout(menuTimeoutRef.current);
+    if (menuTimeoutRef.current !== undefined) {
+      clearTimeout(menuTimeoutRef.current);
+    }
     setMegaMenu({ openCategory: slug, openSubmenu: null });
   };
 
