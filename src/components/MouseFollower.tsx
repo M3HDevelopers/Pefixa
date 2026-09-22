@@ -24,15 +24,15 @@ export function MouseFollower() {
   const wobblePhase = useRef(0);
   const wobbleIntensity = useRef(0);
   
-  // Physics parameters (smooth follow, no overshoot)
-  const STIFFNESS = 0.1;   // Moderate - smooth follow
-  const DAMPING = 0.85;    // Prevents overshoot/bounce
+  // Physics parameters (balanced - not too soft)
+  const STIFFNESS = 0.15;   // Balanced - responsive but smooth
+  const DAMPING = 0.82;     // Good control, minimal bounce
   
   // Morph parameters
-  const MORPH_SENSITIVITY = 0.015; // Reduced for less stretch at normal speeds
-  const MAX_MORPH = 1.8; // Reduced max stretch
-  const MORPH_LERP = 0.1; // Slower morph transition
-  const MORPH_DECAY = 0.92; // Slower decay for smoother return
+  const MORPH_SENSITIVITY = 0.012; // Less sensitive at normal speeds
+  const MAX_MORPH = 1.5; // Moderate max stretch
+  const MORPH_LERP = 0.12; // Balanced morph transition
+  const MORPH_DECAY = 0.90; // Smooth decay
   
   // Shape parameters
   const NUM_POINTS = 24;
@@ -55,9 +55,9 @@ export function MouseFollower() {
       const rawVelX = e.clientX - prevTargetX;
       const rawVelY = e.clientY - prevTargetY;
       
-      // Smooth velocity
-      smoothVelocityX.current = smoothVelocityX.current * 0.8 + rawVelX * 0.2;
-      smoothVelocityY.current = smoothVelocityY.current * 0.8 + rawVelY * 0.2;
+      // Smooth velocity (balanced)
+      smoothVelocityX.current = smoothVelocityX.current * 0.75 + rawVelX * 0.25;
+      smoothVelocityY.current = smoothVelocityY.current * 0.75 + rawVelY * 0.25;
     };
 
     const generateShape = (speed: number, angle: number, morphIntensity: number, wobble: number): string => {
@@ -107,13 +107,13 @@ export function MouseFollower() {
           // Add teardrop point at front (only when morph is strong)
           if (cosAngle > 0.7 && morphIntensity > 0.3) {
             const pointiness = (cosAngle - 0.7) / 0.3;
-            radius += pointiness * morphIntensity * BASE_RADIUS * 0.3;
+            radius += pointiness * morphIntensity * BASE_RADIUS * 0.2;
           }
         }
         
         // Add organic wobble (only when stopping)
         if (wobble > 0.01) {
-          const wobbleOffset = Math.sin(wobblePhase.current + i * 1.5) * wobble * BASE_RADIUS * 0.05;
+          const wobbleOffset = Math.sin(wobblePhase.current + i * 1.5) * wobble * BASE_RADIUS * 0.03;
           radius += wobbleOffset;
         }
         
@@ -190,13 +190,13 @@ export function MouseFollower() {
       
       // Only trigger wobble when coming from high speed
       if (speed < 0.3 && currentMorph.current > 0.3) {
-        wobbleIntensity.current = Math.min(wobbleIntensity.current + 0.2, 0.8);
+        wobbleIntensity.current = Math.min(wobbleIntensity.current + 0.15, 0.5);
       }
       
       // Update wobble
       if (wobbleIntensity.current > 0.01) {
-        wobblePhase.current += 0.25;
-        wobbleIntensity.current *= 0.94;
+        wobblePhase.current += 0.2;
+        wobbleIntensity.current *= 0.95;
       } else {
         wobbleIntensity.current = 0;
       }
