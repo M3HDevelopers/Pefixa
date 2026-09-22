@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 export function MouseFollower() {
@@ -23,11 +23,10 @@ export function MouseFollower() {
       cursorX.current = e.clientX;
       cursorY.current = e.clientY;
       
-      // Calculate velocity
+      // Calculate velocity with smoothing
       const newVelX = e.clientX - lastX.current;
       const newVelY = e.clientY - lastY.current;
       
-      // Smooth velocity with damping
       velocityX.current = velocityX.current * 0.7 + newVelX * 0.3;
       velocityY.current = velocityY.current * 0.7 + newVelY * 0.3;
       
@@ -55,7 +54,6 @@ export function MouseFollower() {
           cursorX.current += distX * pullStrength;
           cursorY.current += distY * pullStrength;
           
-          // Stretch towards element
           targetScale.current = {
             x: 1 + pullStrength * 0.5,
             y: 1 + pullStrength * 0.5
@@ -74,7 +72,6 @@ export function MouseFollower() {
       const speed = Math.sqrt(velocityX.current ** 2 + velocityY.current ** 2);
       
       if (!isHovering.current) {
-        // Water drop stretching effect
         const stretchFactor = Math.min(speed * 0.015, 0.4);
         const angle = Math.atan2(velocityY.current, velocityX.current);
         
@@ -86,7 +83,7 @@ export function MouseFollower() {
         targetRotation.current = angle * (180 / Math.PI);
       }
 
-      // Spring physics for smooth interpolation
+      // Spring physics
       const springStrength = 0.15;
       const damping = 0.8;
       
@@ -94,16 +91,13 @@ export function MouseFollower() {
       currentScale.current.y += (targetScale.current.y - currentScale.current.y) * springStrength;
       currentRotation.current += (targetRotation.current - currentRotation.current) * springStrength;
       
-      // Apply velocity damping
       velocityX.current *= damping;
       velocityY.current *= damping;
 
-      // Reset rotation when velocity is low
       if (speed < 2) {
         targetRotation.current = 0;
       }
 
-      // Apply transforms
       gsap.set(cursor, {
         x: cursorX.current,
         y: cursorY.current,
@@ -128,14 +122,17 @@ export function MouseFollower() {
   return (
     <div
       ref={cursorRef}
-      className="fixed top-0 left-0 w-8 h-8 pointer-events-none z-[9999]"
+      className="fixed top-0 left-0 w-16 h-16 pointer-events-none z-[9999]"
       style={{
-        background: 'rgba(255, 255, 255, 0.95)',
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         borderRadius: '50%',
         transform: 'translate(-50%, -50%)',
-        boxShadow: '0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 0 40px rgba(255, 255, 255, 0.3), 0 0 80px rgba(255, 255, 255, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
         willChange: 'transform',
-        mixBlendMode: 'difference'
+        mixBlendMode: 'screen'
       }}
     />
   );

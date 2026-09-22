@@ -125,9 +125,11 @@
 
   .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
 
-  /* Inputs - adaptive styling */
+  /* Inputs - glassmorphic styling */
   .input-dark {
     background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
     color: #ffffff;
@@ -136,9 +138,10 @@
   }
 
   .input-dark:focus {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.3);
     outline: none;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   }
 
   .input-dark::placeholder { 
@@ -148,12 +151,16 @@
 
   /* Input styling for LiquidCard context */
   .liquid-card-content input,
-  .liquid-card-content textarea {
+  .liquid-card-content textarea,
+  .liquid-card-hovered input,
+  .liquid-card-hovered textarea {
     transition: all 0.4s ease;
   }
 
   .liquid-card-content input::placeholder,
-  .liquid-card-content textarea::placeholder {
+  .liquid-card-content textarea::placeholder,
+  .liquid-card-hovered input::placeholder,
+  .liquid-card-hovered textarea::placeholder {
     transition: color 0.4s ease;
   }
 

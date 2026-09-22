@@ -541,16 +541,20 @@ export function HomePage() {
                 className="flex-1 px-4 py-3 rounded-md border transition-all duration-300"
                 style={{
                   background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   color: '#ffffff',
                 }}
                 onFocus={(e) => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                  e.target.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.05)';
                 }}
                 onBlur={(e) => {
                   e.target.style.background = 'rgba(255, 255, 255, 0.05)';
                   e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.target.style.boxShadow = 'none';
                 }}
               />
               <button className="btn-primary px-6 py-3">Subscribe</button>
