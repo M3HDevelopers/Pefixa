@@ -83,7 +83,7 @@ export function PresetsPage() {
                   <h3 className="font-medium text-white text-[12px]">{preset.name}</h3>
                   <p className="text-[10px] text-[#555]">{tool?.title || preset.toolSlug}</p>
                 </div>
-                <button onClick={() => setPresets(prev => prev.filter(p => p.id !== preset.id))} className="p-1 hover:bg-[#1a1a1a] rounded-sm"><Trash2 size={11} className="text-[#444]" /></button>
+                <button onClick={() => setPresets(prev => prev.filter(p => p.id !== preset.id))} className="p-1 hover:bg-[#1a1a1a] rounded-sm"><Trash2 size={11} className="text-[#666]" /></button>
               </div>
               {Object.keys(preset.options).length > 0 && (
                 <div className="mt-2 pt-2 border-t border-[#1a1a1a]">

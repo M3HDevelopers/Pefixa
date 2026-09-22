@@ -32,7 +32,7 @@ export function ComparePage() {
     <div onDragOver={(e) => { e.preventDefault(); setDropTarget(slot); }} onDragLeave={() => setDropTarget(null)} onDrop={(e) => handleDrop(e, slot)} className={`flex-1 border border-dashed rounded-sm p-8 text-center transition-all min-h-[180px] flex flex-col items-center justify-center ${dropTarget === slot ? 'border-[#4da6ff] bg-[#0a0a0a]' : doc ? 'border-[#333] bg-[#0d0d0d]' : 'border-[#2a2a2a]'}`}>
       {doc ? (
         <div>
-          <FileText size={28} className="mx-auto text-[#4ade80] mb-2" />
+          <FileText size={28} className="mx-auto text-white mb-2" />
           <p className="text-[12px] font-medium text-white">{doc.file.name}</p>
           <p className="text-[10px] text-[#555] mt-1">{doc.pageCount} pages • {doc.fileSize}</p>
           <button onClick={() => slot === 1 ? setDoc1(null) : setDoc2(null)} className="mt-2 text-[10px] text-[#f87171] hover:text-red-400">Remove</button>
@@ -86,10 +86,10 @@ export function ComparePage() {
               ].map(row => {
                 const diff = row.v1 !== row.v2;
                 return (
-                  <div key={row.label} className={`grid grid-cols-3 gap-2 text-[11px] py-1.5 ${diff ? 'bg-[#1a1500]' : ''}`}>
+                  <div key={row.label} className={`grid grid-cols-3 gap-2 text-[11px] py-1.5 ${diff ? 'bg-[#111]' : ''}`}>
                     <span className="text-[#555]">{row.label}</span>
-                    <span className={diff ? 'text-[#fbbf24] font-medium' : 'text-[#888]'}>{row.v1}</span>
-                    <span className={diff ? 'text-[#fbbf24] font-medium' : 'text-[#888]'}>{row.v2}</span>
+                    <span className={diff ? 'text-white font-medium' : 'text-[#888]'}>{row.v1}</span>
+                    <span className={diff ? 'text-white font-medium' : 'text-[#888]'}>{row.v2}</span>
                   </div>
                 );
               })}

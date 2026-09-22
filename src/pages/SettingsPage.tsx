@@ -27,7 +27,7 @@ export function SettingsPage() {
 
       <div className="space-y-4">
         <section className="card p-4">
-          <h2 className="text-[12px] font-semibold text-white flex items-center gap-2 mb-3"><Shield size={13} className="text-[#4ade80]" />Privacy & Security</h2>
+          <h2 className="text-[12px] font-semibold text-white flex items-center gap-2 mb-3"><Shield size={13} className="text-white" />Privacy & Security</h2>
           <div className="space-y-3">
             {[
               { key: 'localOnly', label: 'Local-only processing', desc: 'Process eligible documents entirely in browser' },
@@ -43,7 +43,7 @@ export function SettingsPage() {
         </section>
 
         <section className="card p-4">
-          <h2 className="text-[12px] font-semibold text-white flex items-center gap-2 mb-3"><Cpu size={13} className="text-[#4da6ff]" />Processing</h2>
+          <h2 className="text-[12px] font-semibold text-white flex items-center gap-2 mb-3"><Cpu size={13} className="text-white" />Processing</h2>
           <div className="space-y-3">
             <div>
               <label className="text-[11px] text-[#888]">Max concurrent jobs</label>
@@ -65,7 +65,7 @@ export function SettingsPage() {
         </section>
 
         <section className="card p-4">
-          <h2 className="text-[12px] font-semibold text-white flex items-center gap-2 mb-3"><Eye size={13} className="text-[#a78bfa]" />Display</h2>
+          <h2 className="text-[12px] font-semibold text-white flex items-center gap-2 mb-3"><Eye size={13} className="text-white" />Display</h2>
           <div className="space-y-3">
             <div>
               <label className="text-[11px] text-[#888]">Default page size</label>

@@ -67,13 +67,13 @@ export function InspectPage() {
           <div className="card p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-[12px] font-semibold text-white flex items-center gap-2"><Shield size={13} />Health Report</h2>
-              <div className={`text-2xl font-bold ${result.health.score >= 80 ? 'text-[#4ade80]' : result.health.score >= 50 ? 'text-[#fbbf24]' : 'text-[#f87171]'}`}>{result.health.score}/100</div>
+              <div className={`text-2xl font-bold text-white`}>{result.health.score}/100</div>
             </div>
             <div className="progress-bar h-1.5 mb-3">
-              <div className={`h-full ${result.health.score >= 80 ? 'bg-[#4ade80]' : result.health.score >= 50 ? 'bg-[#fbbf24]' : 'bg-[#f87171]'}`} style={{ width: `${result.health.score}%` }} />
+              <div className="progress-fill h-full" style={{ width: `${result.health.score}%` }} />
             </div>
-            {result.health.warnings.map((w, i) => (<div key={i} className="flex items-center gap-2 text-[11px] text-[#fbbf24]"><AlertTriangle size={11} /><span>{w}</span></div>))}
-            {result.health.warnings.length === 0 && result.health.errors.length === 0 && (<div className="flex items-center gap-2 text-[11px] text-[#4ade80]"><CheckCircle size={11} /><span>No issues detected</span></div>)}
+            {result.health.warnings.map((w, i) => (<div key={i} className="flex items-center gap-2 text-[11px] text-[#888]"><AlertTriangle size={11} /><span>{w}</span></div>))}
+            {result.health.warnings.length === 0 && result.health.errors.length === 0 && (<div className="flex items-center gap-2 text-[11px] text-white"><CheckCircle size={11} /><span>No issues detected</span></div>)}
           </div>
 
           <div className="card p-4">
