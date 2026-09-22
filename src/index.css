@@ -19,10 +19,10 @@
     --accent-dim: #d4d4d4;
   }
 
-  /* Custom Scrollbar - Balanced */
+  /* Custom Scrollbar */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #2a2a2a #0a0a0a;
+    scrollbar-color: #333333 #0a0a0a;
   }
 
   *::-webkit-scrollbar {
@@ -36,18 +36,16 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background: #2a2a2a;
+    background: #333333;
     border-radius: 4px;
+    border: 2px solid #0a0a0a;
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background: #3a3a3a;
+    background: #444444;
   }
 
-  html { 
-    background-color: #000000; 
-    color-scheme: dark;
-  }
+  html { background-color: #000000; color-scheme: dark; }
 
   html.menu-open {
     overflow: hidden;
@@ -55,14 +53,14 @@
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background-color: transparent;
+    background-color: #000000;
     color: #ffffff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
   }
 
-  ::selection { background-color: rgba(255, 255, 255, 0.2); color: #ffffff; }
+  ::selection { background-color: rgba(255, 255, 255, 0.15); color: #ffffff; }
 }
 
 @layer components {
@@ -86,97 +84,80 @@
     animation: fadeIn 0.15s ease-out forwards;
   }
 
-  /* Top bar - Glossy (premium feel) */
+  /* Top bar - simple, solid */
   .top-bar {
-    background: linear-gradient(180deg, rgba(15, 15, 15, 0.95) 0%, rgba(5, 5, 5, 0.98) 100%);
-    backdrop-filter: blur(20px) saturate(150%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+    background-color: #000000;
+    border-bottom: 1px solid #1a1a1a;
   }
 
-  /* Card - Glossy (important elements) */
+  /* Card - simple, solid */
   .card {
-    background: linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(10, 10, 10, 0.95) 100%);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
+    background-color: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 6px;
+    transition: border-color 0.15s ease;
   }
 
   .card:hover {
-    border-color: rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-    transform: translateY(-1px);
+    border-color: #2a2a2a;
   }
 
-  /* Buttons - Primary glossy, Secondary solid */
+  /* Buttons - simple, solid */
   .btn-primary {
-    background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 100%);
+    background-color: #ffffff;
     color: #000000;
-    border-radius: 6px;
+    border-radius: 4px;
     font-weight: 500;
     font-size: 12px;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease;
   }
 
-  .btn-primary:hover { 
-    background: linear-gradient(135deg, #f5f5f5 0%, #d8d8d8 100%);
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-  }
+  .btn-primary:hover { background-color: #e5e5e5; }
 
   .btn-secondary {
-    background: #111111;
+    background-color: #111111;
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    border: 1px solid #262626;
+    border-radius: 4px;
     font-size: 12px;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
-  .btn-secondary:hover { 
-    background: #1a1a1a;
-    border-color: rgba(255, 255, 255, 0.15);
-  }
+  .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
 
-  /* Inputs - Solid (clean look) */
+  /* Inputs - simple, solid */
   .input-dark {
-    background: #050505;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    background-color: #050505;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
     color: #ffffff;
     font-size: 12px;
-    transition: all 0.15s ease;
+    transition: border-color 0.15s ease;
   }
 
   .input-dark:focus {
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: #ffffff;
     outline: none;
   }
 
-  .input-dark::placeholder { color: #444444; }
+  .input-dark::placeholder { color: #404040; }
 
-  /* Mega menu - Glossy (premium dropdown) */
+  /* Mega menu - simple, solid */
   .mega-menu {
-    background: linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(8, 8, 8, 0.99) 100%);
-    backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    background-color: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 6px;
+    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8);
   }
 
   .mega-menu-item {
-    transition: all 0.1s ease;
+    transition: background-color 0.1s ease;
     position: relative;
-    border-radius: 4px;
   }
 
-  .mega-menu-item:hover { 
-    background: rgba(255, 255, 255, 0.05);
-  }
+  .mega-menu-item:hover { background-color: #141414; }
 
-  /* Nav tab - Balanced */
+  /* Nav tab - simple underline */
   .nav-tab {
     position: relative;
     transition: color 0.15s ease;
@@ -199,69 +180,66 @@
     transform: scaleX(1);
   }
 
-  /* Badges - Solid (small elements) */
+  /* Badges - simple, solid */
   .badge-ready {
-    background: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.06);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .badge-partial {
-    background: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.04);
     color: #a3a3a3;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .badge-backend {
-    background: rgba(255, 255, 255, 0.03);
+    background-color: rgba(255, 255, 255, 0.03);
     color: #666666;
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .badge-ai {
-    background: rgba(255, 255, 255, 0.06);
+    background-color: rgba(255, 255, 255, 0.05);
     color: #d4d4d4;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Progress bar - Solid */
+  /* Progress bar */
   .progress-bar {
-    background: #1a1a1a;
-    border-radius: 3px;
+    background-color: #1a1a1a;
+    border-radius: 2px;
     overflow: hidden;
   }
 
   .progress-fill {
-    background: #ffffff;
+    background-color: #ffffff;
     transition: width 0.3s ease;
   }
 
-  /* Icon container - Glossy (visual emphasis) */
+  /* Icon container - simple, solid */
   .icon-box {
-    background: linear-gradient(135deg, rgba(25, 25, 25, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    background-color: #111111;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
-  /* Popular badge - Glossy (highlight) */
+  /* Popular badge */
   .popular-badge {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 100%);
+    background-color: #ffffff;
     color: #000000;
     font-size: 9px;
     font-weight: 600;
     padding: 2px 6px;
-    border-radius: 3px;
+    border-radius: 2px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
   }
 }
