@@ -29,10 +29,10 @@ export function MouseFollower() {
   const DAMPING = 0.87;
   
   // Morph parameters
-  const MORPH_SENSITIVITY = 0.025;
-  const MAX_MORPH = 2.5; // Max stretch multiplier
-  const MORPH_LERP = 0.12;
-  const MORPH_DECAY = 0.88;
+  const MORPH_SENSITIVITY = 0.015; // Reduced for less stretch at normal speeds
+  const MAX_MORPH = 1.8; // Reduced max stretch
+  const MORPH_LERP = 0.1; // Slower morph transition
+  const MORPH_DECAY = 0.92; // Slower decay for smoother return
   
   // Shape parameters
   const NUM_POINTS = 24;
@@ -184,19 +184,21 @@ export function MouseFollower() {
       currentMorph.current += (targetMorph - currentMorph.current) * MORPH_LERP;
       
       // Decay morph when slow
-      if (speed < 1) {
+      if (speed < 2) {
         currentMorph.current *= MORPH_DECAY;
-        
-        // Trigger wobble when stopping
-        if (speed < 0.5 && currentMorph.current > 0.1) {
-          wobbleIntensity.current = Math.min(wobbleIntensity.current + 0.3, 1);
-        }
+      }
+      
+      // Only trigger wobble when coming from high speed
+      if (speed < 0.3 && currentMorph.current > 0.3) {
+        wobbleIntensity.current = Math.min(wobbleIntensity.current + 0.2, 0.8);
       }
       
       // Update wobble
       if (wobbleIntensity.current > 0.01) {
-        wobblePhase.current += 0.3;
-        wobbleIntensity.current *= 0.92;
+        wobblePhase.current += 0.25;
+        wobbleIntensity.current *= 0.94;
+      } else {
+        wobbleIntensity.current = 0;
       }
       
       // Generate morphed shape
