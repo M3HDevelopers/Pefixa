@@ -1,6 +1,7 @@
 import { useAppStore } from '../store';
 import { Link } from 'react-router-dom';
 import { Trash2, Clock, CheckCircle2, XCircle, Loader2, AlertCircle } from 'lucide-react';
+import { getToolIcon } from '../lib/tools/icons';
 
 export function HistoryPage() {
   const jobs = useAppStore(s => s.jobs);
@@ -9,10 +10,10 @@ export function HistoryPage() {
 
   const statusIcon = (status: string) => {
     switch (status) {
-      case 'ready': return <CheckCircle2 size={13} className="text-[#4ade80]" />;
-      case 'failed': return <XCircle size={13} className="text-[#f87171]" />;
+      case 'ready': return <CheckCircle2 size={13} className="text-white" />;
+      case 'failed': return <XCircle size={13} className="text-white" />;
       case 'processing':
-      case 'analyzing': return <Loader2 size={13} className="text-[#4da6ff] animate-spin" />;
+      case 'analyzing': return <Loader2 size={13} className="text-white animate-spin" />;
       default: return <Clock size={13} className="text-[#555]" />;
     }
   };
@@ -25,7 +26,7 @@ export function HistoryPage() {
           <p className="text-[13px] text-[#888]">{jobs.length} jobs</p>
         </div>
         {jobs.length > 0 && (
-          <button onClick={clearJobs} className="flex items-center gap-1 px-3 py-1.5 text-[11px] text-[#f87171] hover:bg-[#1a0a0a] rounded-sm transition-colors">
+          <button onClick={clearJobs} className="flex items-center gap-1 px-3 py-1.5 text-[11px] text-[#888] hover:text-white hover:bg-[#111] rounded-sm transition-colors">
             <Trash2 size={11} />
             Clear All
           </button>
@@ -42,10 +43,15 @@ export function HistoryPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {jobs.map(job => (
+          {jobs.map(job => {
+            const ToolIcon = getToolIcon(job.toolSlug);
+            return (
             <div key={job.id} className="card p-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
+                  <div className="icon-box w-8 h-8 shrink-0">
+                    <ToolIcon size={14} className="text-[#888]" />
+                  </div>
                   {statusIcon(job.status)}
                   <div>
                     <p className="font-medium text-white text-[13px]">{job.toolTitle}</p>
@@ -57,13 +63,13 @@ export function HistoryPage() {
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] px-2 py-0.5 rounded-sm font-medium ${
                     job.status === 'ready' ? 'badge-ready' :
-                    job.status === 'failed' ? 'bg-[#1a0a0a] text-[#f87171] border border-[#331111]' :
-                    'bg-[#0a0a1a] text-[#4da6ff] border border-[#112233]'
+                    job.status === 'failed' ? 'badge-backend' :
+                    'badge-partial'
                   }`}>
                     {job.status}
                   </span>
                   <button onClick={() => removeJob(job.id)} className="p-1 hover:bg-[#1a1a1a] rounded-sm">
-                    <Trash2 size={11} className="text-[#444]" />
+                    <Trash2 size={11} className="text-[#666]" />
                   </button>
                 </div>
               </div>
@@ -81,13 +87,14 @@ export function HistoryPage() {
               )}
 
               {job.error && (
-                <div className="mt-2 flex items-center gap-1 text-[11px] text-[#f87171]">
+                <div className="mt-2 flex items-center gap-1 text-[11px] text-[#888]">
                   <AlertCircle size={11} />
                   <span>{job.error.message}</span>
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

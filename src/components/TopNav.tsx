@@ -1,97 +1,76 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { categories, CategoryInfo } from '../lib/tools/categories';
+import { categories } from '../lib/tools/categories';
 import { getToolsByCategory, searchTools, toolRegistry } from '../lib/tools/registry';
-import { useAppStore } from '../store';
+import { getToolIcon } from '../lib/tools/icons';
 import {
   Search,
-  ChevronDown,
   ChevronRight,
-  Layout,
-  Edit3,
-  FileText,
-  ArrowRight,
-  ArrowLeft,
-  Minimize2,
-  ScanText,
-  Shield,
-  Search as SearchIcon,
-  Download,
-  Code,
-  Zap,
-  GitBranch,
-  Plus,
-  Eye,
-  Settings,
-  Bookmark,
-  History,
   Home,
   Wrench,
+  GitBranch,
+  History,
+  Settings,
+  Bookmark,
 } from 'lucide-react';
 
-const iconMap: Record<string, any> = {
-  Layout, Edit3, FileText, ArrowRight, ArrowLeft, Minimize2, ScanText,
-  Shield, Search: SearchIcon, Download, Code, Zap, GitBranch, Plus, Eye,
-};
-
-interface MegaMenuState {
-  openCategory: string | null;
-  openSubmenu: string | null;
-}
+const mainTabs = [
+  { label: 'Home', path: '/', icon: Home },
+  { label: 'Tools', path: '/tools', icon: Wrench, hasMegaMenu: true },
+  { label: 'Workflows', path: '/workflows', icon: GitBranch },
+  { label: 'History', path: '/history', icon: History },
+];
 
 export function TopNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [megaMenu, setMegaMenu] = useState<MegaMenuState>({ openCategory: null, openSubmenu: null });
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || '');
+  const [activeTool, setActiveTool] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  const menuTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const menuTimeoutRef = useRef<number | undefined>(undefined);
+  const megaMenuRef = useRef<HTMLDivElement>(null);
+  const toolsTabRef = useRef<HTMLDivElement>(null);
 
-  const searchResults = searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 8) : [];
+  const searchResults = searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 6) : [];
 
-  const handleCategoryEnter = (slug: string) => {
-    clearTimeout(menuTimeoutRef.current);
-    setMegaMenu({ openCategory: slug, openSubmenu: null });
-  };
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (megaMenuOpen || searchOpen) {
+      document.documentElement.classList.add('menu-open');
+    } else {
+      document.documentElement.classList.remove('menu-open');
+    }
+    return () => document.documentElement.classList.remove('menu-open');
+  }, [megaMenuOpen, searchOpen]);
 
-  const handleCategoryLeave = () => {
-    menuTimeoutRef.current = setTimeout(() => {
-      setMegaMenu({ openCategory: null, openSubmenu: null });
-    }, 150);
-  };
+  // Close mega menu on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (megaMenuRef.current && !megaMenuRef.current.contains(e.target as Node) &&
+          toolsTabRef.current && !toolsTabRef.current.contains(e.target as Node)) {
+        setMegaMenuOpen(false);
+        setActiveTool(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
-  const handleSubmenuEnter = (toolSlug: string) => {
-    setMegaMenu(prev => ({ ...prev, openSubmenu: toolSlug }));
-  };
-
-  const handleSubmenuLeave = () => {
-    setMegaMenu(prev => ({ ...prev, openSubmenu: null }));
-  };
-
-  const handleMenuLeave = () => {
-    menuTimeoutRef.current = setTimeout(() => {
-      setMegaMenu({ openCategory: null, openSubmenu: null });
-    }, 200);
-  };
-
-  const selectTool = (slug: string) => {
-    setSearchOpen(false);
-    setSearchQuery('');
-    setMegaMenu({ openCategory: null, openSubmenu: null });
-    navigate(`/tools/${slug}`);
-  };
-
+  // Keyboard shortcuts
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setSearchOpen(false);
-        setMegaMenu({ openCategory: null, openSubmenu: null });
+        setMegaMenuOpen(false);
+        setActiveTool(null);
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setSearchOpen(true);
+        setMegaMenuOpen(false);
         setTimeout(() => searchRef.current?.focus(), 50);
       }
     };
@@ -99,40 +78,104 @@ export function TopNav() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  const mainTabs = [
-    { label: 'Home', path: '/', icon: Home },
-    { label: 'Tools', path: '/tools', icon: Wrench },
-    { label: 'Editor', path: '/editor', icon: Edit3 },
-    { label: 'Viewer', path: '/viewer', icon: Eye },
-    { label: 'Compare', path: '/compare', icon: GitBranch },
-    { label: 'Workflows', path: '/workflows', icon: GitBranch },
-  ];
+  const handleToolsTabEnter = () => {
+    if (menuTimeoutRef.current !== undefined) {
+      clearTimeout(menuTimeoutRef.current);
+      menuTimeoutRef.current = undefined;
+    }
+    setMegaMenuOpen(true);
+  };
+
+  const handleToolsTabLeave = () => {
+    menuTimeoutRef.current = window.setTimeout(() => {
+      setMegaMenuOpen(false);
+      setActiveTool(null);
+      menuTimeoutRef.current = undefined;
+    }, 100);
+  };
+
+  const handleCategoryEnter = (slug: string) => {
+    setActiveCategory(slug);
+    setActiveTool(null);
+  };
+
+  const handleToolEnter = (slug: string) => {
+    setActiveTool(slug);
+  };
+
+  const handleToolLeave = () => {
+    setActiveTool(null);
+  };
+
+  const selectTool = (slug: string) => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    setMegaMenuOpen(false);
+    setActiveTool(null);
+    navigate(`/tools/${slug}`);
+  };
+
+  const activeCatTools = activeCategory ? getToolsByCategory(activeCategory) : [];
+  const activeToolDef = activeTool ? toolRegistry.find(t => t.slug === activeTool) : null;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-[#1f1f1f]">
-      <div className="flex items-center h-14 px-4">
+    <header className="fixed top-0 left-0 right-0 z-50 top-bar">
+      <div className="flex items-center h-14 px-6 max-w-[1800px] mx-auto">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 mr-6 shrink-0">
-          <div className="w-8 h-8 bg-white flex items-center justify-center" style={{ borderRadius: '2px' }}>
-            <span className="text-black font-bold text-sm tracking-tight">P</span>
-          </div>
+        <Link to="/" className="flex items-center gap-3 mr-8">
+          <img src="/pefixa-logo.svg" alt="Pefixa" className="w-9 h-9" />
           <div className="flex flex-col">
             <span className="text-white font-semibold text-[15px] tracking-wide leading-none">PEFIXA</span>
-            <span className="text-[9px] text-[#666] tracking-widest uppercase leading-none mt-0.5">PDF Workspace</span>
+            <span className="text-[9px] text-[#555] tracking-[0.2em] uppercase leading-none mt-0.5">PDF WORKSPACE</span>
           </div>
         </Link>
 
-        {/* Main Navigation Tabs */}
-        <nav className="hidden lg:flex items-center gap-0.5 mr-4">
+        {/* Main Navigation */}
+        <nav className="flex items-center gap-1">
           {mainTabs.map(tab => {
-            const isActive = location.pathname === tab.path;
+            const isActive = location.pathname === tab.path || (tab.path !== '/' && location.pathname.startsWith(tab.path));
             const Icon = tab.icon;
+            const isToolsTab = tab.hasMegaMenu;
+
+            if (isToolsTab) {
+              return (
+                <div
+                  key={tab.path}
+                  ref={toolsTabRef}
+                  onMouseEnter={handleToolsTabEnter}
+                  onMouseLeave={handleToolsTabLeave}
+                  className="relative"
+                >
+                  <button
+                    className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md ${
+                      isActive || megaMenuOpen 
+                        ? 'text-white bg-white/5' 
+                        : 'text-[#888] hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon size={14} />
+                    <span>{tab.label}</span>
+                    <svg 
+                      width="8" 
+                      height="8" 
+                      viewBox="0 0 8 8" 
+                      className={`transition-transform duration-150 ${megaMenuOpen ? 'rotate-180' : ''}`}
+                    >
+                      <path d="M1 3L4 6L7 3" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+              );
+            }
+
             return (
               <Link
                 key={tab.path}
                 to={tab.path}
-                className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-sm transition-colors ${
-                  isActive ? 'text-white' : 'text-[#888] hover:text-white'
+                className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md ${
+                  isActive 
+                    ? 'text-white bg-white/5' 
+                    : 'text-[#888] hover:text-white hover:bg-white/5'
                 }`}
               >
                 <Icon size={14} />
@@ -140,252 +183,282 @@ export function TopNav() {
               </Link>
             );
           })}
-
-          {/* Category Mega Menu Tabs */}
-          <div className="flex items-center" onMouseLeave={handleMenuLeave}>
-            {categories.slice(0, 7).map(cat => {
-              const Icon = iconMap[cat.icon] || Wrench;
-              const isOpen = megaMenu.openCategory === cat.slug;
-              const tools = getToolsByCategory(cat.slug);
-
-              return (
-                <div key={cat.slug} className="relative" onMouseEnter={() => handleCategoryEnter(cat.slug)}>
-                  <button
-                    className={`nav-tab flex items-center gap-1 px-2.5 py-2 text-[13px] font-medium rounded-sm transition-colors ${
-                      isOpen ? 'text-white' : 'text-[#888] hover:text-white'
-                    }`}
-                  >
-                    <Icon size={13} />
-                    <span className="hidden xl:inline">{cat.title}</span>
-                    <ChevronDown size={11} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {/* Mega Menu Dropdown */}
-                  {isOpen && (
-                    <div
-                      className="mega-menu absolute top-full left-0 mt-0 w-[320px] animate-slide-down"
-                      onMouseEnter={() => handleCategoryEnter(cat.slug)}
-                    >
-                      <div className="p-2 border-b border-[#1f1f1f]">
-                        <p className="text-[10px] uppercase tracking-wider text-[#555] font-semibold px-2 py-1">
-                          {cat.title} — {tools.length} tools
-                        </p>
-                      </div>
-                      <div className="max-h-[400px] overflow-y-auto py-1">
-                        {tools.slice(0, 25).map(tool => (
-                          <div
-                            key={tool.slug}
-                            className="relative"
-                            onMouseEnter={() => handleSubmenuEnter(tool.slug)}
-                            onMouseLeave={handleSubmenuLeave}
-                          >
-                            <button
-                              onClick={() => selectTool(tool.slug)}
-                              className="mega-menu-item w-full flex items-center gap-2 px-3 py-2 text-left"
-                            >
-                              <div className="w-6 h-6 bg-[#1a1a1a] flex items-center justify-center shrink-0" style={{ borderRadius: '2px' }}>
-                                <Icon size={11} className="text-[#888]" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-[13px] text-white truncate">{tool.title}</p>
-                                <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
-                              </div>
-                              <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-medium shrink-0 ${
-                                tool.capability === 'browser-ready' ? 'badge-ready' :
-                                tool.capability === 'browser-partial' ? 'badge-partial' :
-                                tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
-                              }`}>
-                                {tool.capability === 'browser-ready' ? 'Local' :
-                                 tool.capability === 'browser-partial' ? 'Hybrid' :
-                                 tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
-                              </span>
-                              {tool.options.length > 0 && (
-                                <ChevronRight size={10} className="text-[#444]" />
-                              )}
-                            </button>
-
-                            {/* Sub-menu on hover */}
-                            {megaMenu.openSubmenu === tool.slug && tool.options.length > 0 && (
-                              <div className="mega-menu absolute left-full top-0 ml-0.5 w-[220px] animate-slide-right z-50">
-                                <div className="p-2 border-b border-[#1f1f1f]">
-                                  <p className="text-[11px] font-medium text-white">{tool.title}</p>
-                                  <p className="text-[10px] text-[#555]">Options</p>
-                                </div>
-                                <div className="py-1">
-                                  {tool.options.slice(0, 6).map(opt => (
-                                    <div key={opt.key} className="px-3 py-1.5 text-[11px] text-[#888] hover:text-white hover:bg-[#1a1a1a] transition-colors">
-                                      <span className="text-[#555]">{opt.label}:</span>{' '}
-                                      <span className="text-[#aaa]">{String(opt.default)}</span>
-                                    </div>
-                                  ))}
-                                  <Link
-                                    to={`/tools/${tool.slug}`}
-                                    className="block px-3 py-2 text-[11px] text-[#4da6ff] hover:bg-[#1a1a1a] border-t border-[#1f1f1f] mt-1"
-                                    onClick={() => setMegaMenu({ openCategory: null, openSubmenu: null })}
-                                  >
-                                    Open full tool →
-                                  </Link>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                        {tools.length > 25 && (
-                          <Link
-                            to={`/tools?category=${cat.slug}`}
-                            className="block px-3 py-2 text-[11px] text-[#4da6ff] hover:bg-[#1a1a1a] border-t border-[#1f1f1f]"
-                            onClick={() => setMegaMenu({ openCategory: null, openSubmenu: null })}
-                          >
-                            View all {tools.length} tools →
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
         </nav>
 
-        {/* Spacer */}
         <div className="flex-1" />
 
         {/* Search */}
         <div className="relative">
           <button
-            onClick={() => { setSearchOpen(!searchOpen); setTimeout(() => searchRef.current?.focus(), 50); }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1f1f1f] rounded-sm text-[13px] text-[#888] hover:border-[#333] transition-colors"
+            onClick={() => { 
+              setSearchOpen(!searchOpen); 
+              setMegaMenuOpen(false); 
+              setTimeout(() => searchRef.current?.focus(), 50); 
+            }}
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md text-[12px] text-[#888] hover:border-[#333] hover:bg-[#111] transition-colors"
           >
             <Search size={13} />
-            <span className="hidden sm:inline">Search tools...</span>
-            <kbd className="hidden sm:inline text-[10px] text-[#555] bg-[#111] px-1 py-0.5 rounded-sm border border-[#222]">⌘K</kbd>
+            <span className="hidden sm:inline">Search 286 tools</span>
+            <kbd className="hidden sm:inline text-[9px] text-[#555] bg-[#111] px-1.5 py-0.5 rounded border border-[#1a1a1a]">⌘K</kbd>
           </button>
 
           {searchOpen && (
-            <div className="absolute top-full right-0 mt-1 w-[400px] mega-menu animate-scale-in">
-              <div className="p-2 border-b border-[#1f1f1f]">
-                <div className="relative">
-                  <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#555]" />
-                  <input
-                    ref={searchRef}
-                    type="text"
-                    placeholder="Search 286 tools..."
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 bg-[#000] border border-[#1f1f1f] rounded-sm text-[13px] text-white placeholder:text-[#444] focus:outline-none focus:border-[#333]"
-                    autoFocus
-                  />
+            <div className="fixed inset-0 z-50 flex items-start justify-center pt-20" onClick={() => setSearchOpen(false)}>
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+              <div className="relative w-[500px] mega-menu animate-dropdown" onClick={e => e.stopPropagation()}>
+                <div className="p-3 border-b border-[#1a1a1a]">
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
+                    <input
+                      ref={searchRef}
+                      type="text"
+                      placeholder="Search tools, categories..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2.5 bg-[#000] border border-[#1a1a1a] rounded-md text-[13px] text-white placeholder:text-[#404040] focus:outline-none focus:border-[#333]"
+                      autoFocus
+                    />
+                  </div>
                 </div>
+                {searchResults.length > 0 && (
+                  <div className="max-h-[400px] overflow-y-auto py-2">
+                    {searchResults.map(tool => {
+                      const ToolIcon = getToolIcon(tool.slug);
+                      return (
+                        <button
+                          key={tool.slug}
+                          onClick={() => selectTool(tool.slug)}
+                          className="mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left"
+                        >
+                          <div className="icon-box w-8 h-8 shrink-0">
+                            <ToolIcon size={14} className="text-[#888]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] text-white truncate">{tool.title}</p>
+                            <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
+                          </div>
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium ${
+                            tool.capability === 'browser-ready' ? 'badge-ready' :
+                            tool.capability === 'browser-partial' ? 'badge-partial' :
+                            tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
+                          }`}>
+                            {tool.capability === 'browser-ready' ? 'Local' :
+                             tool.capability === 'browser-partial' ? 'Hybrid' :
+                             tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {searchQuery.length > 1 && searchResults.length === 0 && (
+                  <div className="p-8 text-center text-[13px] text-[#555]">
+                    No tools found for "{searchQuery}"
+                  </div>
+                )}
+                {searchQuery.length <= 1 && (
+                  <div className="p-3 border-t border-[#1a1a1a]">
+                    <p className="text-[10px] text-[#404040] uppercase tracking-wider mb-2">Popular</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word', 'rotate-pages'].map(slug => {
+                        const tool = toolRegistry.find(t => t.slug === slug);
+                        if (!tool) return null;
+                        return (
+                          <button
+                            key={slug}
+                            onClick={() => selectTool(slug)}
+                            className="px-2.5 py-1 bg-[#111] hover:bg-[#1a1a1a] rounded-md text-[11px] text-[#888] hover:text-white"
+                          >
+                            {tool.title}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
-              {searchResults.length > 0 && (
-                <div className="max-h-[300px] overflow-y-auto py-1">
-                  {searchResults.map(tool => (
-                    <button
-                      key={tool.slug}
-                      onClick={() => selectTool(tool.slug)}
-                      className="mega-menu-item w-full flex items-center gap-2 px-3 py-2 text-left"
-                    >
-                      <div className="w-6 h-6 bg-[#1a1a1a] flex items-center justify-center shrink-0" style={{ borderRadius: '2px' }}>
-                        <FileText size={11} className="text-[#888]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] text-white truncate">{tool.title}</p>
-                        <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
-                      </div>
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-medium ${
-                        tool.capability === 'browser-ready' ? 'badge-ready' :
-                        tool.capability === 'browser-partial' ? 'badge-partial' :
-                        tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
-                      }`}>
-                        {tool.capability === 'browser-ready' ? 'Local' :
-                         tool.capability === 'browser-partial' ? 'Hybrid' :
-                         tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {searchQuery.length > 1 && searchResults.length === 0 && (
-                <div className="p-4 text-center text-[12px] text-[#555]">
-                  No tools found for "{searchQuery}"
-                </div>
-              )}
             </div>
           )}
         </div>
 
         {/* Right side actions */}
-        <div className="flex items-center gap-1 ml-3">
-          <Link to="/history" className="p-2 text-[#888] hover:text-white transition-colors rounded-sm hover:bg-[#1a1a1a]">
-            <History size={15} />
-          </Link>
-          <Link to="/presets" className="p-2 text-[#888] hover:text-white transition-colors rounded-sm hover:bg-[#1a1a1a]">
+        <div className="flex items-center gap-0.5 ml-3">
+          <Link 
+            to="/presets" 
+            className="p-2 text-[#888] hover:text-white rounded-md hover:bg-white/5" 
+            title="Presets"
+          >
             <Bookmark size={15} />
           </Link>
-          <Link to="/settings" className="p-2 text-[#888] hover:text-white transition-colors rounded-sm hover:bg-[#1a1a1a]">
+          <Link 
+            to="/settings" 
+            className="p-2 text-[#888] hover:text-white rounded-md hover:bg-white/5" 
+            title="Settings"
+          >
             <Settings size={15} />
           </Link>
         </div>
-
-        {/* Mobile menu toggle */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 text-[#888] hover:text-white ml-2"
-        >
-          <div className="flex flex-col gap-1">
-            <span className="w-4 h-px bg-current"></span>
-            <span className="w-4 h-px bg-current"></span>
-            <span className="w-4 h-px bg-current"></span>
-          </div>
-        </button>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#1f1f1f] bg-black animate-slide-down">
-          <div className="p-3 space-y-1">
-            {mainTabs.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <Link
-                  key={tab.path}
-                  to={tab.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#888] hover:text-white hover:bg-[#1a1a1a] rounded-sm"
-                >
-                  <Icon size={14} />
-                  <span>{tab.label}</span>
-                </Link>
-              );
-            })}
-            <div className="border-t border-[#1f1f1f] my-2" />
-            {categories.map(cat => {
-              const Icon = iconMap[cat.icon] || Wrench;
-              const tools = getToolsByCategory(cat.slug);
-              return (
-                <details key={cat.slug} className="group">
-                  <summary className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#888] hover:text-white cursor-pointer list-none">
-                    <Icon size={14} />
-                    <span className="flex-1">{cat.title}</span>
-                    <span className="text-[10px] text-[#555]">{tools.length}</span>
-                    <ChevronDown size={11} className="group-open:rotate-180 transition-transform" />
-                  </summary>
-                  <div className="ml-6 border-l border-[#1f1f1f] pl-2 py-1">
-                    {tools.slice(0, 10).map(tool => (
-                      <Link
-                        key={tool.slug}
-                        to={`/tools/${tool.slug}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="block px-2 py-1 text-[11px] text-[#666] hover:text-white"
+      {/* Mega Menu */}
+      {megaMenuOpen && (
+        <div
+          ref={megaMenuRef}
+          onMouseEnter={handleToolsTabEnter}
+          onMouseLeave={handleToolsTabLeave}
+          className="fixed left-0 right-0 z-40 animate-dropdown"
+          style={{ top: '56px' }}
+        >
+          <div className="max-w-[1800px] mx-auto px-6">
+            <div className="mega-menu flex" style={{ height: '480px' }}>
+              {/* Categories Column */}
+              <div className="w-[260px] border-r border-[#1a1a1a] flex flex-col">
+                <div className="px-4 py-3 border-b border-[#1a1a1a]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">Categories</p>
+                </div>
+                <div className="flex-1 overflow-y-auto py-2">
+                  {categories.map(cat => {
+                    const tools = getToolsByCategory(cat.slug);
+                    const isActive = activeCategory === cat.slug;
+                    const CatIcon = getToolIcon(cat.slug);
+                    return (
+                      <button
+                        key={cat.slug}
+                        onMouseEnter={() => handleCategoryEnter(cat.slug)}
+                        onClick={() => { 
+                          navigate(`/tools?category=${cat.slug}`); 
+                          setMegaMenuOpen(false); 
+                        }}
+                        className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
+                          isActive ? 'bg-[#141414]' : ''
+                        }`}
                       >
-                        {tool.title}
-                      </Link>
+                        <div className={`icon-box w-8 h-8 shrink-0 ${
+                          isActive ? 'bg-white border-white' : ''
+                        }`}>
+                          <CatIcon size={14} className={isActive ? 'text-black' : 'text-[#888]'} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-[12px] font-medium truncate ${
+                            isActive ? 'text-white' : 'text-[#ccc]'
+                          }`}>
+                            {cat.title}
+                          </p>
+                          <p className="text-[10px] text-[#555]">{tools.length} tools</p>
+                        </div>
+                        <ChevronRight 
+                          size={12} 
+                          className={isActive ? 'text-white' : 'text-[#404040]'} 
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tools Column */}
+              <div className="flex-1 flex flex-col min-w-0">
+                <div className="px-4 py-3 border-b border-[#1a1a1a]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">
+                    {categories.find(c => c.slug === activeCategory)?.title}
+                  </p>
+                </div>
+                <div className="flex-1 overflow-y-auto py-2">
+                  {activeCatTools.map(tool => {
+                    const ToolIcon = getToolIcon(tool.slug);
+                    const isToolActive = activeTool === tool.slug;
+                    return (
+                      <div
+                        key={tool.slug}
+                        onMouseEnter={() => handleToolEnter(tool.slug)}
+                        onMouseLeave={handleToolLeave}
+                        className="relative"
+                      >
+                        <button
+                          onClick={() => selectTool(tool.slug)}
+                          className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
+                            isToolActive ? 'bg-[#141414]' : ''
+                          }`}
+                        >
+                          <div className={`icon-box w-8 h-8 shrink-0 ${
+                            isToolActive ? 'bg-white border-white' : ''
+                          }`}>
+                            <ToolIcon size={14} className={isToolActive ? 'text-black' : 'text-[#888]'} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-[12px] font-medium truncate ${
+                              isToolActive ? 'text-white' : 'text-[#ccc]'
+                            }`}>
+                              {tool.title}
+                            </p>
+                            <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
+                          </div>
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium shrink-0 ${
+                            tool.capability === 'browser-ready' ? 'badge-ready' :
+                            tool.capability === 'browser-partial' ? 'badge-partial' :
+                            tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
+                          }`}>
+                            {tool.capability === 'browser-ready' ? 'Local' :
+                             tool.capability === 'browser-partial' ? 'Hybrid' :
+                             tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
+                          </span>
+                          {tool.options.length > 0 && (
+                            <ChevronRight 
+                              size={11} 
+                              className={`text-[#404040] shrink-0 ${
+                                isToolActive ? 'text-white' : ''
+                              }`} 
+                            />
+                          )}
+                        </button>
+                      </div>
+                    );
+                  })}
+                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
+                    <Link
+                      to={`/tools?category=${activeCategory}`}
+                      onClick={() => setMegaMenuOpen(false)}
+                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                    >
+                      View all {activeCatTools.length} tools 
+                      <ChevronRight size={10} />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tool Details Submenu */}
+              {activeToolDef && activeToolDef.options.length > 0 && (
+                <div className="w-[240px] border-l border-[#1a1a1a] bg-[#0a0a0a] animate-submenu overflow-y-auto">
+                  <div className="px-4 py-3 border-b border-[#1a1a1a]">
+                    <p className="text-[12px] font-semibold text-white">{activeToolDef.title}</p>
+                    <p className="text-[10px] text-[#555] mt-0.5">{activeToolDef.description}</p>
+                  </div>
+                  <div className="px-4 py-2">
+                    <p className="text-[9px] uppercase tracking-wider text-[#555] font-semibold mb-2">Options</p>
+                    {activeToolDef.options.slice(0, 6).map(opt => (
+                      <div key={opt.key} className="py-1.5 text-[11px]">
+                        <span className="text-[#666]">{opt.label}: </span>
+                        <span className="text-[#aaa]">{String(opt.default)}</span>
+                      </div>
                     ))}
                   </div>
-                </details>
-              );
-            })}
+                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
+                    <Link
+                      to={`/tools/${activeToolDef.slug}`}
+                      onClick={() => { 
+                        setMegaMenuOpen(false); 
+                        setActiveTool(null); 
+                      }}
+                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                    >
+                      Open full tool 
+                      <ChevronRight size={10} />
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

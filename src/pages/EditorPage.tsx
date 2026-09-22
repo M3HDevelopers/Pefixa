@@ -42,8 +42,8 @@ export function EditorPage() {
               </button>
             ))}
             <div className="w-full h-px bg-[#1f1f1f] my-1" />
-            <button className="p-2 hover:bg-[#1a0a0a] rounded-sm" title="Remove">
-              <X size={14} className="text-[#f87171]" />
+            <button className="p-2 hover:bg-[#1a1a1a] rounded-sm" title="Remove">
+              <X size={14} className="text-[#888]" />
             </button>
           </div>
 
@@ -52,8 +52,8 @@ export function EditorPage() {
               <FileText size={40} className="mx-auto text-[#333] mb-4" />
               <p className="text-[13px] font-medium text-white">{file.name}</p>
               <p className="text-[11px] text-[#444] mt-1">{(file.size / 1024).toFixed(1)} KB</p>
-              <div className="mt-4 p-3 bg-[#1a1500] border border-[#332a00] rounded-sm">
-                <p className="text-[11px] text-[#fbbf24]">PDF rendering uses PDF.js when fully integrated. This is a placeholder for the editor canvas.</p>
+              <div className="mt-4 p-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-sm">
+                <p className="text-[11px] text-[#888]">PDF rendering uses PDF.js when fully integrated. This is a placeholder for the editor canvas.</p>
               </div>
             </div>
           </div>

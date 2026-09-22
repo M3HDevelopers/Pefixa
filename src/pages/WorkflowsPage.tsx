@@ -70,7 +70,7 @@ export function WorkflowsPage() {
                     <div key={step.id} className="flex items-center gap-2 p-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-sm">
                       <span className="text-[10px] text-[#444] w-5">{i + 1}.</span>
                       <span className="text-[11px] text-[#888] flex-1">{tool?.title || step.toolSlug}</span>
-                      <button onClick={() => setNewSteps(prev => prev.filter(s => s.id !== step.id))} className="text-[#f87171] hover:text-red-400">
+                      <button onClick={() => setNewSteps(prev => prev.filter(s => s.id !== step.id))} className="text-[#888] hover:text-white">
                         <Trash2 size={11} />
                       </button>
                     </div>
@@ -98,7 +98,7 @@ export function WorkflowsPage() {
                 <p className="text-[11px] text-[#555]">{workflow.description}</p>
               </div>
               <div className="flex items-center gap-1">
-                {workflow.isPreset && <span className="text-[9px] px-1.5 py-0.5 bg-[#0a0a1a] text-[#4da6ff] border border-[#112233] rounded-sm font-medium">Preset</span>}
+                {workflow.isPreset && <span className="text-[9px] px-1.5 py-0.5 badge-ready rounded-sm font-medium">Preset</span>}
                 <button onClick={() => setWorkflows(prev => prev.filter(w => w.id !== workflow.id))} className="p-1 hover:bg-[#1a1a1a] rounded-sm">
                   <Trash2 size={11} className="text-[#444]" />
                 </button>
