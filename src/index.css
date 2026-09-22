@@ -64,7 +64,7 @@
 }
 
 @layer components {
-  /* Simple, fast animations - no expensive transforms */
+  /* Simple, fast animations */
   @keyframes fadeDown {
     from { opacity: 0; transform: translateY(-4px); }
     to { opacity: 1; transform: translateY(0); }
@@ -84,99 +84,69 @@
     animation: fadeIn 0.15s ease-out forwards;
   }
 
-  /* Top bar - Glassmorphism */
+  /* Top bar - simple, solid */
   .top-bar {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #000000;
+    border-bottom: 1px solid #1a1a1a;
   }
 
-  /* Card - Glassmorphism style */
+  /* Card - simple, solid */
   .card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    transition: all 0.2s ease;
+    background-color: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 6px;
+    transition: border-color 0.15s ease;
   }
 
   .card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
+    border-color: #2a2a2a;
   }
 
-  /* Glass effect for panels */
-  .glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-  }
-
-  .glass-strong {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-  }
-
-  /* Buttons - Glassmorphism style, no glow */
+  /* Buttons - simple, solid */
   .btn-primary {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background-color: #ffffff;
     color: #000000;
-    border-radius: 6px;
+    border-radius: 4px;
     font-weight: 500;
     font-size: 12px;
-    transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.15s ease;
   }
 
-  .btn-primary:hover { 
-    background: rgba(255, 255, 255, 1);
-    transform: translateY(-1px);
-  }
+  .btn-primary:hover { background-color: #e5e5e5; }
 
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    background-color: #111111;
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    border: 1px solid #262626;
+    border-radius: 4px;
     font-size: 12px;
-    transition: all 0.2s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
-  .btn-secondary:hover { 
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
+  .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
 
-  /* Inputs - Glassmorphism */
+  /* Inputs - simple, solid */
   .input-dark {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
+    background-color: #050505;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
     color: #ffffff;
     font-size: 12px;
-    transition: all 0.15s ease;
+    transition: border-color 0.15s ease;
   }
 
   .input-dark:focus {
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
+    border-color: #ffffff;
     outline: none;
   }
 
   .input-dark::placeholder { color: #404040; }
 
-  /* Mega menu - Glassmorphism */
+  /* Mega menu - simple, solid */
   .mega-menu {
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
+    background-color: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 6px;
     box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8);
   }
 
@@ -185,9 +155,7 @@
     position: relative;
   }
 
-  .mega-menu-item:hover { 
-    background: rgba(255, 255, 255, 0.05);
-  }
+  .mega-menu-item:hover { background-color: #141414; }
 
   /* Nav tab - simple underline */
   .nav-tab {
@@ -212,31 +180,27 @@
     transform: scaleX(1);
   }
 
-  /* Badges - Glassmorphism */
+  /* Badges - simple, solid */
   .badge-ready {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.06);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .badge-partial {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    color: #a3a3a3;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .badge-backend {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    color: #666666;
+  .badge-partial {
+    background-color: rgba(255, 255, 255, 0.04);
+    color: #a3a3a3;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  .badge-backend {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: #666666;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
   .badge-ai {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.05);
     color: #d4d4d4;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
@@ -253,38 +217,29 @@
     transition: width 0.3s ease;
   }
 
-  /* Icon container - Glassmorphism, NO scale on hover, stable */
+  /* Icon container - simple, solid */
   .icon-box {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
+    background-color: #111111;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 0.15s ease;
   }
 
-  .icon-box:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.15);
-  }
-
-  /* Popular badge - Glassmorphism */
+  /* Popular badge */
   .popular-badge {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background-color: #ffffff;
     color: #000000;
     font-size: 9px;
     font-weight: 600;
     padding: 2px 6px;
-    border-radius: 3px;
+    border-radius: 2px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }

@@ -99,7 +99,7 @@ export function ToolPage() {
   if (!tool) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="glass-strong p-8 text-center">
+        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-8 text-center">
           <p className="text-[#888] text-lg mb-2">Tool not found</p>
           <Link to="/tools" className="btn-primary inline-block px-4 py-2 text-sm">Browse all tools</Link>
         </div>
@@ -149,8 +149,8 @@ export function ToolPage() {
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        className={`glass-strong border-dashed p-12 text-center transition-all mb-6 ${
-          dragOver ? 'border-white/30 bg-white/5' : ''
+        className={`bg-[#0a0a0a] border border-dashed border-[#1a1a1a] rounded-md p-12 text-center transition-all mb-6 ${
+          dragOver ? 'border-[#333] bg-[#111]' : ''
         }`}
       >
         <Upload size={32} className="mx-auto text-[#404040] mb-3" />
@@ -182,13 +182,13 @@ export function ToolPage() {
           </div>
           <div className="space-y-1.5">
             {files.map((file, i) => (
-              <div key={i} className="glass flex items-center gap-3 px-3 py-2.5">
+              <div key={i} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md flex items-center gap-3 px-3 py-2.5">
                 <FileText size={14} className="text-[#666]" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[12px] text-white truncate">{file.name}</p>
                   <p className="text-[10px] text-[#555]">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
-                <button onClick={() => removeFile(i)} className="p-1 hover:bg-white/10 rounded transition-colors">
+                <button onClick={() => removeFile(i)} className="p-1 hover:bg-[#1a1a1a] rounded transition-colors">
                   <X size={12} className="text-[#666]" />
                 </button>
               </div>
@@ -199,7 +199,7 @@ export function ToolPage() {
 
       {/* Options */}
       {tool.options.length > 0 && (
-        <div className="mb-6 glass-strong p-5">
+        <div className="mb-6 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-5">
           <h3 className="text-[11px] font-semibold text-white mb-4 uppercase tracking-[0.15em]">Options</h3>
           <div className="grid grid-cols-2 gap-4">
             {tool.options.map(opt => (
@@ -279,8 +279,8 @@ export function ToolPage() {
 
       {/* Error */}
       {error && (
-        <div className="mt-4 glass-strong p-3 flex items-start gap-2 animate-fade border border-red-500/20">
-          <AlertCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
+        <div className="mt-4 bg-[#0a0a0a] border border-[#331111] rounded-md p-3 flex items-start gap-2 animate-fade">
+          <AlertCircle size={14} className="text-[#f87171] mt-0.5 shrink-0" />
           <div>
             <p className="text-[12px] text-white font-medium">Error</p>
             <p className="text-[11px] text-[#888]">{error}</p>
@@ -290,10 +290,10 @@ export function ToolPage() {
 
       {/* Output */}
       {output && (
-        <div className="mt-6 glass-strong p-5 animate-fade">
+        <div className="mt-6 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-5 animate-fade">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-green-400" />
+              <CheckCircle2 size={14} className="text-[#4ade80]" />
               <h3 className="text-[12px] font-medium text-white">Processing Complete</h3>
             </div>
             {output.files.length > 1 && (
@@ -308,7 +308,7 @@ export function ToolPage() {
           </div>
 
           {output.warnings.length > 0 && (
-            <div className="mb-4 glass p-3">
+            <div className="mb-4 bg-[#050505] border border-[#1a1a1a] rounded-md p-3">
               {output.warnings.map((w, i) => (
                 <div key={i} className="flex items-center gap-1.5 text-[11px] text-[#888]">
                   <Info size={11} />
@@ -320,7 +320,7 @@ export function ToolPage() {
 
           <div className="space-y-1.5">
             {output.files.map((file, i) => (
-              <div key={i} className="glass flex items-center gap-3 p-3">
+              <div key={i} className="bg-[#050505] border border-[#1a1a1a] rounded-md flex items-center gap-3 p-3">
                 <FileText size={14} className="text-[#666]" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[12px] text-white truncate">{file.name}</p>
@@ -338,7 +338,7 @@ export function ToolPage() {
           </div>
 
           {output.metadata && Object.keys(output.metadata as Record<string, unknown>).length > 0 && (
-            <div className="mt-4 pt-4 border-t border-white/5">
+            <div className="mt-4 pt-4 border-t border-[#1a1a1a]">
               <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold mb-2">Details</p>
               <div className="grid grid-cols-2 gap-1.5">
                 {Object.entries(output.metadata).map(([key, value]) => (
@@ -353,7 +353,7 @@ export function ToolPage() {
 
           {/* Smart Next Step Engine */}
           {output.files.length > 0 && (
-            <div className="mt-5 pt-5 border-t border-white/5">
+            <div className="mt-5 pt-5 border-t border-[#1a1a1a]">
               <p className="text-[11px] text-[#888] mb-3 flex items-center gap-1.5">
                 <Sparkles size={11} className="text-white" />
                 Suggested next steps:
@@ -365,7 +365,7 @@ export function ToolPage() {
                     <Link
                       key={nextTool.slug}
                       to={`/tools/${nextTool.slug}`}
-                      className="group flex items-center gap-2 glass px-3 py-2 text-[11px] text-[#888] hover:text-white hover:bg-white/5 transition-all"
+                      className="group flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-3 py-2 text-[11px] text-[#888] hover:text-white hover:border-[#333] transition-all"
                     >
                       <NextIcon size={12} />
                       <span>{nextTool.title}</span>

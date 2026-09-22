@@ -32,7 +32,7 @@ export function ToolsListPage() {
         <Link
           to="/tools"
           className={`px-3 py-1.5 rounded-md text-[11px] font-medium transition-all ${
-            !categoryFilter ? 'btn-primary' : 'glass text-[#888] hover:text-white hover:bg-white/5'
+            !categoryFilter ? 'btn-primary' : 'bg-[#0a0a0a] border border-[#1a1a1a] text-[#888] hover:text-white hover:border-[#333]'
           }`}
         >
           All ({toolRegistry.length})
@@ -45,7 +45,7 @@ export function ToolsListPage() {
               key={cat.slug}
               to={`/tools?category=${cat.slug}`}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium transition-all ${
-                categoryFilter === cat.slug ? 'btn-primary' : 'glass text-[#888] hover:text-white hover:bg-white/5'
+                categoryFilter === cat.slug ? 'btn-primary' : 'bg-[#0a0a0a] border border-[#1a1a1a] text-[#888] hover:text-white hover:border-[#333]'
               }`}
             >
               <Icon size={11} />
@@ -78,7 +78,7 @@ export function ToolsListPage() {
                   <Link
                     key={tool.slug}
                     to={`/tools/${tool.slug}`}
-                    className="glass group p-3"
+                    className="card group p-3"
                   >
                     <div className="flex items-start gap-3">
                       <div className="icon-box w-9 h-9 shrink-0">
@@ -102,13 +102,13 @@ export function ToolsListPage() {
                         <p className="text-[10px] text-[#555] line-clamp-2 leading-relaxed">{tool.description}</p>
                         <div className="flex items-center gap-1.5 mt-2">
                           {tool.inputMode === 'multiple' && (
-                            <span className="text-[9px] text-[#666] glass px-1.5 py-0.5 rounded-md">Batch</span>
+                            <span className="text-[9px] text-[#666] bg-[#111] border border-[#1a1a1a] px-1.5 py-0.5 rounded-sm">Batch</span>
                           )}
                           {tool.supportsChaining && (
-                            <span className="text-[9px] text-[#666] glass px-1.5 py-0.5 rounded-md">Chain</span>
+                            <span className="text-[9px] text-[#666] bg-[#111] border border-[#1a1a1a] px-1.5 py-0.5 rounded-sm">Chain</span>
                           )}
                           {tool.output.multiple && (
-                            <span className="text-[9px] text-[#666] glass px-1.5 py-0.5 rounded-md">Multi</span>
+                            <span className="text-[9px] text-[#666] bg-[#111] border border-[#1a1a1a] px-1.5 py-0.5 rounded-sm">Multi</span>
                           )}
                         </div>
                       </div>

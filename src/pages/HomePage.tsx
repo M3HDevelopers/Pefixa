@@ -22,7 +22,7 @@ export function HomePage() {
 
       {/* Hero Section */}
       <div className="text-center mb-20 relative animate-fade">
-        <div className="inline-flex items-center gap-2 glass px-3 py-1.5 text-[11px] font-medium text-[#888] mb-6">
+        <div className="inline-flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-3 py-1.5 text-[11px] font-medium text-[#888] mb-6">
           <Sparkles size={11} className="text-white" />
           <span>286 PDF Tools — All in One Workspace</span>
         </div>
@@ -84,7 +84,7 @@ export function HomePage() {
           { value: categories.length, label: 'Categories' },
           { value: '100%', label: 'Private & Local' },
         ].map((stat, i) => (
-          <div key={i} className="glass p-5 text-center">
+          <div key={i} className="card p-5 text-center">
             <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
             <p className="text-[10px] text-[#555] uppercase tracking-[0.15em]">{stat.label}</p>
           </div>
@@ -107,7 +107,7 @@ export function HomePage() {
                 <Link
                   key={slug}
                   to={`/tools/${slug}`}
-                  className="flex items-center gap-2 glass px-3 py-2 text-[12px] text-[#888] hover:text-white hover:bg-white/5 transition-all"
+                  className="flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-3 py-2 text-[12px] text-[#888] hover:text-white hover:border-[#333] transition-all"
                 >
                   <Icon size={12} />
                   <span>{tool.title}</span>
@@ -129,7 +129,7 @@ export function HomePage() {
               <Link
                 key={cat.slug}
                 to={`/tools?category=${cat.slug}`}
-                className="glass group p-4"
+                className="card group p-4"
               >
                 <div className="flex items-start gap-3">
                   <div className="icon-box w-9 h-9 shrink-0">
