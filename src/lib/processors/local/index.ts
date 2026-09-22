@@ -29,19 +29,36 @@ function parsePageRanges(rangesStr: string, totalPages: number): number[] {
 
 class MergeProcessor implements ProcessorAdapter {
   async process(_tool: ToolDefinition, input: ToolInput): Promise<ToolOutput> {
-    const mergedPdf = await PDFDocument.create();
-    for (const file of input.files) {
-      const bytes = await file.arrayBuffer();
-      const pdf = await PDFDocument.load(bytes);
-      const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-      pages.forEach(page => mergedPdf.addPage(page));
+    try {
+      if (!input.files || input.files.length === 0) {
+        throw new Error('No files provided for merging');
+      }
+      
+      const mergedPdf = await PDFDocument.create();
+      let totalPages = 0;
+      
+      for (const file of input.files) {
+        try {
+          const bytes = await file.arrayBuffer();
+          const pdf = await PDFDocument.load(bytes, { ignoreEncryption: true });
+          const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+          pages.forEach(page => mergedPdf.addPage(page));
+          totalPages += pages.length;
+        } catch (err) {
+          console.error(`Error processing file ${file.name}:`, err);
+          throw new Error(`Failed to process ${file.name}: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        }
+      }
+      
+      const pdfBytes = await mergedPdf.save();
+      return {
+        files: [{ name: 'merged.pdf', blob: toBlob(pdfBytes, 'application/pdf') }],
+        warnings: [],
+        metadata: { pageCount: totalPages, originalFiles: input.files.length },
+      };
+    } catch (error) {
+      throw new Error(`Merge failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    const pdfBytes = await mergedPdf.save();
-    return {
-      files: [{ name: 'merged.pdf', blob: toBlob(pdfBytes, 'application/pdf') }],
-      warnings: [],
-      metadata: { pageCount: mergedPdf.getPageCount(), originalFiles: input.files.length },
-    };
   }
 }
 
@@ -713,9 +730,59 @@ class ImageToPdfProcessor implements ProcessorAdapter {
 class MockProcessor implements ProcessorAdapter {
   async process(tool: ToolDefinition, input: ToolInput): Promise<ToolOutput> {
     const capLabel = tool.capability === 'ai-required' ? 'AI backend' : tool.capability === 'backend-required' ? 'server processing' : 'browser engine';
+    
+    // For PDF outputs, create a valid PDF with a message
+    if (tool.output.mime === 'application/pdf') {
+      const pdf = await PDFDocument.create();
+      const page = pdf.addPage([595.28, 841.89]); // A4 size
+      const font = await pdf.embedFont(StandardFonts.Helvetica);
+      
+      page.drawText(`${tool.title}`, {
+        x: 50,
+        y: 750,
+        size: 24,
+        font,
+        color: rgb(0, 0, 0),
+      });
+      
+      page.drawText(`This tool requires ${capLabel}.`, {
+        x: 50,
+        y: 700,
+        size: 14,
+        font,
+        color: rgb(0.4, 0.4, 0.4),
+      });
+      
+      page.drawText(`Full processing will be available when the backend is connected.`, {
+        x: 50,
+        y: 680,
+        size: 12,
+        font,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      page.drawText(`Input files: ${input.files.length}`, {
+        x: 50,
+        y: 640,
+        size: 12,
+        font,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      const pdfBytes = await pdf.save();
+      return {
+        files: [{ name: `${tool.slug}-preview.pdf`, blob: toBlob(pdfBytes, 'application/pdf') }],
+        warnings: [`⚡ ${tool.title} requires ${capLabel}. This is a preview. Full processing will be available when connected.`],
+        metadata: { mock: true, capability: tool.capability, inputFiles: input.files.length, tool: tool.slug },
+      };
+    }
+    
+    // For other outputs, create a text file with information
+    const content = `${tool.title}\n\nThis tool requires ${capLabel}.\nFull processing will be available when the backend is connected.\n\nInput files: ${input.files.length}\nTool: ${tool.slug}`;
+    
     return {
-      files: [{ name: `result-${tool.slug}.${tool.output.extension}`, blob: new Blob(['mock-output'], { type: tool.output.mime }) }],
-      warnings: [`⚡ ${tool.title} requires ${capLabel}. This is a placeholder result. Full processing will be available when connected.`],
+      files: [{ name: `${tool.slug}-info.txt`, blob: new Blob([content], { type: 'text/plain' }) }],
+      warnings: [`⚡ ${tool.title} requires ${capLabel}. This is a placeholder. Full processing will be available when connected.`],
       metadata: { mock: true, capability: tool.capability, inputFiles: input.files.length, tool: tool.slug },
     };
   }
@@ -723,6 +790,7 @@ class MockProcessor implements ProcessorAdapter {
 
 // Register all browser-ready processors
 const processors: Record<string, ProcessorAdapter> = {
+  // Organize
   'merge-pdf': new MergeProcessor(),
   'split-pdf': new SplitProcessor(),
   'extract-pages': new ExtractPagesProcessor(),
@@ -731,25 +799,37 @@ const processors: Record<string, ProcessorAdapter> = {
   'extract-odd-pages': new ExtractOddPagesProcessor(),
   'extract-even-pages': new ExtractEvenPagesProcessor(),
   'rotate-pages': new RotatePagesProcessor(),
+  
+  // Edit
   'watermark-text': new WatermarkTextProcessor(),
   'page-numbers': new PageNumbersProcessor(),
   'bates-numbering': new BatesNumberingProcessor(),
   'stamp-pdf': new StampPdfProcessor(),
   'header-footer': new HeaderFooterProcessor(),
   'add-text': new AddTextProcessor(),
+  
+  // Compress
   'compress-pdf': new CompressProcessor(),
   'flatten-pdf': new FlattenProcessor(),
   'flatten-annotations': new FlattenProcessor(),
   'flatten-for-sharing': new FlattenProcessor(),
+  
+  // Security
   'encrypt-pdf': new EncryptProcessor(),
   'decrypt-pdf': new DecryptProcessor(),
   'remove-metadata': new RemoveMetadataProcessor(),
   'edit-metadata': new EditMetadataProcessor(),
+  
+  // Inspect
   'pdf-info': new PDFInfoProcessor(),
   'pdf-metadata-viewer': new PDFInfoProcessor(),
+  
+  // Create
   'generate-password': new GeneratePasswordProcessor(),
   'blank-pdf': new BlankPdfProcessor(),
   'text-to-pdf': new TextToPdfProcessor(),
+  
+  // Convert To
   'jpg-to-pdf': new ImageToPdfProcessor(),
   'png-to-pdf': new ImageToPdfProcessor(),
 };

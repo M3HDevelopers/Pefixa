@@ -123,9 +123,7 @@ export function TopNav() {
       <div className="flex items-center h-14 px-6 max-w-[1800px] mx-auto">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 mr-8">
-          <div className="w-9 h-9 bg-white flex items-center justify-center rounded-lg">
-            <span className="text-black font-bold text-lg tracking-tighter">P</span>
-          </div>
+          <img src="/pefixa-logo.svg" alt="Pefixa" className="w-9 h-9" />
           <div className="flex flex-col">
             <span className="text-white font-semibold text-[15px] tracking-wide leading-none">PEFIXA</span>
             <span className="text-[9px] text-[#555] tracking-[0.2em] uppercase leading-none mt-0.5">PDF WORKSPACE</span>
