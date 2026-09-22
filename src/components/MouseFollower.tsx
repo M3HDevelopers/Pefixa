@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 export function MouseFollower() {
@@ -13,9 +13,6 @@ export function MouseFollower() {
   const currentScale = useRef({ x: 1, y: 1 });
   const targetRotation = useRef(0);
   const currentRotation = useRef(0);
-  const [isMerged, setIsMerged] = useState(false);
-  const [isOverText, setIsOverText] = useState(false);
-  const lastInteractive = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const cursor = cursorRef.current;
@@ -35,45 +32,13 @@ export function MouseFollower() {
       lastX.current = e.clientX;
       lastY.current = e.clientY;
 
-      // Check for interactive elements (cards, buttons)
+      // Check for interactive elements
       const target = e.target as HTMLElement;
       const interactive = target.closest('.liquid-card, button, a');
-      const textElement = target.closest('[data-text-invert], h1, h2, h3, h4, h5, h6, p, span');
       
-      // Handle merging into interactive elements
-      if (interactive && interactive !== lastInteractive.current) {
-        lastInteractive.current = interactive as HTMLElement;
-        setIsMerged(true);
-        
-        // Trigger the element's fill animation
-        const event = new MouseEvent('mouseenter', {
-          bubbles: true,
-          clientX: e.clientX,
-          clientY: e.clientY
-        });
-        interactive.dispatchEvent(event);
-      } else if (!interactive && lastInteractive.current) {
-        const prevInteractive = lastInteractive.current;
-        lastInteractive.current = null;
-        setIsMerged(false);
-        
-        // Trigger mouseleave on the element
-        if (prevInteractive) {
-          const event = new MouseEvent('mouseleave', { bubbles: true });
-          prevInteractive.dispatchEvent(event);
-        }
-      }
-
-      // Handle text inversion
-      if (textElement && !interactive) {
-        setIsOverText(true);
-      } else {
-        setIsOverText(false);
-      }
-
-      // Magnetic pull effect for interactive elements
-      if (interactive && !isMerged) {
-        const rect = (interactive as HTMLElement).getBoundingClientRect();
+      // Magnetic pull effect
+      if (interactive) {
+        const rect = interactive.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         
@@ -83,20 +48,21 @@ export function MouseFollower() {
         const maxDistance = 120;
         
         if (distance < maxDistance) {
-          const pullStrength = (1 - distance / maxDistance) * 0.4;
+          const pullStrength = (1 - distance / maxDistance) * 0.3;
           cursorX.current += distX * pullStrength;
           cursorY.current += distY * pullStrength;
           
-          // Elongate towards element (surface tension)
+          // Elongate towards element
           const angle = Math.atan2(distY, distX);
           targetScale.current = {
-            x: 1 + pullStrength * 0.8,
-            y: 1 + pullStrength * 0.3
+            x: 1 + pullStrength * 0.6,
+            y: 1 + pullStrength * 0.2
           };
           targetRotation.current = angle * (180 / Math.PI);
         }
-      } else if (!interactive) {
+      } else {
         targetScale.current = { x: 1, y: 1 };
+        targetRotation.current = 0;
       }
     };
 
@@ -106,24 +72,23 @@ export function MouseFollower() {
       // Calculate stretch based on velocity (liquid deformation)
       const speed = Math.sqrt(velocityX.current ** 2 + velocityY.current ** 2);
       
-      if (!isMerged) {
-        // Organic liquid stretching
-        const stretchFactor = Math.min(speed * 0.02, 0.6);
-        const angle = Math.atan2(velocityY.current, velocityX.current);
-        
-        // Add wobble for liquid feel
-        const wobble = Math.sin(Date.now() * 0.01) * 0.05;
-        
+      // Organic liquid stretching
+      const stretchFactor = Math.min(speed * 0.015, 0.5);
+      const angle = Math.atan2(velocityY.current, velocityX.current);
+      
+      // Add wobble for liquid feel
+      const wobble = Math.sin(Date.now() * 0.01) * 0.03;
+      
+      if (targetScale.current.x === 1 && targetScale.current.y === 1) {
         targetScale.current = {
           x: 1 + stretchFactor + wobble,
           y: 1 - stretchFactor * 0.4 + wobble
         };
-        
         targetRotation.current = angle * (180 / Math.PI);
       }
 
       // Spring physics with damping
-      const springStrength = 0.12;
+      const springStrength = 0.15;
       const damping = 0.85;
       
       currentScale.current.x += (targetScale.current.x - currentScale.current.x) * springStrength;
@@ -144,9 +109,7 @@ export function MouseFollower() {
         scaleX: currentScale.current.x,
         scaleY: currentScale.current.y,
         rotation: currentRotation.current,
-        transformOrigin: 'center center',
-        opacity: isMerged ? 0 : 1,
-        duration: 0.2
+        transformOrigin: 'center center'
       });
 
       requestAnimationFrame(animate);
@@ -159,18 +122,13 @@ export function MouseFollower() {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrame);
     };
-  }, [isMerged]);
+  }, []);
 
   return (
     <>
       {/* SVG Filter for Gooey/Metaball Effect */}
       <svg style={{ position: 'absolute', width: 0, height: 0 }}>
         <defs>
-          <filter id="gooey">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
           <filter id="liquid">
             <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
             <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="liquid" />
@@ -187,9 +145,9 @@ export function MouseFollower() {
           width: '80px',
           height: '80px',
           transform: 'translate(-50%, -50%)',
-          willChange: 'transform, opacity',
+          willChange: 'transform',
           filter: 'url(#liquid)',
-          mixBlendMode: isOverText ? 'difference' : 'screen'
+          mixBlendMode: 'screen'
         }}
       >
         {/* Main liquid body */}
