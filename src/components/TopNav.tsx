@@ -12,7 +12,6 @@ import {
   History,
   Settings,
   Bookmark,
-  Layers,
 } from 'lucide-react';
 
 const mainTabs = [
@@ -28,20 +27,31 @@ export function TopNav() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || '');
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const menuTimeoutRef = useRef<number | undefined>(undefined);
   const megaMenuRef = useRef<HTMLDivElement>(null);
+  const toolsTabRef = useRef<HTMLDivElement>(null);
 
   const searchResults = searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 6) : [];
+
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (megaMenuOpen || searchOpen) {
+      document.documentElement.classList.add('menu-open');
+    } else {
+      document.documentElement.classList.remove('menu-open');
+    }
+    return () => document.documentElement.classList.remove('menu-open');
+  }, [megaMenuOpen, searchOpen]);
 
   // Close mega menu on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (megaMenuRef.current && !megaMenuRef.current.contains(e.target as Node)) {
+      if (megaMenuRef.current && !megaMenuRef.current.contains(e.target as Node) &&
+          toolsTabRef.current && !toolsTabRef.current.contains(e.target as Node)) {
         setMegaMenuOpen(false);
-        setActiveCategory(null);
         setActiveTool(null);
       }
     };
@@ -55,12 +65,12 @@ export function TopNav() {
       if (e.key === 'Escape') {
         setSearchOpen(false);
         setMegaMenuOpen(false);
-        setActiveCategory(null);
         setActiveTool(null);
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setSearchOpen(true);
+        setMegaMenuOpen(false);
         setTimeout(() => searchRef.current?.focus(), 50);
       }
     };
@@ -69,16 +79,19 @@ export function TopNav() {
   }, []);
 
   const handleToolsTabEnter = () => {
-    if (menuTimeoutRef.current !== undefined) clearTimeout(menuTimeoutRef.current);
+    if (menuTimeoutRef.current !== undefined) {
+      clearTimeout(menuTimeoutRef.current);
+      menuTimeoutRef.current = undefined;
+    }
     setMegaMenuOpen(true);
   };
 
   const handleToolsTabLeave = () => {
     menuTimeoutRef.current = window.setTimeout(() => {
       setMegaMenuOpen(false);
-      setActiveCategory(null);
       setActiveTool(null);
-    }, 200);
+      menuTimeoutRef.current = undefined;
+    }, 100);
   };
 
   const handleCategoryEnter = (slug: string) => {
@@ -94,19 +107,10 @@ export function TopNav() {
     setActiveTool(null);
   };
 
-  const handleMenuLeave = () => {
-    menuTimeoutRef.current = window.setTimeout(() => {
-      setMegaMenuOpen(false);
-      setActiveCategory(null);
-      setActiveTool(null);
-    }, 250);
-  };
-
   const selectTool = (slug: string) => {
     setSearchOpen(false);
     setSearchQuery('');
     setMegaMenuOpen(false);
-    setActiveCategory(null);
     setActiveTool(null);
     navigate(`/tools/${slug}`);
   };
@@ -128,7 +132,7 @@ export function TopNav() {
           </div>
         </Link>
 
-        {/* Main Navigation - Clean & Minimal */}
+        {/* Main Navigation */}
         <nav className="flex items-center gap-1">
           {mainTabs.map(tab => {
             const isActive = location.pathname === tab.path || (tab.path !== '/' && location.pathname.startsWith(tab.path));
@@ -139,9 +143,9 @@ export function TopNav() {
               return (
                 <div
                   key={tab.path}
-                  ref={megaMenuRef}
+                  ref={toolsTabRef}
                   onMouseEnter={handleToolsTabEnter}
-                  onMouseLeave={handleMenuLeave}
+                  onMouseLeave={handleToolsTabLeave}
                   className="relative"
                 >
                   <button
@@ -151,131 +155,10 @@ export function TopNav() {
                   >
                     <Icon size={14} />
                     <span>{tab.label}</span>
-                    <svg width="8" height="8" viewBox="0 0 8 8" className={`transition-transform duration-200 ${megaMenuOpen ? 'rotate-180' : ''}`}>
+                    <svg width="8" height="8" viewBox="0 0 8 8" className={`transition-transform duration-150 ${megaMenuOpen ? 'rotate-180' : ''}`}>
                       <path d="M1 3L4 6L7 3" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
                     </svg>
                   </button>
-
-                  {/* Mega Menu */}
-                  {megaMenuOpen && (
-                    <div className="mega-menu absolute top-full left-0 mt-2 flex animate-dropdown" style={{ width: '720px' }}>
-                      {/* Categories Column */}
-                      <div className="w-[240px] border-r border-[#1a1a1a] p-2">
-                        <p className="text-[10px] uppercase tracking-[0.15em] text-[#404040] font-semibold px-3 py-2">Categories</p>
-                        <div className="space-y-0.5">
-                          {categories.map((cat, idx) => {
-                            const tools = getToolsByCategory(cat.slug);
-                            const isActive = activeCategory === cat.slug;
-                            const CatIcon = getToolIcon(cat.slug);
-                            return (
-                              <button
-                                key={cat.slug}
-                                onMouseEnter={() => handleCategoryEnter(cat.slug)}
-                                onClick={() => navigate(`/tools?category=${cat.slug}`)}
-                                className={`mega-menu-item w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-sm stagger-item`}
-                                style={{ animationDelay: `${idx * 20}ms` }}
-                              >
-                                <div className={`icon-box w-7 h-7 shrink-0 ${isActive ? 'bg-white border-white' : ''}`}>
-                                  <CatIcon size={13} className={isActive ? 'text-black' : 'text-[#888]'} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className={`text-[12px] font-medium truncate ${isActive ? 'text-white' : 'text-[#ccc]'}`}>{cat.title}</p>
-                                  <p className="text-[10px] text-[#555]">{tools.length} tools</p>
-                                </div>
-                                <ChevronRight size={11} className={`transition-transform ${isActive ? 'text-white translate-x-0.5' : 'text-[#404040]'}`} />
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Tools Column */}
-                      <div className="flex-1 p-2 min-h-[400px] max-h-[500px] overflow-y-auto">
-                        {activeCategory ? (
-                          <>
-                            <p className="text-[10px] uppercase tracking-[0.15em] text-[#404040] font-semibold px-3 py-2">
-                              {categories.find(c => c.slug === activeCategory)?.title}
-                            </p>
-                            <div className="space-y-0.5">
-                              {activeCatTools.map((tool, idx) => {
-                                const ToolIcon = getToolIcon(tool.slug);
-                                const isToolActive = activeTool === tool.slug;
-                                return (
-                                  <div
-                                    key={tool.slug}
-                                    onMouseEnter={() => handleToolEnter(tool.slug)}
-                                    onMouseLeave={handleToolLeave}
-                                    className="relative"
-                                  >
-                                    <button
-                                      onClick={() => selectTool(tool.slug)}
-                                      className={`mega-menu-item w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-sm stagger-item`}
-                                      style={{ animationDelay: `${idx * 15}ms` }}
-                                    >
-                                      <div className={`icon-box w-7 h-7 shrink-0 ${isToolActive ? 'bg-white border-white' : ''}`}>
-                                        <ToolIcon size={13} className={isToolActive ? 'text-black' : 'text-[#888]'} />
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className={`text-[12px] font-medium truncate ${isToolActive ? 'text-white' : 'text-[#ccc]'}`}>{tool.title}</p>
-                                        <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
-                                      </div>
-                                      <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-medium shrink-0 ${
-                                        tool.capability === 'browser-ready' ? 'badge-ready' :
-                                        tool.capability === 'browser-partial' ? 'badge-partial' :
-                                        tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
-                                      }`}>
-                                        {tool.capability === 'browser-ready' ? 'Local' :
-                                         tool.capability === 'browser-partial' ? 'Hybrid' :
-                                         tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
-                                      </span>
-                                      {tool.options.length > 0 && (
-                                        <ChevronRight size={10} className="text-[#404040]" />
-                                      )}
-                                    </button>
-
-                                    {/* Tool Details Submenu */}
-                                    {isToolActive && tool.options.length > 0 && (
-                                      <div className="mega-menu absolute left-full top-0 ml-1 w-[220px] animate-submenu-right z-50 p-2">
-                                        <div className="px-2 py-1.5 border-b border-[#1a1a1a] mb-1">
-                                          <p className="text-[11px] font-semibold text-white">{tool.title}</p>
-                                          <p className="text-[10px] text-[#555]">{tool.description}</p>
-                                        </div>
-                                        <p className="text-[9px] uppercase tracking-wider text-[#404040] font-semibold px-2 py-1">Options</p>
-                                        {tool.options.slice(0, 5).map(opt => (
-                                          <div key={opt.key} className="px-2 py-1.5 text-[11px] hover:bg-[#141414] rounded-sm">
-                                            <span className="text-[#666]">{opt.label}: </span>
-                                            <span className="text-[#aaa]">{String(opt.default)}</span>
-                                          </div>
-                                        ))}
-                                        <Link
-                                          to={`/tools/${tool.slug}`}
-                                          onClick={() => { setMegaMenuOpen(false); setActiveCategory(null); setActiveTool(null); }}
-                                          className="block mt-1 px-2 py-2 text-[11px] text-white border-t border-[#1a1a1a] hover:bg-[#141414] rounded-sm"
-                                        >
-                                          Open full tool →
-                                        </Link>
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                              <Link
-                                to={`/tools?category=${activeCategory}`}
-                                onClick={() => { setMegaMenuOpen(false); setActiveCategory(null); }}
-                                className="block mt-2 px-3 py-2 text-[11px] text-white border-t border-[#1a1a1a] hover:bg-[#141414] rounded-sm"
-                              >
-                                View all {activeCatTools.length} tools →
-                              </Link>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="flex items-center justify-center h-full text-[#404040] text-[12px]">
-                            Hover a category to see tools
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             }
@@ -300,7 +183,7 @@ export function TopNav() {
         {/* Search */}
         <div className="relative">
           <button
-            onClick={() => { setSearchOpen(!searchOpen); setTimeout(() => searchRef.current?.focus(), 50); }}
+            onClick={() => { setSearchOpen(!searchOpen); setMegaMenuOpen(false); setTimeout(() => searchRef.current?.focus(), 50); }}
             className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-sm text-[12px] text-[#888] hover:border-[#333] transition-all"
           >
             <Search size={13} />
@@ -309,58 +192,80 @@ export function TopNav() {
           </button>
 
           {searchOpen && (
-            <div className="absolute top-full right-0 mt-2 w-[420px] mega-menu animate-scale">
-              <div className="p-2 border-b border-[#1a1a1a]">
-                <div className="relative">
-                  <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#555]" />
-                  <input
-                    ref={searchRef}
-                    type="text"
-                    placeholder="Search tools, categories..."
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 bg-[#000] border border-[#1a1a1a] rounded-sm text-[12px] text-white placeholder:text-[#404040] focus:outline-none focus:border-[#333]"
-                    autoFocus
-                  />
+            <div className="fixed inset-0 z-50 flex items-start justify-center pt-20" onClick={() => setSearchOpen(false)}>
+              <div className="absolute inset-0 bg-black/60" />
+              <div className="relative w-[500px] mega-menu animate-dropdown" onClick={e => e.stopPropagation()}>
+                <div className="p-3 border-b border-[#1a1a1a]">
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
+                    <input
+                      ref={searchRef}
+                      type="text"
+                      placeholder="Search tools, categories..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2.5 bg-[#000] border border-[#1a1a1a] rounded-sm text-[13px] text-white placeholder:text-[#404040] focus:outline-none focus:border-[#333]"
+                      autoFocus
+                    />
+                  </div>
                 </div>
+                {searchResults.length > 0 && (
+                  <div className="max-h-[400px] overflow-y-auto py-2">
+                    {searchResults.map(tool => {
+                      const ToolIcon = getToolIcon(tool.slug);
+                      return (
+                        <button
+                          key={tool.slug}
+                          onClick={() => selectTool(tool.slug)}
+                          className="mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left"
+                        >
+                          <div className="icon-box w-8 h-8 shrink-0">
+                            <ToolIcon size={14} className="text-[#888]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] text-white truncate">{tool.title}</p>
+                            <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
+                          </div>
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-medium ${
+                            tool.capability === 'browser-ready' ? 'badge-ready' :
+                            tool.capability === 'browser-partial' ? 'badge-partial' :
+                            tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
+                          }`}>
+                            {tool.capability === 'browser-ready' ? 'Local' :
+                             tool.capability === 'browser-partial' ? 'Hybrid' :
+                             tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {searchQuery.length > 1 && searchResults.length === 0 && (
+                  <div className="p-8 text-center text-[13px] text-[#555]">
+                    No tools found for "{searchQuery}"
+                  </div>
+                )}
+                {searchQuery.length <= 1 && (
+                  <div className="p-3 border-t border-[#1a1a1a]">
+                    <p className="text-[10px] text-[#404040] uppercase tracking-wider mb-2">Popular</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word', 'rotate-pages'].map(slug => {
+                        const tool = toolRegistry.find(t => t.slug === slug);
+                        if (!tool) return null;
+                        return (
+                          <button
+                            key={slug}
+                            onClick={() => selectTool(slug)}
+                            className="px-2.5 py-1 bg-[#111] hover:bg-[#1a1a1a] rounded-sm text-[11px] text-[#888] hover:text-white transition-colors"
+                          >
+                            {tool.title}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
-              {searchResults.length > 0 && (
-                <div className="max-h-[320px] overflow-y-auto py-1">
-                  {searchResults.map((tool, idx) => {
-                    const ToolIcon = getToolIcon(tool.slug);
-                    return (
-                      <button
-                        key={tool.slug}
-                        onClick={() => selectTool(tool.slug)}
-                        className="mega-menu-item w-full flex items-center gap-2.5 px-3 py-2 text-left stagger-item"
-                        style={{ animationDelay: `${idx * 30}ms` }}
-                      >
-                        <div className="icon-box w-7 h-7 shrink-0">
-                          <ToolIcon size={13} className="text-[#888]" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[12px] text-white truncate">{tool.title}</p>
-                          <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
-                        </div>
-                        <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-medium ${
-                          tool.capability === 'browser-ready' ? 'badge-ready' :
-                          tool.capability === 'browser-partial' ? 'badge-partial' :
-                          tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
-                        }`}>
-                          {tool.capability === 'browser-ready' ? 'Local' :
-                           tool.capability === 'browser-partial' ? 'Hybrid' :
-                           tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-              {searchQuery.length > 1 && searchResults.length === 0 && (
-                <div className="p-6 text-center text-[12px] text-[#555]">
-                  No tools found for "{searchQuery}"
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -375,6 +280,137 @@ export function TopNav() {
           </Link>
         </div>
       </div>
+
+      {/* Mega Menu - Rendered outside the tab, absolutely positioned */}
+      {megaMenuOpen && (
+        <div
+          ref={megaMenuRef}
+          onMouseEnter={handleToolsTabEnter}
+          onMouseLeave={handleToolsTabLeave}
+          className="fixed left-0 right-0 z-40 animate-dropdown"
+          style={{ top: '56px' }}
+        >
+          <div className="max-w-[1800px] mx-auto px-6">
+            <div className="mega-menu flex" style={{ height: '480px' }}>
+              {/* Categories Column - Fixed width, scrollable */}
+              <div className="w-[260px] border-r border-[#1a1a1a] flex flex-col">
+                <div className="px-4 py-3 border-b border-[#1a1a1a]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">Categories</p>
+                </div>
+                <div className="flex-1 overflow-y-auto py-2">
+                  {categories.map(cat => {
+                    const tools = getToolsByCategory(cat.slug);
+                    const isActive = activeCategory === cat.slug;
+                    const CatIcon = getToolIcon(cat.slug);
+                    return (
+                      <button
+                        key={cat.slug}
+                        onMouseEnter={() => handleCategoryEnter(cat.slug)}
+                        onClick={() => { navigate(`/tools?category=${cat.slug}`); setMegaMenuOpen(false); }}
+                        className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${isActive ? 'bg-[#141414]' : ''}`}
+                      >
+                        <div className={`icon-box w-8 h-8 shrink-0 ${isActive ? 'bg-white border-white' : ''}`}>
+                          <CatIcon size={14} className={isActive ? 'text-black' : 'text-[#888]'} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-[12px] font-medium truncate ${isActive ? 'text-white' : 'text-[#ccc]'}`}>{cat.title}</p>
+                          <p className="text-[10px] text-[#555]">{tools.length} tools</p>
+                        </div>
+                        <ChevronRight size={12} className={`transition-transform ${isActive ? 'text-white' : 'text-[#404040]'}`} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tools Column - Takes remaining space, scrollable */}
+              <div className="flex-1 flex flex-col min-w-0">
+                <div className="px-4 py-3 border-b border-[#1a1a1a]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">
+                    {categories.find(c => c.slug === activeCategory)?.title}
+                  </p>
+                </div>
+                <div className="flex-1 overflow-y-auto py-2">
+                  {activeCatTools.map(tool => {
+                    const ToolIcon = getToolIcon(tool.slug);
+                    const isToolActive = activeTool === tool.slug;
+                    return (
+                      <div
+                        key={tool.slug}
+                        onMouseEnter={() => handleToolEnter(tool.slug)}
+                        onMouseLeave={handleToolLeave}
+                        className="relative"
+                      >
+                        <button
+                          onClick={() => selectTool(tool.slug)}
+                          className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${isToolActive ? 'bg-[#141414]' : ''}`}
+                        >
+                          <div className={`icon-box w-8 h-8 shrink-0 ${isToolActive ? 'bg-white border-white' : ''}`}>
+                            <ToolIcon size={14} className={isToolActive ? 'text-black' : 'text-[#888]'} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-[12px] font-medium truncate ${isToolActive ? 'text-white' : 'text-[#ccc]'}`}>{tool.title}</p>
+                            <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
+                          </div>
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-medium shrink-0 ${
+                            tool.capability === 'browser-ready' ? 'badge-ready' :
+                            tool.capability === 'browser-partial' ? 'badge-partial' :
+                            tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
+                          }`}>
+                            {tool.capability === 'browser-ready' ? 'Local' :
+                             tool.capability === 'browser-partial' ? 'Hybrid' :
+                             tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
+                          </span>
+                          {tool.options.length > 0 && (
+                            <ChevronRight size={11} className="text-[#404040] shrink-0" />
+                          )}
+                        </button>
+                      </div>
+                    );
+                  })}
+                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
+                    <Link
+                      to={`/tools?category=${activeCategory}`}
+                      onClick={() => setMegaMenuOpen(false)}
+                      className="text-[11px] text-white hover:text-[#ccc] transition-colors"
+                    >
+                      View all {activeCatTools.length} tools →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tool Details Submenu - Absolutely positioned, outside the main menu */}
+              {activeToolDef && activeToolDef.options.length > 0 && (
+                <div className="w-[240px] border-l border-[#1a1a1a] bg-[#0a0a0a] animate-submenu overflow-y-auto">
+                  <div className="px-4 py-3 border-b border-[#1a1a1a]">
+                    <p className="text-[12px] font-semibold text-white">{activeToolDef.title}</p>
+                    <p className="text-[10px] text-[#555] mt-0.5">{activeToolDef.description}</p>
+                  </div>
+                  <div className="px-4 py-2">
+                    <p className="text-[9px] uppercase tracking-wider text-[#555] font-semibold mb-2">Options</p>
+                    {activeToolDef.options.slice(0, 6).map(opt => (
+                      <div key={opt.key} className="py-1.5 text-[11px]">
+                        <span className="text-[#666]">{opt.label}: </span>
+                        <span className="text-[#aaa]">{String(opt.default)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
+                    <Link
+                      to={`/tools/${activeToolDef.slug}`}
+                      onClick={() => { setMegaMenuOpen(false); setActiveTool(null); }}
+                      className="text-[11px] text-white hover:text-[#ccc] transition-colors"
+                    >
+                      Open full tool →
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

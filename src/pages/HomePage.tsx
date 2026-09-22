@@ -49,7 +49,7 @@ export function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {popularTools.map((slug, idx) => {
+          {popularTools.map((slug) => {
             const tool = toolRegistry.find(t => t.slug === slug);
             if (!tool) return null;
             const Icon = getToolIcon(slug);
@@ -58,8 +58,7 @@ export function HomePage() {
                 key={slug}
                 to={`/tools/${slug}`}
                 onClick={() => addRecentTool(slug)}
-                className="card group p-4 relative stagger-item"
-                style={{ animationDelay: `${idx * 50}ms` }}
+                className="card group p-4 relative"
               >
                 <div className="popular-badge">Popular</div>
                 <div className="icon-box w-10 h-10 mb-3">
@@ -85,7 +84,7 @@ export function HomePage() {
           { value: categories.length, label: 'Categories' },
           { value: '100%', label: 'Private & Local' },
         ].map((stat, i) => (
-          <div key={i} className="card p-5 text-center stagger-item" style={{ animationDelay: `${i * 50}ms` }}>
+          <div key={i} className="card p-5 text-center">
             <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
             <p className="text-[10px] text-[#555] uppercase tracking-[0.15em]">{stat.label}</p>
           </div>
@@ -123,15 +122,14 @@ export function HomePage() {
       <div className="mb-20">
         <h2 className="text-sm font-semibold text-white mb-5 uppercase tracking-[0.15em]">All Categories</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {categories.map((cat, idx) => {
+          {categories.map((cat) => {
             const tools = getToolsByCategory(cat.slug);
             const Icon = getCategoryIcon(cat.slug);
             return (
               <Link
                 key={cat.slug}
                 to={`/tools?category=${cat.slug}`}
-                className="card group p-4 stagger-item"
-                style={{ animationDelay: `${idx * 30}ms` }}
+                className="card group p-4"
               >
                 <div className="flex items-start gap-3">
                   <div className="icon-box w-9 h-9 shrink-0">
@@ -155,7 +153,7 @@ export function HomePage() {
           { icon: Globe, title: 'Works Offline', desc: 'Core tools work without internet. No account required.' },
           { icon: Zap, title: 'Workflow Ready', desc: 'Chain tools together. Save presets. Automate repetitive tasks.' },
         ].map((feature, i) => (
-          <div key={i} className="text-center stagger-item" style={{ animationDelay: `${i * 80}ms` }}>
+          <div key={i} className="text-center">
             <div className="icon-box w-12 h-12 mx-auto mb-3">
               <feature.icon size={20} className="text-white" />
             </div>

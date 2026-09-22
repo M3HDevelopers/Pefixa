@@ -31,6 +31,11 @@
 
   html { background-color: #000000; color-scheme: dark; }
 
+  /* Prevent background scroll when menu is open */
+  html.menu-open {
+    overflow: hidden;
+  }
+
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: #000000;
@@ -44,19 +49,14 @@
 }
 
 @layer components {
-  /* Advanced Animations */
-  @keyframes fadeSlideDown {
-    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+  /* Simple, fast animations - no stagger, no complex transforms */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes fadeSlideRight {
-    from { opacity: 0; transform: translateX(-8px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  @keyframes fadeSlideLeft {
-    from { opacity: 0; transform: translateX(8px); }
+  @keyframes fadeRight {
+    from { opacity: 0; transform: translateX(-4px); }
     to { opacity: 1; transform: translateX(0); }
   }
 
@@ -65,78 +65,30 @@
     to { opacity: 1; }
   }
 
-  @keyframes scaleUp {
-    from { opacity: 0; transform: scale(0.94); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  @keyframes glow {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
-  }
-
-  @keyframes slideInStagger {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
   .animate-dropdown {
-    animation: fadeSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    transform-origin: top center;
+    animation: fadeDown 0.15s ease-out forwards;
   }
 
-  .animate-submenu-right {
-    animation: fadeSlideRight 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .animate-submenu-left {
-    animation: fadeSlideLeft 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .animate-scale {
-    animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  .animate-submenu {
+    animation: fadeRight 0.12s ease-out forwards;
   }
 
   .animate-fade {
-    animation: fadeIn 0.3s ease-out forwards;
+    animation: fadeIn 0.2s ease-out forwards;
   }
 
-  .stagger-item {
-    opacity: 0;
-    animation: slideInStagger 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  /* Card with subtle hover lift */
+  /* Card with simple hover */
   .card {
     background-color: #0a0a0a;
     border: 1px solid #1a1a1a;
     border-radius: 6px;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.03), transparent 40%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
+    transition: border-color 0.15s ease, transform 0.15s ease;
   }
 
   .card:hover {
     border-color: #2a2a2a;
     transform: translateY(-1px);
   }
-
-  .card:hover::before { opacity: 1; }
 
   /* Buttons */
   .btn-primary {
@@ -145,23 +97,11 @@
     border-radius: 4px;
     font-weight: 500;
     font-size: 12px;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    overflow: hidden;
+    transition: background-color 0.15s ease;
   }
 
-  .btn-primary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.5s;
-  }
-
-  .btn-primary:hover { background-color: #e5e5e5; transform: translateY(-1px); }
-  .btn-primary:hover::after { transform: translateX(100%); }
-  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:hover { background-color: #e5e5e5; }
+  .btn-primary:active { background-color: #cccccc; }
 
   .btn-secondary {
     background-color: #111111;
@@ -169,7 +109,7 @@
     border: 1px solid #262626;
     border-radius: 4px;
     font-size: 12px;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.15s ease;
   }
 
   .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
@@ -181,70 +121,55 @@
     border-radius: 4px;
     color: #ffffff;
     font-size: 12px;
-    transition: all 0.2s;
+    transition: border-color 0.15s ease;
   }
 
   .input-dark:focus {
     border-color: #ffffff;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
   }
 
   .input-dark::placeholder { color: #404040; }
 
-  /* Mega menu */
+  /* Mega menu - fixed height, scrollable */
   .mega-menu {
     background-color: #0a0a0a;
     border: 1px solid #1a1a1a;
     border-radius: 6px;
-    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.02) inset;
-    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8);
   }
 
   .mega-menu-item {
-    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background-color 0.1s ease;
     position: relative;
-  }
-
-  .mega-menu-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 4px;
-    bottom: 4px;
-    width: 2px;
-    background: #ffffff;
-    transform: scaleY(0);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .mega-menu-item:hover { background-color: #141414; }
-  .mega-menu-item:hover::before { transform: scaleY(1); }
 
-  /* Nav tab with underline indicator */
+  /* Nav tab */
   .nav-tab {
     position: relative;
-    transition: color 0.2s;
+    transition: color 0.15s ease;
   }
 
   .nav-tab::after {
     content: '';
     position: absolute;
     bottom: -2px;
-    left: 50%;
-    right: 50%;
+    left: 0;
+    right: 0;
     height: 1px;
     background-color: #ffffff;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
   }
 
   .nav-tab:hover::after,
   .nav-tab.active::after {
-    left: 0;
-    right: 0;
+    transform: scaleX(1);
   }
 
-  /* Badges - monochrome only */
+  /* Badges - monochrome */
   .badge-ready {
     background-color: rgba(255, 255, 255, 0.06);
     color: #ffffff;
@@ -278,7 +203,7 @@
 
   .progress-fill {
     background-color: #ffffff;
-    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: width 0.4s ease;
   }
 
   /* Icon container */
@@ -286,7 +211,7 @@
     background-color: #111111;
     border: 1px solid #1a1a1a;
     border-radius: 4px;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.15s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -301,7 +226,7 @@
     color: #000000 !important;
   }
 
-  /* Popular tool highlight */
+  /* Popular badge */
   .popular-badge {
     position: absolute;
     top: 8px;
@@ -314,22 +239,5 @@
     border-radius: 2px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-  }
-
-  /* Shimmer loading */
-  .shimmer {
-    background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-  }
-
-  /* Glow effect for hero */
-  .hero-glow {
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
-    pointer-events: none;
-    animation: glow 4s ease-in-out infinite;
   }
 }

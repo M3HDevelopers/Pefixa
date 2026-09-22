@@ -72,14 +72,13 @@ export function ToolsListPage() {
               <span className="text-[10px] text-[#555]">({tools.length})</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
-              {tools.map((tool, idx) => {
+              {tools.map((tool) => {
                 const ToolIcon = getToolIcon(tool.slug);
                 return (
                   <Link
                     key={tool.slug}
                     to={`/tools/${tool.slug}`}
-                    className="card group p-3 stagger-item"
-                    style={{ animationDelay: `${idx * 15}ms` }}
+                    className="card group p-3"
                   >
                     <div className="flex items-start gap-3">
                       <div className="icon-box w-9 h-9 shrink-0">
