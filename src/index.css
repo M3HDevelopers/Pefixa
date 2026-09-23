@@ -246,8 +246,36 @@
   animation: fadeDown 0.2s ease-out;
 }
 
+.animate-dropdown-out {
+  animation: fadeUp 0.2s ease-in forwards;
+}
+
 .animate-fade {
   animation: fadeIn 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .animate-pulse-icon {

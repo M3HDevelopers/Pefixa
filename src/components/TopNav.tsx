@@ -46,6 +46,7 @@ export function TopNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchClosing, setSearchClosing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -89,7 +90,9 @@ export function TopNav() {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setSearchOpen(false);
+        if (searchOpen) {
+          closeSearch();
+        }
         setActiveMenu(null);
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -101,7 +104,7 @@ export function TopNav() {
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
+  }, [searchOpen]);
 
   // Scroll detection for navbar state
   useEffect(() => {
@@ -133,6 +136,15 @@ export function TopNav() {
     setSearchQuery('');
     setActiveMenu(null);
     navigate(`/tools/${slug}`);
+  };
+
+  const closeSearch = () => {
+    setSearchClosing(true);
+    setTimeout(() => {
+      setSearchOpen(false);
+      setSearchClosing(false);
+      setSearchQuery('');
+    }, 200);
   };
 
   // Get tools for specific category (using cached values)
@@ -243,9 +255,9 @@ export function TopNav() {
           </button>
 
           {searchOpen && (
-            <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 animate-fade" onClick={() => setSearchOpen(false)}>
+            <div className={`fixed inset-0 z-50 flex items-start justify-center pt-20 ${searchClosing ? 'animate-fade-out' : 'animate-fade'}`} onClick={closeSearch}>
               <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-              <div className="relative w-[500px] mega-menu animate-dropdown" onClick={e => e.stopPropagation()}>
+              <div className={`relative w-[500px] mega-menu ${searchClosing ? 'animate-dropdown-out' : 'animate-dropdown'}`} onClick={e => e.stopPropagation()}>
                 <div className="p-3 border-b border-[#1a1a1a]">
                   <div className="relative">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
