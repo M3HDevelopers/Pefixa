@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, memo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categories } from '../lib/tools/categories';
 import { getToolsByCategory, searchTools, toolRegistry } from '../lib/tools/registry';
@@ -16,6 +16,22 @@ import {
   FilePlus2,
 } from 'lucide-react';
 import { getToolColor, getCategoryColor } from '../lib/tools/icons';
+
+// Memoized tool item to prevent re-renders
+const MemoizedToolItem = memo(({ tool, selectTool }: { tool: any; selectTool: (slug: string) => void }) => {
+  const ToolIcon = getToolIcon(tool.slug);
+  return (
+    <button
+      onClick={() => selectTool(tool.slug)}
+      className="mega-menu-item flex items-center gap-1.5 px-2 py-1 text-left rounded"
+    >
+      <div className="icon-box w-6 h-6 shrink-0">
+        <ToolIcon size={12} color={getToolColor(tool.slug)} />
+      </div>
+      <p className="text-[9px] font-medium text-[#ccc] truncate">{tool.title}</p>
+    </button>
+  );
+});
 
 const mainTabs = [
   { label: 'Home', path: '/', icon: Home },
@@ -349,21 +365,9 @@ export function TopNav() {
 
                         {/* Tools Grid - 2 columns, 2 rows (4 tools) */}
                         <div className="grid grid-cols-2 gap-1">
-                          {tools.slice(0, 4).map(tool => {
-                            const ToolIcon = getToolIcon(tool.slug);
-                            return (
-                              <button
-                                key={tool.slug}
-                                onClick={() => selectTool(tool.slug)}
-                                className="mega-menu-item flex items-center gap-1.5 px-2 py-1 text-left rounded"
-                              >
-                                <div className="icon-box w-6 h-6 shrink-0">
-                                  <ToolIcon size={12} color={getToolColor(tool.slug)} />
-                                </div>
-                                <p className="text-[9px] font-medium text-[#ccc] truncate">{tool.title}</p>
-                              </button>
-                            );
-                          })}
+                          {tools.slice(0, 4).map(tool => (
+                            <MemoizedToolItem key={tool.slug} tool={tool} selectTool={selectTool} />
+                          ))}
                         </div>
 
                         {/* View all link */}
@@ -420,8 +424,8 @@ export function TopNav() {
                         onClick={() => selectTool(tool.slug)}
                         className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
-                        <div className="icon-box w-5 h-5 shrink-0">
-                          <ToolIcon size={10} color={getToolColor(tool.slug)} />
+                        <div className="icon-box w-6 h-6 shrink-0">
+                          <ToolIcon size={12} color={getToolColor(tool.slug)} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
@@ -471,8 +475,8 @@ export function TopNav() {
                         onClick={() => selectTool(tool.slug)}
                         className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
-                        <div className="icon-box w-5 h-5 shrink-0">
-                          <ToolIcon size={10} color={getToolColor(tool.slug)} />
+                        <div className="icon-box w-6 h-6 shrink-0">
+                          <ToolIcon size={12} color={getToolColor(tool.slug)} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
