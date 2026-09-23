@@ -11,6 +11,8 @@ import { ComparePage } from './pages/ComparePage';
 import { InspectPage } from './pages/InspectPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { PresetsPage } from './pages/PresetsPage';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/presets" element={<PresetsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

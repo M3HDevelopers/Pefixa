@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { TopNav } from './TopNav';
 import { MouseFollower } from './MouseFollower';
+import { AuthToggleButton } from './AuthToggleButton';
 
 export function Layout() {
   const location = useLocation();
@@ -9,6 +10,7 @@ export function Layout() {
     <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
       <MouseFollower />
       <TopNav />
+      <AuthToggleButton />
       <main className="pt-14 page-enter" key={location.pathname}>
         <Outlet />
       </main>
