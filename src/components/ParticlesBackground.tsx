@@ -39,8 +39,8 @@ export function ParticlesBackground() {
     
     window.addEventListener('resize', debouncedResize);
 
-    // Initialize particles - increased count
-    const particleCount = Math.min(200, Math.floor((canvas.width * canvas.height) / 8000));
+    // Initialize particles - increased count for more density
+    const particleCount = Math.min(350, Math.floor((canvas.width * canvas.height) / 5000));
     particlesRef.current = Array.from({ length: particleCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -112,7 +112,7 @@ export function ParticlesBackground() {
         ctx.fill();
       }
 
-      // Draw connections - optimized
+      // Draw connections - more visible
       for (let i = 0; i < particles.length; i++) {
         const p1 = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
@@ -121,14 +121,14 @@ export function ParticlesBackground() {
           const dy = p1.y - p2.y;
           const distanceSq = dx * dx + dy * dy;
 
-          if (distanceSq < 14400) { // 120^2
+          if (distanceSq < 22500) { // 150^2 - increased connection distance
             const distance = Math.sqrt(distanceSq);
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
-            const opacity = (1 - distance / 120) * 0.3; // Increased from 0.15 to 0.3
+            const opacity = (1 - distance / 150) * 0.5; // Increased opacity to 0.5
             ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-            ctx.lineWidth = 0.8; // Increased from 0.5 to 0.8
+            ctx.lineWidth = 1.2; // Increased line width to 1.2
             ctx.stroke();
           }
         }
