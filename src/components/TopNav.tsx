@@ -12,11 +12,15 @@ import {
   History,
   Settings,
   Bookmark,
+  FileOutput,
+  FilePlus2,
 } from 'lucide-react';
 
 const mainTabs = [
   { label: 'Home', path: '/', icon: Home },
   { label: 'Tools', path: '/tools', icon: Wrench, hasMegaMenu: true },
+  { label: 'Convert From PDF', path: '/tools?category=convert-from', icon: FileOutput },
+  { label: 'Convert To PDF', path: '/tools?category=convert-to', icon: FilePlus2 },
   { label: 'Workflows', path: '/workflows', icon: GitBranch },
   { label: 'History', path: '/history', icon: History },
 ];
