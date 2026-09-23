@@ -125,22 +125,44 @@
 
   .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
 
-  /* Inputs - simple, solid */
+  /* Inputs - glassmorphic styling */
   .input-dark {
-    background-color: #050505;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
     color: #ffffff;
     font-size: 12px;
-    transition: border-color 0.15s ease;
+    transition: all 0.3s ease;
   }
 
   .input-dark:focus {
-    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
     outline: none;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   }
 
-  .input-dark::placeholder { color: #404040; }
+  .input-dark::placeholder { 
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.3s ease;
+  }
+
+  /* Input styling for LiquidCard context */
+  .liquid-card-content input,
+  .liquid-card-content textarea,
+  .liquid-card-hovered input,
+  .liquid-card-hovered textarea {
+    transition: all 0.4s ease;
+  }
+
+  .liquid-card-content input::placeholder,
+  .liquid-card-content textarea::placeholder,
+  .liquid-card-hovered input::placeholder,
+  .liquid-card-hovered textarea::placeholder {
+    transition: color 0.4s ease;
+  }
 
   /* Mega menu - simple, solid */
   .mega-menu {
@@ -219,13 +241,14 @@
 
   /* Icon container - simple, solid */
   .icon-box {
-    background-color: #111111;
-    border: 1px solid #1a1a1a;
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Popular badge */
@@ -241,5 +264,86 @@
     border-radius: 2px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+
+  /* Page transition animation */
+  .page-enter {
+    animation: pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Text elements for cursor inversion */
+  h1, h2, h3, h4, h5, h6, p, span, a, button {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Ensure liquid cards work properly */
+  .liquid-card {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .liquid-card:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Cursor blend mode for text inversion */
+  .cursor-invert {
+    mix-blend-mode: difference;
+  }
+
+  /* Ensure proper stacking for blend modes */
+  .blend-container {
+    isolation: isolate;
+  }
+
+  /* Text inversion when cursor passes over */
+  [data-text-invert] {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  /* Ensure text remains readable */
+  .liquid-card h1,
+  .liquid-card h2,
+  .liquid-card h3,
+  .liquid-card h4,
+  .liquid-card h5,
+  .liquid-card h6,
+  .liquid-card p,
+  .liquid-card span,
+  .liquid-card div {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Button and link hover effects */
+  button, a {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  button:hover, a:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Smooth liquid card transitions */
+  .liquid-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .liquid-card:hover {
+    transform: translateY(-2px);
   }
 }
