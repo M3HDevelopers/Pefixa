@@ -5,6 +5,7 @@ import { getToolsByCategory, toolRegistry } from '../lib/tools/registry';
 import { getToolIcon, getCategoryIcon } from '../lib/tools/icons';
 import { useAppStore } from '../store';
 import { LiquidCard } from '../components/LiquidCard';
+import { ParticlesBackground } from '../components/ParticlesBackground';
 import { 
   ArrowRight, Zap, Shield, Clock, Globe, Sparkles, 
   Check, Star, Users, Award, Target, TrendingUp,
@@ -55,6 +56,9 @@ export function HomePage() {
 
   return (
     <div className="relative overflow-hidden">
+      {/* Particles background */}
+      <ParticlesBackground />
+      
       {/* Ambient background gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-[120px]" />
