@@ -231,12 +231,36 @@
   }
 }
 
+@keyframes pulseIcon {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
 .animate-dropdown {
   animation: fadeDown 0.2s ease-out;
 }
 
 .animate-fade {
   animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse-icon {
+  animation: pulseIcon 1s ease-in-out infinite;
+}
+
+/* Auth Toggle Button */
+.auth-toggle-button {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.auth-toggle-button:hover {
+  transform: translateY(-2px);
 }
 
 /* Scrollbar */

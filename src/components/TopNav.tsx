@@ -40,8 +40,6 @@ const mainTabs = [
   { label: 'Convert To PDF', path: '/tools?category=convert-to', icon: FilePlus2, hasMegaMenu: true, menuType: 'convert-to' },
   { label: 'Workflows', path: '/workflows', icon: GitBranch },
   { label: 'History', path: '/history', icon: History },
-  { label: 'Sign In', path: '/login', icon: null, isAuth: true },
-  { label: 'Sign Up', path: '/register', icon: null, isAuth: true },
 ];
 
 export function TopNav() {
@@ -176,25 +174,6 @@ export function TopNav() {
             const hasMegaMenu = tab.hasMegaMenu;
             const menuType = tab.menuType;
             const isMenuOpen = activeMenu === menuType;
-            const isAuth = tab.isAuth;
-
-            if (isAuth) {
-              return (
-                <Link
-                  key={tab.path}
-                  to={tab.path}
-                  className={`nav-tab flex items-center px-3 py-2 text-[13px] font-medium rounded-md ${
-                    tab.label === 'Sign Up'
-                      ? 'btn-primary ml-2'
-                      : isActive 
-                        ? 'text-white bg-white/5' 
-                        : 'text-[#888] hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                </Link>
-              );
-            }
 
             if (hasMegaMenu) {
               const Icon = tab.icon!;
