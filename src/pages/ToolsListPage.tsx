@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { categories } from '../lib/tools/categories';
 import { toolRegistry, getToolsByCategory } from '../lib/tools/registry';
-import { getToolIcon, getCategoryIcon } from '../lib/tools/icons';
+import { getToolIcon, getCategoryIcon, getToolColor, getCategoryColor } from '../lib/tools/icons';
 import { ArrowRight } from 'lucide-react';
 
 export function ToolsListPage() {
@@ -48,7 +48,7 @@ export function ToolsListPage() {
                 categoryFilter === cat.slug ? 'btn-primary' : 'bg-[#0a0a0a] border border-[#1a1a1a] text-[#888] hover:text-white hover:border-[#333]'
               }`}
             >
-              <Icon size={11} />
+              <Icon size={11} color={categoryFilter === cat.slug ? '#000000' : getCategoryColor(cat.slug)} />
               <span>{cat.title}</span>
               <span className="text-[9px] opacity-60">({count})</span>
             </Link>
@@ -66,7 +66,7 @@ export function ToolsListPage() {
           <div key={cat.slug} className="mb-12">
             <div className="flex items-center gap-2 mb-4">
               <div className="icon-box w-7 h-7">
-                <Icon size={13} className="text-[#888]" />
+                <Icon size={13} color={getCategoryColor(cat.slug)} />
               </div>
               <h2 className="text-sm font-semibold text-white">{cat.title}</h2>
               <span className="text-[10px] text-[#555]">({tools.length})</span>
@@ -82,7 +82,7 @@ export function ToolsListPage() {
                   >
                     <div className="flex items-start gap-3">
                       <div className="icon-box w-9 h-9 shrink-0">
-                        <ToolIcon size={15} className="text-[#888]" />
+                        <ToolIcon size={15} color={getToolColor(tool.slug)} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">

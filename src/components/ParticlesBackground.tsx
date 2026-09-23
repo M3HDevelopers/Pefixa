@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export function ParticlesBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -13,6 +13,7 @@ export function ParticlesBackground() {
   const mouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>(0);
   const lastMouseMove = useRef<number>(0);
+  const isVisibleRef = useRef<boolean>(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -69,6 +70,12 @@ export function ParticlesBackground() {
     // Optimized animation loop
     const animate = () => {
       if (!ctx || !canvas || !canvas.parentElement) return;
+      
+      // Pause animation when dropdown is open (check if menu-open class exists)
+      if (document.documentElement.classList.contains('menu-open')) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 

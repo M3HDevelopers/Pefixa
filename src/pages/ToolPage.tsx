@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useCallback } from 'react';
 import { getToolBySlug, getNextSteps } from '../lib/tools/registry';
-import { getToolIcon } from '../lib/tools/icons';
+import { getToolIcon, getToolColor } from '../lib/tools/icons';
 import { processTool } from '../lib/processors/local';
 import { useAppStore } from '../store';
 import { ToolOutput } from '../types/tool';
@@ -129,7 +129,7 @@ export function ToolPage() {
         </div>
         <div className="flex items-start gap-4">
           <div className="icon-box w-14 h-14 shrink-0">
-            <ToolIcon size={24} className="text-white" />
+            <ToolIcon size={24} color={getToolColor(tool.slug)} />
           </div>
           <div className="flex-1">
             <div className="flex items-start justify-between gap-4 mb-2">
@@ -367,7 +367,7 @@ export function ToolPage() {
                       to={`/tools/${nextTool.slug}`}
                       className="group flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-3 py-2 text-[11px] text-[#888] hover:text-white hover:border-[#333] transition-all"
                     >
-                      <NextIcon size={12} />
+                      <NextIcon size={12} color={getToolColor(nextTool.slug)} />
                       <span>{nextTool.title}</span>
                       <ArrowRight size={10} className="text-[#404040] group-hover:text-white" />
                     </Link>

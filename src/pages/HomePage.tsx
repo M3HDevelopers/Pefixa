@@ -2,17 +2,55 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { categories } from '../lib/tools/categories';
 import { getToolsByCategory, toolRegistry } from '../lib/tools/registry';
-import { getToolIcon, getCategoryIcon } from '../lib/tools/icons';
+import { getToolIcon, getCategoryIcon, getToolColor, getCategoryColor } from '../lib/tools/icons';
 import { useAppStore } from '../store';
 import { LiquidCard } from '../components/LiquidCard';
 import { ParticlesBackground } from '../components/ParticlesBackground';
+
+// Animated FAQ Item Component
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(isOpen ? contentRef.current.scrollHeight : 0);
+    }
+  }, [isOpen]);
+
+  return (
+    <div className="card" data-hover="border">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full p-5 flex items-center justify-between text-left"
+      >
+        <span className="text-[14px] font-medium text-white pr-4">{question}</span>
+        <ChevronDown 
+          size={16} 
+          className={`text-[#888] transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} 
+        />
+      </button>
+      <div
+        style={{ height: `${height}px` }}
+        className="overflow-hidden transition-[height] duration-300 ease-in-out"
+      >
+        <div ref={contentRef} className="px-5 pb-5 text-[13px] text-[#888] leading-relaxed">
+          {answer}
+        </div>
+      </div>
+    </div>
+  );
+}
 import { 
   ArrowRight, Zap, Shield, Clock, Globe, Sparkles, 
   Check, Star, Users, Award, Target, TrendingUp,
   Lock, Eye, Cpu, Database, Code, Layers, ChevronDown,
   Mail, Github, Twitter, Linkedin, Heart, Rocket,
   FileText, Image, FileSpreadsheet, Presentation,
-  ScanLine, Key, PenTool, GitBranch
+  ScanLine, Key, PenTool, GitBranch, Cloud, Archive,
+  MessageSquare, Box, Shapes, CheckCircle2, BarChart3, Layout,
+  FileCode, Terminal
 } from 'lucide-react';
 
 const popularTools = [
@@ -58,7 +96,7 @@ export function HomePage() {
     <div className="relative overflow-hidden">
       {/* Particles Background - Scrolls with content, behind everything */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <ParticlesBackground />
+        <ParticlesBackground key="particles" />
       </div>
 
       {/* Ambient background gradients */}
@@ -176,7 +214,7 @@ export function HomePage() {
                   <LiquidCard className="p-5 h-full">
                     <div className="popular-badge">Popular</div>
                     <div className="icon-box w-12 h-12 mb-4">
-                      <Icon size={20} className="text-[#888]" />
+                      <Icon size={20} color={getToolColor(slug)} />
                     </div>
                     <h3 className="font-semibold text-[14px] mb-2">{tool.title}</h3>
                     <p className="text-[11px] leading-relaxed line-clamp-2 mb-3 opacity-70">{tool.description}</p>
@@ -249,7 +287,7 @@ export function HomePage() {
                   }`}
                   data-hover="fill"
                 >
-                  <Icon size={13} />
+                  <Icon size={13} color={activeTab === cat.slug ? '#000000' : getCategoryColor(cat.slug)} />
                   <span>{cat.title}</span>
                 </button>
               );
@@ -279,7 +317,7 @@ export function HomePage() {
                         <LiquidCard className="p-4">
                           <div className="flex items-start gap-3">
                             <div className="icon-box w-9 h-9 shrink-0">
-                              <ToolIcon size={14} className="text-white" />
+                              <ToolIcon size={14} color={getToolColor(tool.slug)} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-[12px] mb-1 truncate">{tool.title}</h4>
@@ -472,15 +510,7 @@ export function HomePage() {
               { q: 'How does the AI features work?', a: 'AI-powered features like summarization and translation require backend processing. These tools clearly indicate when cloud processing is needed.' },
               { q: 'Is my data secure?', a: 'Absolutely. We use industry-standard encryption, never store your files, and all processing happens locally when possible. Your privacy is our top priority.' },
             ].map((faq, i) => (
-              <details key={i} className="card group" data-hover="border">
-                <summary className="p-5 cursor-pointer flex items-center justify-between list-none">
-                  <span className="text-[14px] font-medium text-white">{faq.q}</span>
-                  <ChevronDown size={16} className="text-[#888] group-open:rotate-180 transition-transform" />
-                </summary>
-                <div className="px-5 pb-5 text-[13px] text-[#888] leading-relaxed">
-                  {faq.a}
-                </div>
-              </details>
+              <FaqItem key={i} question={faq.q} answer={faq.a} />
             ))}
           </div>
         </RevealSection>
@@ -493,14 +523,42 @@ export function HomePage() {
             <p className="text-[#888] text-[14px]">Seamless integration with your favorite tools</p>
           </div>
           <div className="grid grid-cols-6 gap-4">
-            {['Google Drive', 'Dropbox', 'OneDrive', 'Slack', 'Notion', 'Zapier', 'GitHub', 'VS Code', 'Figma', 'Jira', 'Asana', 'Trello'].map((tool, i) => (
-              <LiquidCard key={i} className="p-4 text-center">
-                <div className="icon-box w-10 h-10 mx-auto mb-2">
-                  <Layers size={16} className="text-white" />
-                </div>
-                <p className="text-[11px] opacity-70">{tool}</p>
-              </LiquidCard>
-            ))}
+            {[
+              { name: 'Google Drive', color: '#4285F4', icons: [FileText, Database, Cloud] },
+              { name: 'Dropbox', color: '#0061FF', icons: [Database, FileText, Archive] },
+              { name: 'OneDrive', color: '#0078D4', icons: [Cloud, FileText, Database] },
+              { name: 'Slack', color: '#4A154B', icons: [MessageSquare, Users, Zap] },
+              { name: 'Notion', color: '#FFFFFF', icons: [FileText, Database, Layers] },
+              { name: 'Zapier', color: '#FF4A00', icons: [Zap, GitBranch, ArrowRight] },
+              { name: 'GitHub', color: '#F0F6FC', icons: [Code, GitBranch, Box] },
+              { name: 'VS Code', color: '#007ACC', icons: [Code, FileCode, Terminal] },
+              { name: 'Figma', color: '#F24E1E', icons: [PenTool, Layers, Shapes] },
+              { name: 'Jira', color: '#0052CC', icons: [Target, CheckCircle2, BarChart3] },
+              { name: 'Asana', color: '#F06A6A', icons: [Check, Target, Users] },
+              { name: 'Trello', color: '#0079BF', icons: [Layout, Layers, Check] },
+            ].map((tool, i) => {
+              const Icon1 = tool.icons[0];
+              const Icon2 = tool.icons[1];
+              const Icon3 = tool.icons[2];
+              return (
+                <LiquidCard key={i} className="p-4 text-center relative overflow-hidden">
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-center gap-1 mb-2 h-10">
+                      <div className="icon-box w-8 h-8" style={{ borderColor: tool.color + '40' }}>
+                        <Icon1 size={14} color={tool.color} />
+                      </div>
+                      <div className="icon-box w-6 h-6 -ml-2" style={{ borderColor: tool.color + '30' }}>
+                        <Icon2 size={10} color={tool.color} />
+                      </div>
+                      <div className="icon-box w-5 h-5 -ml-1.5" style={{ borderColor: tool.color + '20' }}>
+                        <Icon3 size={8} color={tool.color} />
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-[#888]">{tool.name}</p>
+                  </div>
+                </LiquidCard>
+              );
+            })}
           </div>
         </RevealSection>
 
@@ -691,7 +749,7 @@ export function HomePage() {
               <span>•</span>
               <span>Privacy-first PDF processing</span>
               <span>•</span>
-              <span>Made with <Heart size={10} className="inline text-white" /> for the web</span>
+              <span>Built for professionals, by professionals</span>
             </div>
             <div className="flex items-center gap-2 text-[11px] text-[#888]">
               <span>Designed & Developed by</span>
