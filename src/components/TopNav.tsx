@@ -339,8 +339,8 @@ export function TopNav() {
                         {/* Category Header */}
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <div className="icon-box w-5 h-5">
-                              <CatIcon size={10} color={getCategoryColor(cat.slug)} />
+                            <div className="icon-box w-7 h-7">
+                              <CatIcon size={14} color={getCategoryColor(cat.slug)} />
                             </div>
                             <h4 className="text-[11px] font-semibold text-white">{cat.title}</h4>
                             <span className="text-[8px] text-[#555] bg-[#1a1a1a] px-1.5 py-0.5 rounded">{tools.length}</span>
@@ -357,8 +357,8 @@ export function TopNav() {
                                 onClick={() => selectTool(tool.slug)}
                                 className="mega-menu-item flex items-center gap-1.5 px-2 py-1 text-left rounded"
                               >
-                                <div className="icon-box w-4 h-4 shrink-0">
-                                  <ToolIcon size={9} color={getToolColor(tool.slug)} />
+                                <div className="icon-box w-6 h-6 shrink-0">
+                                  <ToolIcon size={12} color={getToolColor(tool.slug)} />
                                 </div>
                                 <p className="text-[9px] font-medium text-[#ccc] truncate">{tool.title}</p>
                               </button>
