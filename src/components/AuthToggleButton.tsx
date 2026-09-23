@@ -13,7 +13,7 @@ export function AuthToggleButton() {
 
   return (
     <div 
-      className="fixed right-6 top-24 z-40 auth-toggle-button"
+      className="fixed right-6 top-20 z-40 auth-toggle-button"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
