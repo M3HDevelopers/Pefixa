@@ -18,9 +18,9 @@ import {
 
 const mainTabs = [
   { label: 'Home', path: '/', icon: Home },
-  { label: 'Tools', path: '/tools', icon: Wrench, hasMegaMenu: true },
-  { label: 'Convert From PDF', path: '/tools?category=convert-from', icon: FileOutput },
-  { label: 'Convert To PDF', path: '/tools?category=convert-to', icon: FilePlus2 },
+  { label: 'Tools', path: '/tools', icon: Wrench, hasMegaMenu: true, menuType: 'all' },
+  { label: 'Convert From PDF', path: '/tools?category=convert-from', icon: FileOutput, hasMegaMenu: true, menuType: 'convert-from' },
+  { label: 'Convert To PDF', path: '/tools?category=convert-to', icon: FilePlus2, hasMegaMenu: true, menuType: 'convert-to' },
   { label: 'Workflows', path: '/workflows', icon: GitBranch },
   { label: 'History', path: '/history', icon: History },
 ];
@@ -30,32 +30,32 @@ export function TopNav() {
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || '');
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const menuTimeoutRef = useRef<number | undefined>(undefined);
-  const megaMenuRef = useRef<HTMLDivElement>(null);
-  const toolsTabRef = useRef<HTMLDivElement>(null);
+  const activeMenuRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLDivElement>(null);
 
   const searchResults = searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 6) : [];
 
   // Lock body scroll when menu is open
   useEffect(() => {
-    if (megaMenuOpen || searchOpen) {
+    if (activeMenu || searchOpen) {
       document.documentElement.classList.add('menu-open');
     } else {
       document.documentElement.classList.remove('menu-open');
     }
     return () => document.documentElement.classList.remove('menu-open');
-  }, [megaMenuOpen, searchOpen]);
+  }, [activeMenu, searchOpen]);
 
   // Close mega menu on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (megaMenuRef.current && !megaMenuRef.current.contains(e.target as Node) &&
-          toolsTabRef.current && !toolsTabRef.current.contains(e.target as Node)) {
-        setMegaMenuOpen(false);
+      if (activeMenuRef.current && !activeMenuRef.current.contains(e.target as Node) &&
+          activeTabRef.current && !activeTabRef.current.contains(e.target as Node)) {
+        setActiveMenu(null);
         setActiveTool(null);
       }
     };
@@ -68,13 +68,13 @@ export function TopNav() {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setSearchOpen(false);
-        setMegaMenuOpen(false);
+        setActiveMenu(null);
         setActiveTool(null);
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setSearchOpen(true);
-        setMegaMenuOpen(false);
+        setActiveMenu(null);
         setTimeout(() => searchRef.current?.focus(), 50);
       }
     };
@@ -82,17 +82,26 @@ export function TopNav() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  const handleToolsTabEnter = () => {
+  const handleTabEnter = (menuType: string) => {
     if (menuTimeoutRef.current !== undefined) {
       clearTimeout(menuTimeoutRef.current);
       menuTimeoutRef.current = undefined;
     }
-    setMegaMenuOpen(true);
+    setActiveMenu(menuType);
+    
+    // Set default category for this menu
+    if (menuType === 'convert-from') {
+      setActiveCategory('convert-from');
+    } else if (menuType === 'convert-to') {
+      setActiveCategory('convert-to');
+    } else if (menuType === 'all') {
+      setActiveCategory(categories[0]?.slug || '');
+    }
   };
 
-  const handleToolsTabLeave = () => {
+  const handleTabLeave = () => {
     menuTimeoutRef.current = window.setTimeout(() => {
-      setMegaMenuOpen(false);
+      setActiveMenu(null);
       setActiveTool(null);
       menuTimeoutRef.current = undefined;
     }, 100);
@@ -114,13 +123,23 @@ export function TopNav() {
   const selectTool = (slug: string) => {
     setSearchOpen(false);
     setSearchQuery('');
-    setMegaMenuOpen(false);
+    setActiveMenu(null);
     setActiveTool(null);
     navigate(`/tools/${slug}`);
   };
 
   const activeCatTools = activeCategory ? getToolsByCategory(activeCategory) : [];
   const activeToolDef = activeTool ? toolRegistry.find(t => t.slug === activeTool) : null;
+
+  // Get tools for specific category
+  const getToolsForMenu = (menuType: string) => {
+    if (menuType === 'convert-from') {
+      return getToolsByCategory('convert-from');
+    } else if (menuType === 'convert-to') {
+      return getToolsByCategory('convert-to');
+    }
+    return [];
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 top-bar">
@@ -139,20 +158,22 @@ export function TopNav() {
           {mainTabs.map(tab => {
             const isActive = location.pathname === tab.path || (tab.path !== '/' && location.pathname.startsWith(tab.path));
             const Icon = tab.icon;
-            const isToolsTab = tab.hasMegaMenu;
+            const hasMegaMenu = tab.hasMegaMenu;
+            const menuType = tab.menuType;
+            const isMenuOpen = activeMenu === menuType;
 
-            if (isToolsTab) {
+            if (hasMegaMenu) {
               return (
                 <div
                   key={tab.path}
-                  ref={toolsTabRef}
-                  onMouseEnter={handleToolsTabEnter}
-                  onMouseLeave={handleToolsTabLeave}
+                  ref={isMenuOpen ? activeTabRef : undefined}
+                  onMouseEnter={() => handleTabEnter(menuType!)}
+                  onMouseLeave={handleTabLeave}
                   className="relative"
                 >
                   <button
                     className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md ${
-                      isActive || megaMenuOpen 
+                      isActive || isMenuOpen 
                         ? 'text-white bg-white/5' 
                         : 'text-[#888] hover:text-white hover:bg-white/5'
                     }`}
@@ -163,7 +184,7 @@ export function TopNav() {
                       width="8" 
                       height="8" 
                       viewBox="0 0 8 8" 
-                      className={`transition-transform duration-150 ${megaMenuOpen ? 'rotate-180' : ''}`}
+                      className={`transition-transform duration-150 ${isMenuOpen ? 'rotate-180' : ''}`}
                     >
                       <path d="M1 3L4 6L7 3" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
                     </svg>
@@ -196,10 +217,10 @@ export function TopNav() {
           <button
             onClick={() => { 
               setSearchOpen(!searchOpen); 
-              setMegaMenuOpen(false); 
+              setActiveMenu(null); 
               setTimeout(() => searchRef.current?.focus(), 50); 
             }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md text-[12px] text-[#888] hover:border-[#333] hover:bg-[#111] transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md text-[12px] text-[#888] hover:border-[#333] transition-colors"
           >
             <Search size={13} />
             <span className="hidden sm:inline">Search 286 tools</span>
@@ -208,7 +229,7 @@ export function TopNav() {
 
           {searchOpen && (
             <div className="fixed inset-0 z-50 flex items-start justify-center pt-20" onClick={() => setSearchOpen(false)}>
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+              <div className="absolute inset-0 bg-black/60" />
               <div className="relative w-[500px] mega-menu animate-dropdown" onClick={e => e.stopPropagation()}>
                 <div className="p-3 border-b border-[#1a1a1a]">
                   <div className="relative">
@@ -304,12 +325,12 @@ export function TopNav() {
         </div>
       </div>
 
-      {/* Mega Menu */}
-      {megaMenuOpen && (
+      {/* Mega Menu for "Tools" (All Categories) */}
+      {activeMenu === 'all' && (
         <div
-          ref={megaMenuRef}
-          onMouseEnter={handleToolsTabEnter}
-          onMouseLeave={handleToolsTabLeave}
+          ref={activeMenuRef}
+          onMouseEnter={() => handleTabEnter('all')}
+          onMouseLeave={handleTabLeave}
           className="fixed left-0 right-0 z-40 animate-dropdown"
           style={{ top: '56px' }}
         >
@@ -331,7 +352,7 @@ export function TopNav() {
                         onMouseEnter={() => handleCategoryEnter(cat.slug)}
                         onClick={() => { 
                           navigate(`/tools?category=${cat.slug}`); 
-                          setMegaMenuOpen(false); 
+                          setActiveMenu(null); 
                         }}
                         className={`mega-menu-item w-full flex items-center gap-2 px-3 py-1.5 text-left ${
                           isActive ? 'bg-[#141414]' : ''
@@ -421,7 +442,7 @@ export function TopNav() {
                   <div className="px-3 py-2 border-t border-[#1a1a1a]">
                     <Link
                       to={`/tools?category=${activeCategory}`}
-                      onClick={() => setMegaMenuOpen(false)}
+                      onClick={() => setActiveMenu(null)}
                       className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
                     >
                       View all {activeCatTools.length} tools 
@@ -451,7 +472,7 @@ export function TopNav() {
                     <Link
                       to={`/tools/${activeToolDef.slug}`}
                       onClick={() => { 
-                        setMegaMenuOpen(false); 
+                        setActiveMenu(null); 
                         setActiveTool(null); 
                       }}
                       className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
@@ -462,6 +483,108 @@ export function TopNav() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mega Menu for "Convert From PDF" */}
+      {activeMenu === 'convert-from' && (
+        <div
+          ref={activeMenuRef}
+          onMouseEnter={() => handleTabEnter('convert-from')}
+          onMouseLeave={handleTabLeave}
+          className="fixed left-0 right-0 z-40 animate-dropdown"
+          style={{ top: '56px' }}
+        >
+          <div className="max-w-[1400px] mx-auto px-6">
+            <div className="mega-menu" style={{ height: 'auto', maxHeight: '500px' }}>
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="text-[14px] font-semibold text-white mb-1">Convert From PDF</h3>
+                    <p className="text-[11px] text-[#888]">Transform PDF to other formats</p>
+                  </div>
+                  <Link
+                    to="/tools?category=convert-from"
+                    onClick={() => setActiveMenu(null)}
+                    className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                  >
+                    View all tools <ChevronRight size={9} />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {getToolsForMenu('convert-from').map(tool => {
+                    const ToolIcon = getToolIcon(tool.slug);
+                    return (
+                      <button
+                        key={tool.slug}
+                        onClick={() => selectTool(tool.slug)}
+                        className="mega-menu-item flex items-center gap-2 px-3 py-2 text-left rounded-md"
+                      >
+                        <div className="icon-box w-6 h-6 shrink-0">
+                          <ToolIcon size={11} className="text-[#888]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                          <p className="text-[9px] text-[#555] truncate">{tool.description}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mega Menu for "Convert To PDF" */}
+      {activeMenu === 'convert-to' && (
+        <div
+          ref={activeMenuRef}
+          onMouseEnter={() => handleTabEnter('convert-to')}
+          onMouseLeave={handleTabLeave}
+          className="fixed left-0 right-0 z-40 animate-dropdown"
+          style={{ top: '56px' }}
+        >
+          <div className="max-w-[1400px] mx-auto px-6">
+            <div className="mega-menu" style={{ height: 'auto', maxHeight: '500px' }}>
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="text-[14px] font-semibold text-white mb-1">Convert To PDF</h3>
+                    <p className="text-[11px] text-[#888]">Create PDF from other formats</p>
+                  </div>
+                  <Link
+                    to="/tools?category=convert-to"
+                    onClick={() => setActiveMenu(null)}
+                    className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                  >
+                    View all tools <ChevronRight size={9} />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {getToolsForMenu('convert-to').map(tool => {
+                    const ToolIcon = getToolIcon(tool.slug);
+                    return (
+                      <button
+                        key={tool.slug}
+                        onClick={() => selectTool(tool.slug)}
+                        className="mega-menu-item flex items-center gap-2 px-3 py-2 text-left rounded-md"
+                      >
+                        <div className="icon-box w-6 h-6 shrink-0">
+                          <ToolIcon size={11} className="text-[#888]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                          <p className="text-[9px] text-[#555] truncate">{tool.description}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>
