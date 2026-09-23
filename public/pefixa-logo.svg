@@ -1,32 +1,38 @@
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background Circle -->
-  <circle cx="100" cy="100" r="95" fill="#000000" stroke="#ffffff" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Outer Circle -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#ffffff" stroke-width="2"/>
   
-  <!-- Document Stack - Back Layer -->
-  <rect x="55" y="50" width="70" height="90" rx="4" fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.4"/>
+  <!-- Inner Hexagon Shape -->
+  <path d="M 100 30 L 155 65 L 155 135 L 100 170 L 45 135 L 45 65 Z" 
+        fill="#000000" 
+        stroke="#ffffff" 
+        stroke-width="2.5"/>
   
-  <!-- Document Stack - Middle Layer -->
-  <rect x="60" y="55" width="70" height="90" rx="4" fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.7"/>
+  <!-- Stylized P with Document -->
+  <g transform="translate(100, 100)">
+    <!-- Document outline -->
+    <rect x="-25" y="-35" width="50" height="70" 
+          fill="none" 
+          stroke="#ffffff" 
+          stroke-width="2" 
+          rx="3"/>
+    
+    <!-- P letter integrated -->
+    <path d="M -15 -20 L -15 20 M -15 -20 L 5 -20 Q 15 -20 15 -10 Q 15 0 5 0 L -15 0" 
+          fill="none" 
+          stroke="#ffffff" 
+          stroke-width="3.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+    
+    <!-- Accent dots -->
+    <circle cx="10" cy="15" r="2" fill="#ffffff"/>
+    <circle cx="10" cy="22" r="2" fill="#ffffff"/>
+  </g>
   
-  <!-- Document Stack - Front Layer -->
-  <rect x="65" y="60" width="70" height="90" rx="4" fill="#ffffff" stroke="#ffffff" stroke-width="2.5"/>
-  
-  <!-- Stylized P - Integrated into front document -->
-  <path d="M 80 75 L 80 135 M 80 75 L 100 75 Q 115 75 115 90 Q 115 105 100 105 L 80 105" 
-        fill="none" 
-        stroke="#000000" 
-        stroke-width="6" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"/>
-  
-  <!-- Decorative Lines - representing data flow -->
-  <line x1="80" y1="115" x2="120" y2="115" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="80" y1="125" x2="110" y2="125" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="80" y1="135" x2="115" y2="135" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
-  
-  <!-- Corner Accent - Top Right -->
-  <path d="M 135 60 L 135 70 L 125 70" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <!-- Corner Accent - Bottom Left -->
-  <path d="M 65 150 L 65 140 L 75 140" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Corner accents -->
+  <path d="M 20 20 L 35 20 M 20 20 L 20 35" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 180 20 L 165 20 M 180 20 L 180 35" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 20 180 L 35 180 M 20 180 L 20 165" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 180 180 L 165 180 M 180 180 L 180 165" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
 </svg>
