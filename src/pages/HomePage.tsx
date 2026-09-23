@@ -6,7 +6,6 @@ import { getToolIcon, getCategoryIcon, getToolColor, getCategoryColor } from '..
 import { useAppStore } from '../store';
 import { LiquidCard } from '../components/LiquidCard';
 import { ParticlesBackground } from '../components/ParticlesBackground';
-import { IntroScreen } from '../components/IntroScreen';
 import { 
   ArrowRight, Zap, Shield, Clock, Globe, Sparkles, 
   Check, Star, Users, Award, Target, TrendingUp,
@@ -89,20 +88,12 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export function HomePage() {
-  const [showIntro, setShowIntro] = useState(true);
   const addRecentTool = useAppStore(s => s.addRecentTool);
   const recentTools = useAppStore(s => s.recentTools);
   const [activeTab, setActiveTab] = useState('organize');
 
-  const handleIntroComplete = () => {
-    setShowIntro(false);
-  };
-
   return (
-    <>
-      {showIntro && <IntroScreen onComplete={handleIntroComplete} />}
-      
-      <div className="relative overflow-hidden" data-hero-section>
+    <div className="relative overflow-hidden">
         {/* Particles Background - Scrolls with content, behind everything */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <ParticlesBackground key="particles" />
@@ -821,6 +812,5 @@ export function HomePage() {
           </footer>
         </div>
       </div>
-    </>
   );
 }
