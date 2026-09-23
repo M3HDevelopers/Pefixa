@@ -301,7 +301,7 @@ export function TopNav() {
         </div>
       </div>
 
-      {/* Mega Menu for "Tools" (All Categories) */}
+      {/* Mega Menu for "Tools" (All Categories) - 2 Column Layout */}
       {activeMenu === 'all' && (
         <div
           ref={activeMenuRef}
@@ -311,12 +311,12 @@ export function TopNav() {
           style={{ top: '56px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
-            <div className="mega-menu max-h-[550px] overflow-y-auto">
+            <div className="mega-menu max-h-[480px] overflow-y-auto">
               <div className="p-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h3 className="text-[14px] font-semibold text-white mb-1">All Tools</h3>
-                    <p className="text-[11px] text-[#888]">286+ PDF tools organized by category</p>
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">All Tools</h3>
+                    <p className="text-[10px] text-[#888]">286+ PDF tools organized by category</p>
                   </div>
                   <Link
                     to="/tools"
@@ -327,65 +327,54 @@ export function TopNav() {
                   </Link>
                 </div>
 
-                {/* Categories Grid */}
-                <div className="space-y-4">
+                {/* Categories Grid - 2 Columns */}
+                <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                   {categories.map(cat => {
                     const tools = getToolsByCategory(cat.slug);
                     const CatIcon = getToolIcon(cat.slug);
                     
                     return (
-                      <div key={cat.slug}>
+                      <div key={cat.slug} className="border border-[#1a1a1a] rounded-md p-2.5">
                         {/* Category Header */}
-                        <div className="flex items-center justify-between mb-2 pb-2 border-b border-[#1a1a1a]">
+                        <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <div className="icon-box w-6 h-6">
-                              <CatIcon size={11} className="text-[#888]" />
+                            <div className="icon-box w-5 h-5">
+                              <CatIcon size={10} className="text-[#888]" />
                             </div>
-                            <h4 className="text-[12px] font-semibold text-white">{cat.title}</h4>
-                            <span className="text-[9px] text-[#555]">({tools.length})</span>
+                            <h4 className="text-[11px] font-semibold text-white">{cat.title}</h4>
+                            <span className="text-[8px] text-[#555] bg-[#1a1a1a] px-1.5 py-0.5 rounded">{tools.length}</span>
                           </div>
-                          <Link
-                            to={`/tools?category=${cat.slug}`}
-                            onClick={() => setActiveMenu(null)}
-                            className="text-[9px] text-[#888] hover:text-white inline-flex items-center gap-1"
-                          >
-                            View all <ChevronRight size={8} />
-                          </Link>
                         </div>
 
-                        {/* Tools Grid - Show first 8 tools */}
-                        <div className="grid grid-cols-4 gap-1.5">
-                          {tools.slice(0, 8).map(tool => {
+                        {/* Tools Grid - 2 columns, 2 rows (4 tools) */}
+                        <div className="grid grid-cols-2 gap-1">
+                          {tools.slice(0, 4).map(tool => {
                             const ToolIcon = getToolIcon(tool.slug);
                             return (
                               <button
                                 key={tool.slug}
                                 onClick={() => selectTool(tool.slug)}
-                                className="mega-menu-item flex items-center gap-2 px-2 py-1.5 text-left rounded-md"
+                                className="mega-menu-item flex items-center gap-1.5 px-2 py-1 text-left rounded"
                               >
-                                <div className="icon-box w-5 h-5 shrink-0">
-                                  <ToolIcon size={10} className="text-[#888]" />
+                                <div className="icon-box w-4 h-4 shrink-0">
+                                  <ToolIcon size={9} className="text-[#888]" />
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
-                                </div>
+                                <p className="text-[9px] font-medium text-[#ccc] truncate">{tool.title}</p>
                               </button>
                             );
                           })}
                         </div>
 
-                        {/* Show more link if there are more tools */}
-                        {tools.length > 8 && (
-                          <div className="mt-1.5">
-                            <Link
-                              to={`/tools?category=${cat.slug}`}
-                              onClick={() => setActiveMenu(null)}
-                              className="text-[9px] text-[#666] hover:text-white"
-                            >
-                              + {tools.length - 8} more tools
-                            </Link>
-                          </div>
-                        )}
+                        {/* View all link */}
+                        <div className="mt-1.5 pt-1.5 border-t border-[#1a1a1a]">
+                          <Link
+                            to={`/tools?category=${cat.slug}`}
+                            onClick={() => setActiveMenu(null)}
+                            className="text-[9px] text-[#666] hover:text-white inline-flex items-center gap-0.5"
+                          >
+                            View all {tools.length} tools <ChevronRight size={8} />
+                          </Link>
+                        </div>
                       </div>
                     );
                   })}
@@ -406,12 +395,12 @@ export function TopNav() {
           style={{ top: '56px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
-            <div className="mega-menu" style={{ height: 'auto', maxHeight: '500px' }}>
+            <div className="mega-menu">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h3 className="text-[14px] font-semibold text-white mb-1">Convert From PDF</h3>
-                    <p className="text-[11px] text-[#888]">Transform PDF to other formats</p>
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">Convert From PDF</h3>
+                    <p className="text-[10px] text-[#888]">Transform PDF to other formats</p>
                   </div>
                   <Link
                     to="/tools?category=convert-from"
@@ -421,21 +410,21 @@ export function TopNav() {
                     View all tools <ChevronRight size={9} />
                   </Link>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-5 gap-1.5">
                   {getToolsForMenu('convert-from').map(tool => {
                     const ToolIcon = getToolIcon(tool.slug);
                     return (
                       <button
                         key={tool.slug}
                         onClick={() => selectTool(tool.slug)}
-                        className="mega-menu-item flex items-center gap-2 px-3 py-2 text-left rounded-md"
+                        className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
-                        <div className="icon-box w-6 h-6 shrink-0">
-                          <ToolIcon size={11} className="text-[#888]" />
+                        <div className="icon-box w-5 h-5 shrink-0">
+                          <ToolIcon size={10} className="text-[#888]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-medium text-[#ccc] truncate">{tool.title}</p>
-                          <p className="text-[9px] text-[#555] truncate">{tool.description}</p>
+                          <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                          <p className="text-[8px] text-[#555] truncate">{tool.description}</p>
                         </div>
                       </button>
                     );
@@ -457,12 +446,12 @@ export function TopNav() {
           style={{ top: '56px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
-            <div className="mega-menu" style={{ height: 'auto', maxHeight: '500px' }}>
+            <div className="mega-menu">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h3 className="text-[14px] font-semibold text-white mb-1">Convert To PDF</h3>
-                    <p className="text-[11px] text-[#888]">Create PDF from other formats</p>
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">Convert To PDF</h3>
+                    <p className="text-[10px] text-[#888]">Create PDF from other formats</p>
                   </div>
                   <Link
                     to="/tools?category=convert-to"
@@ -472,21 +461,21 @@ export function TopNav() {
                     View all tools <ChevronRight size={9} />
                   </Link>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-5 gap-1.5">
                   {getToolsForMenu('convert-to').map(tool => {
                     const ToolIcon = getToolIcon(tool.slug);
                     return (
                       <button
                         key={tool.slug}
                         onClick={() => selectTool(tool.slug)}
-                        className="mega-menu-item flex items-center gap-2 px-3 py-2 text-left rounded-md"
+                        className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
-                        <div className="icon-box w-6 h-6 shrink-0">
-                          <ToolIcon size={11} className="text-[#888]" />
+                        <div className="icon-box w-5 h-5 shrink-0">
+                          <ToolIcon size={10} className="text-[#888]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-medium text-[#ccc] truncate">{tool.title}</p>
-                          <p className="text-[9px] text-[#555] truncate">{tool.description}</p>
+                          <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                          <p className="text-[8px] text-[#555] truncate">{tool.description}</p>
                         </div>
                       </button>
                     );
