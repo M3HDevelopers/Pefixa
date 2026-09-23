@@ -167,8 +167,8 @@ export function HomePage() {
                   onClick={() => addRecentTool(slug)}
                   className="block"
                 >
-                  <LiquidCard className="p-5 relative h-full">
-                    <div className="popular-badge" style={{ color: '#000' }}>Popular</div>
+                  <LiquidCard className="p-5 h-full">
+                    <div className="popular-badge">Popular</div>
                     <div className="icon-box w-12 h-12 mb-4">
                       <Icon size={20} className="text-[#888]" />
                     </div>

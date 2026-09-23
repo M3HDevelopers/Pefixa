@@ -164,20 +164,25 @@
     transition: color 0.4s ease;
   }
 
-  /* Mega menu - simple, solid */
+  /* Mega menu - distinct from background */
   .mega-menu {
-    background-color: #0a0a0a;
-    border: 1px solid #1a1a1a;
-    border-radius: 6px;
-    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8);
+    background-color: #111111;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    box-shadow: 
+      0 25px 80px -12px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+    contain: layout style paint;
   }
 
   .mega-menu-item {
-    transition: background-color 0.1s ease;
     position: relative;
+    contain: layout style;
   }
 
-  .mega-menu-item:hover { background-color: #141414; }
+  .mega-menu-item:hover { 
+    background-color: #1a1a1a;
+  }
 
   /* Nav tab - simple underline */
   .nav-tab {
@@ -254,16 +259,19 @@
   /* Popular badge */
   .popular-badge {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 10px;
+    right: 10px;
     background-color: #ffffff;
     color: #000000;
-    font-size: 9px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 2px;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    z-index: 20;
+    white-space: nowrap;
+    line-height: 1;
   }
 
   /* Page transition animation */

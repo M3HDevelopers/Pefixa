@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categories } from '../lib/tools/categories';
 import { getToolsByCategory, searchTools, toolRegistry } from '../lib/tools/registry';
@@ -12,11 +12,15 @@ import {
   History,
   Settings,
   Bookmark,
+  FileOutput,
+  FilePlus2,
 } from 'lucide-react';
 
 const mainTabs = [
   { label: 'Home', path: '/', icon: Home },
-  { label: 'Tools', path: '/tools', icon: Wrench, hasMegaMenu: true },
+  { label: 'Tools', path: '/tools', icon: Wrench, hasMegaMenu: true, menuType: 'all' },
+  { label: 'Convert From PDF', path: '/tools?category=convert-from', icon: FileOutput, hasMegaMenu: true, menuType: 'convert-from' },
+  { label: 'Convert To PDF', path: '/tools?category=convert-to', icon: FilePlus2, hasMegaMenu: true, menuType: 'convert-to' },
   { label: 'Workflows', path: '/workflows', icon: GitBranch },
   { label: 'History', path: '/history', icon: History },
 ];
@@ -26,33 +30,37 @@ export function TopNav() {
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || '');
-  const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const menuTimeoutRef = useRef<number | undefined>(undefined);
-  const megaMenuRef = useRef<HTMLDivElement>(null);
-  const toolsTabRef = useRef<HTMLDivElement>(null);
+  const activeMenuRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLDivElement>(null);
 
-  const searchResults = searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 6) : [];
+  const searchResults = useMemo(
+    () => searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 6) : [],
+    [searchQuery]
+  );
+
+  // Cache tools for each menu type
+  const convertFromTools = useMemo(() => getToolsByCategory('convert-from'), []);
+  const convertToTools = useMemo(() => getToolsByCategory('convert-to'), []);
 
   // Lock body scroll when menu is open
   useEffect(() => {
-    if (megaMenuOpen || searchOpen) {
+    if (activeMenu || searchOpen) {
       document.documentElement.classList.add('menu-open');
     } else {
       document.documentElement.classList.remove('menu-open');
     }
     return () => document.documentElement.classList.remove('menu-open');
-  }, [megaMenuOpen, searchOpen]);
+  }, [activeMenu, searchOpen]);
 
   // Close mega menu on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (megaMenuRef.current && !megaMenuRef.current.contains(e.target as Node) &&
-          toolsTabRef.current && !toolsTabRef.current.contains(e.target as Node)) {
-        setMegaMenuOpen(false);
-        setActiveTool(null);
+      if (activeMenuRef.current && !activeMenuRef.current.contains(e.target as Node) &&
+          activeTabRef.current && !activeTabRef.current.contains(e.target as Node)) {
+        setActiveMenu(null);
       }
     };
     document.addEventListener('mousedown', handleClick);
@@ -64,13 +72,12 @@ export function TopNav() {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setSearchOpen(false);
-        setMegaMenuOpen(false);
-        setActiveTool(null);
+        setActiveMenu(null);
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setSearchOpen(true);
-        setMegaMenuOpen(false);
+        setActiveMenu(null);
         setTimeout(() => searchRef.current?.focus(), 50);
       }
     };
@@ -78,45 +85,37 @@ export function TopNav() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  const handleToolsTabEnter = () => {
+  const handleTabEnter = (menuType: string) => {
     if (menuTimeoutRef.current !== undefined) {
       clearTimeout(menuTimeoutRef.current);
       menuTimeoutRef.current = undefined;
     }
-    setMegaMenuOpen(true);
+    setActiveMenu(menuType);
   };
 
-  const handleToolsTabLeave = () => {
+  const handleTabLeave = () => {
     menuTimeoutRef.current = window.setTimeout(() => {
-      setMegaMenuOpen(false);
-      setActiveTool(null);
+      setActiveMenu(null);
       menuTimeoutRef.current = undefined;
     }, 100);
-  };
-
-  const handleCategoryEnter = (slug: string) => {
-    setActiveCategory(slug);
-    setActiveTool(null);
-  };
-
-  const handleToolEnter = (slug: string) => {
-    setActiveTool(slug);
-  };
-
-  const handleToolLeave = () => {
-    setActiveTool(null);
   };
 
   const selectTool = (slug: string) => {
     setSearchOpen(false);
     setSearchQuery('');
-    setMegaMenuOpen(false);
-    setActiveTool(null);
+    setActiveMenu(null);
     navigate(`/tools/${slug}`);
   };
 
-  const activeCatTools = activeCategory ? getToolsByCategory(activeCategory) : [];
-  const activeToolDef = activeTool ? toolRegistry.find(t => t.slug === activeTool) : null;
+  // Get tools for specific category (using cached values)
+  const getToolsForMenu = (menuType: string) => {
+    if (menuType === 'convert-from') {
+      return convertFromTools;
+    } else if (menuType === 'convert-to') {
+      return convertToTools;
+    }
+    return [];
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 top-bar">
@@ -135,20 +134,22 @@ export function TopNav() {
           {mainTabs.map(tab => {
             const isActive = location.pathname === tab.path || (tab.path !== '/' && location.pathname.startsWith(tab.path));
             const Icon = tab.icon;
-            const isToolsTab = tab.hasMegaMenu;
+            const hasMegaMenu = tab.hasMegaMenu;
+            const menuType = tab.menuType;
+            const isMenuOpen = activeMenu === menuType;
 
-            if (isToolsTab) {
+            if (hasMegaMenu) {
               return (
                 <div
                   key={tab.path}
-                  ref={toolsTabRef}
-                  onMouseEnter={handleToolsTabEnter}
-                  onMouseLeave={handleToolsTabLeave}
+                  ref={isMenuOpen ? activeTabRef : undefined}
+                  onMouseEnter={() => handleTabEnter(menuType!)}
+                  onMouseLeave={handleTabLeave}
                   className="relative"
                 >
                   <button
                     className={`nav-tab flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-md ${
-                      isActive || megaMenuOpen 
+                      isActive || isMenuOpen 
                         ? 'text-white bg-white/5' 
                         : 'text-[#888] hover:text-white hover:bg-white/5'
                     }`}
@@ -159,7 +160,7 @@ export function TopNav() {
                       width="8" 
                       height="8" 
                       viewBox="0 0 8 8" 
-                      className={`transition-transform duration-150 ${megaMenuOpen ? 'rotate-180' : ''}`}
+                      className={`transition-transform duration-150 ${isMenuOpen ? 'rotate-180' : ''}`}
                     >
                       <path d="M1 3L4 6L7 3" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
                     </svg>
@@ -192,10 +193,10 @@ export function TopNav() {
           <button
             onClick={() => { 
               setSearchOpen(!searchOpen); 
-              setMegaMenuOpen(false); 
+              setActiveMenu(null); 
               setTimeout(() => searchRef.current?.focus(), 50); 
             }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md text-[12px] text-[#888] hover:border-[#333] hover:bg-[#111] transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md text-[12px] text-[#888] hover:border-[#333] transition-colors"
           >
             <Search size={13} />
             <span className="hidden sm:inline">Search 286 tools</span>
@@ -204,7 +205,7 @@ export function TopNav() {
 
           {searchOpen && (
             <div className="fixed inset-0 z-50 flex items-start justify-center pt-20" onClick={() => setSearchOpen(false)}>
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+              <div className="absolute inset-0 bg-black/60" />
               <div className="relative w-[500px] mega-menu animate-dropdown" onClick={e => e.stopPropagation()}>
                 <div className="p-3 border-b border-[#1a1a1a]">
                   <div className="relative">
@@ -300,164 +301,187 @@ export function TopNav() {
         </div>
       </div>
 
-      {/* Mega Menu */}
-      {megaMenuOpen && (
+      {/* Mega Menu for "Tools" (All Categories) - 2 Column Layout */}
+      {activeMenu === 'all' && (
         <div
-          ref={megaMenuRef}
-          onMouseEnter={handleToolsTabEnter}
-          onMouseLeave={handleToolsTabLeave}
+          ref={activeMenuRef}
+          onMouseEnter={() => handleTabEnter('all')}
+          onMouseLeave={handleTabLeave}
           className="fixed left-0 right-0 z-40 animate-dropdown"
           style={{ top: '56px' }}
         >
-          <div className="max-w-[1800px] mx-auto px-6">
-            <div className="mega-menu flex" style={{ height: '480px' }}>
-              {/* Categories Column */}
-              <div className="w-[260px] border-r border-[#1a1a1a] flex flex-col">
-                <div className="px-4 py-3 border-b border-[#1a1a1a]">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">Categories</p>
+          <div className="max-w-[1400px] mx-auto px-6">
+            <div className="mega-menu max-h-[480px] overflow-y-auto">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">All Tools</h3>
+                    <p className="text-[10px] text-[#888]">286+ PDF tools organized by category</p>
+                  </div>
+                  <Link
+                    to="/tools"
+                    onClick={() => setActiveMenu(null)}
+                    className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                  >
+                    View all tools <ChevronRight size={9} />
+                  </Link>
                 </div>
-                <div className="flex-1 overflow-y-auto py-2">
+
+                {/* Categories Grid - 2 Columns */}
+                <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                   {categories.map(cat => {
                     const tools = getToolsByCategory(cat.slug);
-                    const isActive = activeCategory === cat.slug;
                     const CatIcon = getToolIcon(cat.slug);
+                    
+                    return (
+                      <div key={cat.slug} className="border border-[#1a1a1a] rounded-md p-2.5">
+                        {/* Category Header */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="icon-box w-5 h-5">
+                              <CatIcon size={10} className="text-[#888]" />
+                            </div>
+                            <h4 className="text-[11px] font-semibold text-white">{cat.title}</h4>
+                            <span className="text-[8px] text-[#555] bg-[#1a1a1a] px-1.5 py-0.5 rounded">{tools.length}</span>
+                          </div>
+                        </div>
+
+                        {/* Tools Grid - 2 columns, 2 rows (4 tools) */}
+                        <div className="grid grid-cols-2 gap-1">
+                          {tools.slice(0, 4).map(tool => {
+                            const ToolIcon = getToolIcon(tool.slug);
+                            return (
+                              <button
+                                key={tool.slug}
+                                onClick={() => selectTool(tool.slug)}
+                                className="mega-menu-item flex items-center gap-1.5 px-2 py-1 text-left rounded"
+                              >
+                                <div className="icon-box w-4 h-4 shrink-0">
+                                  <ToolIcon size={9} className="text-[#888]" />
+                                </div>
+                                <p className="text-[9px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* View all link */}
+                        <div className="mt-1.5 pt-1.5 border-t border-[#1a1a1a]">
+                          <Link
+                            to={`/tools?category=${cat.slug}`}
+                            onClick={() => setActiveMenu(null)}
+                            className="text-[9px] text-[#666] hover:text-white inline-flex items-center gap-0.5"
+                          >
+                            View all {tools.length} tools <ChevronRight size={8} />
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mega Menu for "Convert From PDF" */}
+      {activeMenu === 'convert-from' && (
+        <div
+          ref={activeMenuRef}
+          onMouseEnter={() => handleTabEnter('convert-from')}
+          onMouseLeave={handleTabLeave}
+          className="fixed left-0 right-0 z-40 animate-dropdown"
+          style={{ top: '56px' }}
+        >
+          <div className="max-w-[1400px] mx-auto px-6">
+            <div className="mega-menu">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">Convert From PDF</h3>
+                    <p className="text-[10px] text-[#888]">Transform PDF to other formats</p>
+                  </div>
+                  <Link
+                    to="/tools?category=convert-from"
+                    onClick={() => setActiveMenu(null)}
+                    className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                  >
+                    View all tools <ChevronRight size={9} />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {getToolsForMenu('convert-from').map(tool => {
+                    const ToolIcon = getToolIcon(tool.slug);
                     return (
                       <button
-                        key={cat.slug}
-                        onMouseEnter={() => handleCategoryEnter(cat.slug)}
-                        onClick={() => { 
-                          navigate(`/tools?category=${cat.slug}`); 
-                          setMegaMenuOpen(false); 
-                        }}
-                        className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
-                          isActive ? 'bg-[#141414]' : ''
-                        }`}
+                        key={tool.slug}
+                        onClick={() => selectTool(tool.slug)}
+                        className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
-                        <div className={`icon-box w-8 h-8 shrink-0 ${
-                          isActive ? 'bg-white border-white' : ''
-                        }`}>
-                          <CatIcon size={14} className={isActive ? 'text-black' : 'text-[#888]'} />
+                        <div className="icon-box w-5 h-5 shrink-0">
+                          <ToolIcon size={10} className="text-[#888]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-[12px] font-medium truncate ${
-                            isActive ? 'text-white' : 'text-[#ccc]'
-                          }`}>
-                            {cat.title}
-                          </p>
-                          <p className="text-[10px] text-[#555]">{tools.length} tools</p>
+                          <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                          <p className="text-[8px] text-[#555] truncate">{tool.description}</p>
                         </div>
-                        <ChevronRight 
-                          size={12} 
-                          className={isActive ? 'text-white' : 'text-[#404040]'} 
-                        />
                       </button>
                     );
                   })}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-              {/* Tools Column */}
-              <div className="flex-1 flex flex-col min-w-0">
-                <div className="px-4 py-3 border-b border-[#1a1a1a]">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">
-                    {categories.find(c => c.slug === activeCategory)?.title}
-                  </p>
+      {/* Mega Menu for "Convert To PDF" */}
+      {activeMenu === 'convert-to' && (
+        <div
+          ref={activeMenuRef}
+          onMouseEnter={() => handleTabEnter('convert-to')}
+          onMouseLeave={handleTabLeave}
+          className="fixed left-0 right-0 z-40 animate-dropdown"
+          style={{ top: '56px' }}
+        >
+          <div className="max-w-[1400px] mx-auto px-6">
+            <div className="mega-menu">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">Convert To PDF</h3>
+                    <p className="text-[10px] text-[#888]">Create PDF from other formats</p>
+                  </div>
+                  <Link
+                    to="/tools?category=convert-to"
+                    onClick={() => setActiveMenu(null)}
+                    className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                  >
+                    View all tools <ChevronRight size={9} />
+                  </Link>
                 </div>
-                <div className="flex-1 overflow-y-auto py-2">
-                  {activeCatTools.map(tool => {
+                <div className="grid grid-cols-5 gap-1.5">
+                  {getToolsForMenu('convert-to').map(tool => {
                     const ToolIcon = getToolIcon(tool.slug);
-                    const isToolActive = activeTool === tool.slug;
                     return (
-                      <div
+                      <button
                         key={tool.slug}
-                        onMouseEnter={() => handleToolEnter(tool.slug)}
-                        onMouseLeave={handleToolLeave}
-                        className="relative"
+                        onClick={() => selectTool(tool.slug)}
+                        className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
-                        <button
-                          onClick={() => selectTool(tool.slug)}
-                          className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
-                            isToolActive ? 'bg-[#141414]' : ''
-                          }`}
-                        >
-                          <div className={`icon-box w-8 h-8 shrink-0 ${
-                            isToolActive ? 'bg-white border-white' : ''
-                          }`}>
-                            <ToolIcon size={14} className={isToolActive ? 'text-black' : 'text-[#888]'} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-[12px] font-medium truncate ${
-                              isToolActive ? 'text-white' : 'text-[#ccc]'
-                            }`}>
-                              {tool.title}
-                            </p>
-                            <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
-                          </div>
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium shrink-0 ${
-                            tool.capability === 'browser-ready' ? 'badge-ready' :
-                            tool.capability === 'browser-partial' ? 'badge-partial' :
-                            tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
-                          }`}>
-                            {tool.capability === 'browser-ready' ? 'Local' :
-                             tool.capability === 'browser-partial' ? 'Hybrid' :
-                             tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
-                          </span>
-                          {tool.options.length > 0 && (
-                            <ChevronRight 
-                              size={11} 
-                              className={`text-[#404040] shrink-0 ${
-                                isToolActive ? 'text-white' : ''
-                              }`} 
-                            />
-                          )}
-                        </button>
-                      </div>
+                        <div className="icon-box w-5 h-5 shrink-0">
+                          <ToolIcon size={10} className="text-[#888]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                          <p className="text-[8px] text-[#555] truncate">{tool.description}</p>
+                        </div>
+                      </button>
                     );
                   })}
-                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
-                    <Link
-                      to={`/tools?category=${activeCategory}`}
-                      onClick={() => setMegaMenuOpen(false)}
-                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
-                    >
-                      View all {activeCatTools.length} tools 
-                      <ChevronRight size={10} />
-                    </Link>
-                  </div>
                 </div>
               </div>
-
-              {/* Tool Details Submenu */}
-              {activeToolDef && activeToolDef.options.length > 0 && (
-                <div className="w-[240px] border-l border-[#1a1a1a] bg-[#0a0a0a] animate-submenu overflow-y-auto">
-                  <div className="px-4 py-3 border-b border-[#1a1a1a]">
-                    <p className="text-[12px] font-semibold text-white">{activeToolDef.title}</p>
-                    <p className="text-[10px] text-[#555] mt-0.5">{activeToolDef.description}</p>
-                  </div>
-                  <div className="px-4 py-2">
-                    <p className="text-[9px] uppercase tracking-wider text-[#555] font-semibold mb-2">Options</p>
-                    {activeToolDef.options.slice(0, 6).map(opt => (
-                      <div key={opt.key} className="py-1.5 text-[11px]">
-                        <span className="text-[#666]">{opt.label}: </span>
-                        <span className="text-[#aaa]">{String(opt.default)}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
-                    <Link
-                      to={`/tools/${activeToolDef.slug}`}
-                      onClick={() => { 
-                        setMegaMenuOpen(false); 
-                        setActiveTool(null); 
-                      }}
-                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
-                    >
-                      Open full tool 
-                      <ChevronRight size={10} />
-                    </Link>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
