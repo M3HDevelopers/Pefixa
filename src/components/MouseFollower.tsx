@@ -153,6 +153,9 @@ export function MouseFollower() {
       return path;
     };
 
+    let lastElementCheck = 0;
+    let isOverCard = false;
+
     const animate = () => {
       if (!cursor || !pathRef.current) return;
 
@@ -201,23 +204,28 @@ export function MouseFollower() {
         wobbleIntensity.current = 0;
       }
       
-      // Generate morphed shape
-      const pathData = generateShape(
-        speed,
-        angle,
-        currentMorph.current,
-        wobbleIntensity.current
-      );
-      
-      pathRef.current.setAttribute('d', pathData);
+      // Only regenerate path when morphing (optimization)
+      if (currentMorph.current > 0.01 || wobbleIntensity.current > 0.01) {
+        const pathData = generateShape(
+          speed,
+          angle,
+          currentMorph.current,
+          wobbleIntensity.current
+        );
+        pathRef.current.setAttribute('d', pathData);
+      }
       
       // Apply position transform
       cursor.style.transform = `translate3d(${currentX.current - BASE_RADIUS}px, ${currentY.current - BASE_RADIUS}px, 0)`;
       
-      // Fade out when over cards
-      const element = document.elementFromPoint(targetX.current, targetY.current);
-      const isOverCard = element?.closest('.liquid-card');
-      cursor.style.opacity = isOverCard ? '0' : '1';
+      // Throttle expensive elementFromPoint check (every 100ms instead of every frame)
+      const now = performance.now();
+      if (now - lastElementCheck > 100) {
+        lastElementCheck = now;
+        const element = document.elementFromPoint(targetX.current, targetY.current);
+        isOverCard = !!element?.closest('.liquid-card');
+        cursor.style.opacity = isOverCard ? '0' : '1';
+      }
 
       rafId.current = requestAnimationFrame(animate);
     };
