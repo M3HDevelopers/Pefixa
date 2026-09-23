@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { categories } from '../lib/tools/categories';
 import { getToolsByCategory, toolRegistry } from '../lib/tools/registry';
-import { getToolIcon, getCategoryIcon } from '../lib/tools/icons';
+import { getToolIcon, getCategoryIcon, getToolColor, getCategoryColor } from '../lib/tools/icons';
 import { useAppStore } from '../store';
 import { LiquidCard } from '../components/LiquidCard';
 import { ParticlesBackground } from '../components/ParticlesBackground';
@@ -176,7 +176,7 @@ export function HomePage() {
                   <LiquidCard className="p-5 h-full">
                     <div className="popular-badge">Popular</div>
                     <div className="icon-box w-12 h-12 mb-4">
-                      <Icon size={20} className="text-[#888]" />
+                      <Icon size={20} color={getToolColor(slug)} />
                     </div>
                     <h3 className="font-semibold text-[14px] mb-2">{tool.title}</h3>
                     <p className="text-[11px] leading-relaxed line-clamp-2 mb-3 opacity-70">{tool.description}</p>
@@ -249,7 +249,7 @@ export function HomePage() {
                   }`}
                   data-hover="fill"
                 >
-                  <Icon size={13} />
+                  <Icon size={13} color={activeTab === cat.slug ? '#000000' : getCategoryColor(cat.slug)} />
                   <span>{cat.title}</span>
                 </button>
               );
@@ -279,7 +279,7 @@ export function HomePage() {
                         <LiquidCard className="p-4">
                           <div className="flex items-start gap-3">
                             <div className="icon-box w-9 h-9 shrink-0">
-                              <ToolIcon size={14} className="text-white" />
+                              <ToolIcon size={14} color={getToolColor(tool.slug)} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-[12px] mb-1 truncate">{tool.title}</h4>

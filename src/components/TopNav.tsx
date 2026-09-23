@@ -15,6 +15,7 @@ import {
   FileOutput,
   FilePlus2,
 } from 'lucide-react';
+import { getToolColor, getCategoryColor } from '../lib/tools/icons';
 
 const mainTabs = [
   { label: 'Home', path: '/', icon: Home },
@@ -232,7 +233,7 @@ export function TopNav() {
                           className="mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left"
                         >
                           <div className="icon-box w-8 h-8 shrink-0">
-                            <ToolIcon size={14} className="text-[#888]" />
+                            <ToolIcon size={14} color={getToolColor(tool.slug)} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[13px] text-white truncate">{tool.title}</p>
@@ -339,7 +340,7 @@ export function TopNav() {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <div className="icon-box w-5 h-5">
-                              <CatIcon size={10} className="text-[#888]" />
+                              <CatIcon size={10} color={getCategoryColor(cat.slug)} />
                             </div>
                             <h4 className="text-[11px] font-semibold text-white">{cat.title}</h4>
                             <span className="text-[8px] text-[#555] bg-[#1a1a1a] px-1.5 py-0.5 rounded">{tools.length}</span>
@@ -357,7 +358,7 @@ export function TopNav() {
                                 className="mega-menu-item flex items-center gap-1.5 px-2 py-1 text-left rounded"
                               >
                                 <div className="icon-box w-4 h-4 shrink-0">
-                                  <ToolIcon size={9} className="text-[#888]" />
+                                  <ToolIcon size={9} color={getToolColor(tool.slug)} />
                                 </div>
                                 <p className="text-[9px] font-medium text-[#ccc] truncate">{tool.title}</p>
                               </button>
@@ -420,7 +421,7 @@ export function TopNav() {
                         className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
                         <div className="icon-box w-5 h-5 shrink-0">
-                          <ToolIcon size={10} className="text-[#888]" />
+                          <ToolIcon size={10} color={getToolColor(tool.slug)} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
@@ -471,7 +472,7 @@ export function TopNav() {
                         className="mega-menu-item flex items-center gap-2 px-2.5 py-1.5 text-left rounded-md"
                       >
                         <div className="icon-box w-5 h-5 shrink-0">
-                          <ToolIcon size={10} className="text-[#888]" />
+                          <ToolIcon size={10} color={getToolColor(tool.slug)} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
