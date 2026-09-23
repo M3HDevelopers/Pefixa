@@ -107,16 +107,59 @@ export function HomePage() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-8">
         {/* Hero Section */}
-        <section className="pt-24 pb-20 text-center relative overflow-hidden">
-          {/* Logo at the top center */}
-          <div className="mb-12 flex justify-center">
-            <div className="relative">
-              <img 
-                src="/pefixa-logo.svg" 
-                alt="Pefixa Logo" 
-                className="w-32 h-32 animate-fade"
-              />
-              <div className="absolute inset-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -z-10" />
+        <section className="pt-20 pb-20 text-center relative overflow-hidden">
+          {/* Premium Brand Identity Block */}
+          <div className="mb-16 flex flex-col items-center">
+            {/* Logo with sophisticated effects */}
+            <div className="relative mb-8 group">
+              {/* Animated glow background */}
+              <div className="absolute inset-0 w-28 h-28 bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-pink-500/20 rounded-full blur-2xl animate-glow" />
+              
+              {/* Outer rotating ring */}
+              <div className="absolute inset-0 w-28 h-28 border border-white/5 rounded-full animate-[spin_20s_linear_infinite]" />
+              
+              {/* Middle ring with hover effect */}
+              <div className="absolute inset-0 w-28 h-28 border border-white/10 rounded-full scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-700" />
+              
+              {/* Logo container with glass morphism */}
+              <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md border border-white/20 flex items-center justify-center overflow-hidden shadow-2xl">
+                {/* Inner glow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Logo image */}
+                <img 
+                  src="/pefixa-logo.svg" 
+                  alt="Pefixa" 
+                  className="w-24 h-24 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 relative z-10"
+                />
+              </div>
+              
+              {/* Floating particles effect */}
+              <div className="absolute -top-2 -right-2 w-2 h-2 bg-white/30 rounded-full animate-float" style={{ animationDelay: '0s' }} />
+              <div className="absolute -bottom-2 -left-2 w-1.5 h-1.5 bg-white/20 rounded-full animate-float" style={{ animationDelay: '1s' }} />
+              <div className="absolute top-1/2 -right-4 w-1 h-1 bg-white/25 rounded-full animate-float" style={{ animationDelay: '0.5s' }} />
+            </div>
+
+            {/* Brand name with gradient */}
+            <div className="flex flex-col items-center gap-3">
+              <h2 className="text-4xl font-bold tracking-tight">
+                <span className="bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent">
+                  PEFIXA
+                </span>
+              </h2>
+              
+              {/* Tagline with decorative lines */}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <span className="tracking-[0.3em] uppercase text-[11px] text-[#888] font-medium">PDF Workspace</span>
+                <div className="w-12 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              </div>
+              
+              {/* Premium badge */}
+              <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                <span className="text-[10px] text-[#888] tracking-wider uppercase">Professional Grade</span>
+              </div>
             </div>
           </div>
 
