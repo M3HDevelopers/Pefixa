@@ -20,19 +20,19 @@ export function MouseFollower() {
   const smoothVelocityY = useRef(0);
   
   // Morphing state
-  const currentMorph = useRef(0); // Current morph intensity
+  const currentMorph = useRef(0);
   const wobblePhase = useRef(0);
   const wobbleIntensity = useRef(0);
   
-  // Physics parameters (smooth and controlled)
-  const STIFFNESS = 0.18;   // Smooth follow
-  const DAMPING = 0.80;     // Good control
+  // Physics parameters
+  const STIFFNESS = 0.18;
+  const DAMPING = 0.80;
   
   // Morph parameters
-  const MORPH_SENSITIVITY = 0.010; // Less sensitive
-  const MAX_MORPH = 1.3; // Reduced max stretch
-  const MORPH_LERP = 0.10; // Slower morph transition
-  const MORPH_DECAY = 0.88; // Smooth decay
+  const MORPH_SENSITIVITY = 0.010;
+  const MAX_MORPH = 1.3;
+  const MORPH_LERP = 0.10;
+  const MORPH_DECAY = 0.88;
   
   // Shape parameters
   const NUM_POINTS = 24;
@@ -51,19 +51,16 @@ export function MouseFollower() {
       targetX.current = e.clientX;
       targetY.current = e.clientY;
       
-      // Calculate velocity
       const rawVelX = e.clientX - prevTargetX;
       const rawVelY = e.clientY - prevTargetY;
       
-      // Smooth velocity (more smoothing)
-      smoothVelocityX.current = smoothVelocityX.current * 0.80 + rawVelX * 0.20;
-      smoothVelocityY.current = smoothVelocityY.current * 0.80 + rawVelY * 0.20;
+      smoothVelocityX.current = smoothVelocityX.current * 0.8 + rawVelX * 0.2;
+      smoothVelocityY.current = smoothVelocityY.current * 0.8 + rawVelY * 0.2;
     };
 
     const generateShape = (speed: number, angle: number, morphIntensity: number, wobble: number): string => {
       const points: Array<[number, number]> = [];
       
-      // If morph is very low, just return perfect circle
       if (morphIntensity < 0.01 && wobble < 0.01) {
         for (let i = 0; i < NUM_POINTS; i++) {
           const baseAngle = (i / NUM_POINTS) * Math.PI * 2;
@@ -75,56 +72,43 @@ export function MouseFollower() {
         return generateSmoothPath(points);
       }
       
-      // Calculate stretch factors
       const stretchAmount = Math.min(morphIntensity * speed * MORPH_SENSITIVITY, MAX_MORPH);
       
       for (let i = 0; i < NUM_POINTS; i++) {
         const t = i / NUM_POINTS;
         const baseAngle = t * Math.PI * 2;
-        
-        // Rotate angle to align with movement direction
         const relativeAngle = baseAngle - angle;
         
-        // Start with base radius
         let radius = BASE_RADIUS;
         const cosAngle = Math.cos(relativeAngle);
         const sinAngle = Math.sin(relativeAngle);
         
-        // Only apply stretch if morph intensity is significant
         if (stretchAmount > 0.01) {
-          // Front of shape (direction of movement) - stretch
           if (cosAngle > 0) {
             radius *= 1 + stretchAmount * cosAngle;
-          }
-          // Back of shape - compress slightly
-          else {
+          } else {
             radius *= 1 - stretchAmount * 0.3 * Math.abs(cosAngle);
           }
           
-          // Sides - compress perpendicular to movement
           radius *= 1 - stretchAmount * 0.4 * Math.abs(sinAngle);
           
-          // Add teardrop point at front (only when morph is strong)
           if (cosAngle > 0.7 && morphIntensity > 0.3) {
             const pointiness = (cosAngle - 0.7) / 0.3;
             radius += pointiness * morphIntensity * BASE_RADIUS * 0.15;
           }
         }
         
-        // Add organic wobble (only when stopping)
         if (wobble > 0.01) {
           const wobbleOffset = Math.sin(wobblePhase.current + i * 1.5) * wobble * BASE_RADIUS * 0.02;
           radius += wobbleOffset;
         }
         
-        // Convert to cartesian
         const x = Math.cos(baseAngle) * radius;
         const y = Math.sin(baseAngle) * radius;
         
         points.push([x, y]);
       }
       
-      // Generate smooth closed path using cubic beziers
       return generateSmoothPath(points);
     };
 
@@ -139,7 +123,6 @@ export function MouseFollower() {
         const p2 = points[(i + 1) % points.length];
         const p3 = points[(i + 2) % points.length];
         
-        // Catmull-Rom to Bezier conversion for smooth curves
         const tension = 0.5;
         const cp1x = p1[0] + (p2[0] - p0[0]) * tension / 3;
         const cp1y = p1[1] + (p2[1] - p0[1]) * tension / 3;
@@ -156,7 +139,6 @@ export function MouseFollower() {
     const animate = () => {
       if (!cursor || !pathRef.current) return;
 
-      // Spring physics for position
       const dx = targetX.current - currentX.current;
       const dy = targetY.current - currentY.current;
       
@@ -169,31 +151,25 @@ export function MouseFollower() {
       currentX.current += velocityX.current;
       currentY.current += velocityY.current;
       
-      // Calculate speed
       const speed = Math.sqrt(
         smoothVelocityX.current ** 2 + smoothVelocityY.current ** 2
       );
       
-      // Calculate movement angle
       const angle = speed > 0.5 
         ? Math.atan2(smoothVelocityY.current, smoothVelocityX.current)
         : 0;
       
-      // Update morph intensity
       const targetMorph = Math.min(speed * MORPH_SENSITIVITY, 1);
       currentMorph.current += (targetMorph - currentMorph.current) * MORPH_LERP;
       
-      // Decay morph when slow
       if (speed < 2) {
         currentMorph.current *= MORPH_DECAY;
       }
       
-      // Only trigger wobble when coming from high speed
       if (speed < 0.3 && currentMorph.current > 0.3) {
         wobbleIntensity.current = Math.min(wobbleIntensity.current + 0.1, 0.3);
       }
       
-      // Update wobble
       if (wobbleIntensity.current > 0.01) {
         wobblePhase.current += 0.15;
         wobbleIntensity.current *= 0.96;
@@ -201,7 +177,6 @@ export function MouseFollower() {
         wobbleIntensity.current = 0;
       }
       
-      // Generate morphed shape
       const pathData = generateShape(
         speed,
         angle,
@@ -211,10 +186,8 @@ export function MouseFollower() {
       
       pathRef.current.setAttribute('d', pathData);
       
-      // Apply position transform
       cursor.style.transform = `translate3d(${currentX.current - BASE_RADIUS}px, ${currentY.current - BASE_RADIUS}px, 0)`;
       
-      // Fade out when over cards
       const element = document.elementFromPoint(targetX.current, targetY.current);
       const isOverCard = element?.closest('.liquid-card');
       cursor.style.opacity = isOverCard ? '0' : '1';

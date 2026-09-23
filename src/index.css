@@ -1,241 +1,170 @@
 @import "tailwindcss";
+@import "./cursors.css";
 
 @layer base {
-  :root {
-    --bg-primary: #000000;
-    --bg-secondary: #0a0a0a;
-    --bg-tertiary: #111111;
-    --bg-card: #0d0d0d;
-    --bg-hover: #161616;
-    --bg-active: #1c1c1c;
-    --border-primary: #1a1a1a;
-    --border-secondary: #262626;
-    --border-accent: #333333;
-    --text-primary: #ffffff;
-    --text-secondary: #a3a3a3;
-    --text-muted: #666666;
-    --text-dim: #404040;
-    --accent: #ffffff;
-    --accent-dim: #d4d4d4;
-  }
-
-  /* Custom Scrollbar */
   * {
-    scrollbar-width: thin;
-    scrollbar-color: #333333 #0a0a0a;
+    cursor: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3 L5 19 L9 15 L13 22 L15 21 L11 14 L17 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto;
   }
-
-  *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  
+  input, textarea, [contenteditable] {
+    cursor: text;
   }
-
-  *::-webkit-scrollbar-track {
-    background: #0a0a0a;
-    border-radius: 4px;
-  }
-
-  *::-webkit-scrollbar-thumb {
-    background: #333333;
-    border-radius: 4px;
-    border: 2px solid #0a0a0a;
-  }
-
-  *::-webkit-scrollbar-thumb:hover {
-    background: #444444;
-  }
-
-  html { background-color: #000000; color-scheme: dark; }
-
-  html.menu-open {
-    overflow: hidden;
-  }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background-color: #000000;
-    color: #ffffff;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.01em;
-  }
-
-  ::selection { background-color: rgba(255, 255, 255, 0.15); color: #ffffff; }
 }
 
 @layer components {
-  /* Simple, fast animations */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  .animate-dropdown {
-    animation: fadeDown 0.15s ease-out forwards;
-    will-change: transform, opacity;
-  }
-
-  .animate-fade {
-    animation: fadeIn 0.15s ease-out forwards;
-  }
-
-  /* Top bar - simple, solid */
+  /* Top Navigation Bar */
   .top-bar {
     background-color: #000000;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
   }
 
-  /* Card - simple, solid */
+  /* Cards */
   .card {
     background-color: #0a0a0a;
-    border: 1px solid #1a1a1a;
-    border-radius: 6px;
-    transition: border-color 0.15s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 10;
   }
 
   .card:hover {
-    border-color: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
   }
 
-  /* Buttons - simple, solid */
+  /* Liquid Card */
+  .liquid-card {
+    background-color: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 10;
+  }
+
+  .liquid-card:hover {
+    background-color: #1a1a1a;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Buttons */
   .btn-primary {
     background-color: #ffffff;
     color: #000000;
-    border-radius: 4px;
+    border-radius: 6px;
     font-weight: 500;
-    font-size: 12px;
-    transition: background-color 0.15s ease;
+    transition: all 0.2s ease;
   }
 
-  .btn-primary:hover { background-color: #e5e5e5; }
+  .btn-primary:hover {
+    background-color: #e5e5e5;
+  }
 
   .btn-secondary {
-    background-color: #111111;
+    background-color: rgba(255, 255, 255, 0.1);
     color: #ffffff;
-    border: 1px solid #262626;
-    border-radius: 4px;
-    font-size: 12px;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    transition: all 0.2s ease;
   }
 
-  .btn-secondary:hover { background-color: #1a1a1a; border-color: #333; }
+  .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
 
-  /* Inputs - glassmorphic styling */
-  .input-dark {
-    background-color: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+  /* Mega Menu Dropdown */
+  .mega-menu {
+    background-color: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  }
+
+  .mega-menu-item {
+    transition: background-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .mega-menu-item:hover {
+    background-color: #1a1a1a;
+  }
+
+  .mega-menu-item .icon-box {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Icon Box */
+  .icon-box {
+    background-color: #1a1a1a;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .card:hover .icon-box,
+  .liquid-card:hover .icon-box {
+    background-color: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Badges */
+  .badge-ready {
+    background-color: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+  }
+
+  .badge-partial {
+    background-color: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+  }
+
+  .badge-backend {
+    background-color: rgba(96, 165, 250, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+  }
+
+  .badge-ai {
+    background-color: rgba(167, 139, 250, 0.1);
+    color: #a78bfa;
+    border: 1px solid rgba(167, 139, 250, 0.2);
+  }
+
+  /* Input Fields */
+  .input-dark {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
     color: #ffffff;
-    font-size: 12px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
   }
 
   .input-dark:focus {
     background-color: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.3);
     outline: none;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   }
 
-  .input-dark::placeholder { 
-    color: rgba(255, 255, 255, 0.4);
-    transition: color 0.3s ease;
+  .input-dark::placeholder {
+    color: rgba(255, 255, 255, 0.3);
   }
 
-  /* Input styling for LiquidCard context */
-  .liquid-card-content input,
-  .liquid-card-content textarea,
-  .liquid-card-hovered input,
-  .liquid-card-hovered textarea {
-    transition: all 0.4s ease;
-  }
-
-  .liquid-card-content input::placeholder,
-  .liquid-card-content textarea::placeholder,
-  .liquid-card-hovered input::placeholder,
-  .liquid-card-hovered textarea::placeholder {
-    transition: color 0.4s ease;
-  }
-
-  /* Mega menu - distinct from background */
-  .mega-menu {
-    background-color: #111111;
-    border: 1px solid #333333;
-    border-radius: 8px;
-    box-shadow: 
-      0 25px 80px -12px rgba(0, 0, 0, 0.9),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-    contain: layout style paint;
-  }
-
-  .mega-menu-item {
-    position: relative;
-    contain: layout style;
-  }
-
-  .mega-menu-item:hover { 
-    background-color: #1a1a1a;
-  }
-
-  /* Nav tab - simple underline */
-  .nav-tab {
-    position: relative;
-    transition: color 0.15s ease;
-  }
-
-  .nav-tab::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: #ffffff;
-    transform: scaleX(0);
-    transition: transform 0.15s ease;
-  }
-
-  .nav-tab:hover::after,
-  .nav-tab.active::after {
-    transform: scaleX(1);
-  }
-
-  /* Badges - simple, solid */
-  .badge-ready {
-    background-color: rgba(255, 255, 255, 0.06);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .badge-partial {
-    background-color: rgba(255, 255, 255, 0.04);
-    color: #a3a3a3;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .badge-backend {
-    background-color: rgba(255, 255, 255, 0.03);
-    color: #666666;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .badge-ai {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #d4d4d4;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  /* Progress bar */
+  /* Progress Bar */
   .progress-bar {
-    background-color: #1a1a1a;
-    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
     overflow: hidden;
   }
 
@@ -244,114 +173,67 @@
     transition: width 0.3s ease;
   }
 
-  /* Icon container - simple, solid */
-  .icon-box {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Popular badge */
+  /* Popular Badge */
   .popular-badge {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
     background-color: #ffffff;
     color: #000000;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
     padding: 3px 8px;
     border-radius: 3px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    z-index: 20;
-    white-space: nowrap;
-    line-height: 1;
-  }
-
-  /* Page transition animation */
-  .page-enter {
-    animation: pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  @keyframes pageEnter {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Text elements for cursor inversion */
-  h1, h2, h3, h4, h5, h6, p, span, a, button {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Ensure liquid cards work properly */
-  .liquid-card {
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .liquid-card:hover {
-    transform: translateY(-2px);
-  }
-
-  /* Cursor blend mode for text inversion */
-  .cursor-invert {
-    mix-blend-mode: difference;
-  }
-
-  /* Ensure proper stacking for blend modes */
-  .blend-container {
-    isolation: isolate;
-  }
-
-  /* Text inversion when cursor passes over */
-  [data-text-invert] {
-    position: relative;
-    transition: color 0.3s ease;
-  }
-
-  /* Ensure text remains readable */
-  .liquid-card h1,
-  .liquid-card h2,
-  .liquid-card h3,
-  .liquid-card h4,
-  .liquid-card h5,
-  .liquid-card h6,
-  .liquid-card p,
-  .liquid-card span,
-  .liquid-card div {
-    position: relative;
     z-index: 10;
   }
+}
 
-  /* Button and link hover effects */
-  button, a {
-    position: relative;
-    transition: all 0.3s ease;
+/* Animations */
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  button:hover, a:hover {
-    transform: translateY(-1px);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
 
-  /* Smooth liquid card transitions */
-  .liquid-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+.animate-dropdown {
+  animation: fadeDown 0.2s ease-out;
+}
 
-  .liquid-card:hover {
-    transform: translateY(-2px);
-  }
+.animate-fade {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444444;
 }

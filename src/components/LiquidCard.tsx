@@ -25,16 +25,13 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
       
-      // Kill any existing animation
       if (animationRef.current) {
         animationRef.current.kill();
       }
       
-      // Set fill origin
       fillRef.current.style.left = `${x}%`;
       fillRef.current.style.top = `${y}%`;
       
-      // Water drop fill animation - more visible
       animationRef.current = gsap.fromTo(fillRef.current, 
         {
           scale: 0,
@@ -97,12 +94,12 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
       className={`liquid-card relative overflow-hidden ${className}`}
       style={{
         isolation: 'isolate',
-        background: isHovered ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        transition: 'background 0.2s ease, border-color 0.2s ease'
+        background: isHovered ? '#1a1a1a' : '#0a0a0a',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        transition: 'background 0.2s ease, border-color 0.2s ease',
+        borderRadius: '8px',
       }}
     >
-      {/* Clean fill effect from entry point */}
       <div
         ref={fillRef}
         className="absolute pointer-events-none"
@@ -117,7 +114,6 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
         }}
       />
       
-      {/* Content */}
       <div className="relative z-10">
         {children}
       </div>
