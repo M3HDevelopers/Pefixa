@@ -1,140 +1,33 @@
 /* ═══════════════════════════════════════════════════════════
-   CUSTOM CURSORS - Premium Dark Theme
+   DEFAULT CURSOR - With White Outline for Visibility
    ═══════════════════════════════════════════════════════════ */
 
-/* Hide default cursor globally */
+/* Default arrow cursor with white fill and black outline - visible on both light and dark backgrounds */
 * {
-  cursor: none !important;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3 L5 19 L9 15 L13 22 L15 21 L11 14 L17 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto !important;
 }
 
-/* Fallback for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    cursor: auto !important;
-  }
+/* Text cursor for input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+textarea,
+[contenteditable] {
+  cursor: text !important;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   1. DEFAULT CURSOR - Minimalist Dot
-   ═══════════════════════════════════════════════════════════ */
-
-/* Small, crisp white dot with subtle glow */
-body,
-button:not(:hover),
-a:not(:hover),
-.card:not(:hover),
-.liquid-card:not(:hover) {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='3' fill='%23ffffff'/%3E%3Ccircle cx='8' cy='8' r='4' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.3'/%3E%3C/svg%3E") 8 8, auto !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   2. POINTER CURSOR - Interactive Elements
-   ═══════════════════════════════════════════════════════════ */
-
-/* Stylish pointer for clickable elements */
-button:hover,
-a:hover,
-.card:hover,
-.liquid-card:hover,
-[role="button"]:hover,
-input[type="submit"]:hover,
-input[type="button"]:hover,
-.btn-primary:hover,
-.btn-secondary:hover,
-.mega-menu-item:hover,
-.nav-tab:hover,
-select:hover {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M8 4 L8 20 L12 16 L16 22 L18 21 L14 15 L20 15 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1'/%3E%3C/svg%3E") 4 4, pointer !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   3. TEXT CURSOR - Input Fields
-   ═══════════════════════════════════════════════════════════ */
-
-/* Modern I-beam for text inputs */
-input[type="text"]:hover,
-input[type="email"]:hover,
-input[type="password"]:hover,
-input[type="search"]:hover,
-input[type="number"]:hover,
-input[type="tel"]:hover,
-input[type="url"]:hover,
-textarea:hover,
-[contenteditable]:hover,
-.input-dark:hover,
-input:focus,
-textarea:focus {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24' viewBox='0 0 20 24'%3E%3Cline x1='10' y1='2' x2='10' y2='22' stroke='%23ffffff' stroke-width='2'/%3E%3Cline x1='6' y1='2' x2='14' y2='2' stroke='%23ffffff' stroke-width='2'/%3E%3Cline x1='6' y1='22' x2='14' y2='22' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E") 10 12, text !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   4. MOVE CURSOR - Draggable Elements
-   ═══════════════════════════════════════════════════════════ */
-
-/* Cross-arrow for draggable/movable elements */
-[draggable="true"]:hover,
-.draggable:hover {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 L15 5 L13 5 L13 11 L19 11 L19 9 L22 12 L19 15 L19 13 L13 13 L13 19 L15 19 L12 22 L9 19 L11 19 L11 13 L5 13 L5 15 L2 12 L5 9 L5 11 L11 11 L11 5 L9 5 Z' fill='%23ffffff' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E") 12 12, move !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   5. ZOOM CURSORS - Image/Map Elements
-   ═══════════════════════════════════════════════════════════ */
-
-/* Zoom in cursor */
-.zoom-in:hover,
-[zoom-in]:hover {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='10' cy='10' r='7' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Cline x1='15' y1='15' x2='21' y2='21' stroke='%23ffffff' stroke-width='2'/%3E%3Cline x1='7' y1='10' x2='13' y2='10' stroke='%23ffffff' stroke-width='2'/%3E%3Cline x1='10' y1='7' x2='10' y2='13' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E") 10 10, zoom-in !important;
-}
-
-/* Zoom out cursor */
-.zoom-out:hover,
-[zoom-out]:hover {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='10' cy='10' r='7' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Cline x1='15' y1='15' x2='21' y2='21' stroke='%23ffffff' stroke-width='2'/%3E%3Cline x1='7' y1='10' x2='13' y2='10' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E") 10 10, zoom-out !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   6. NOT-ALLOWED CURSOR - Disabled Elements
-   ═══════════════════════════════════════════════════════════ */
-
-/* Disabled/Not-allowed cursor */
-button:disabled:hover,
-[disabled]:hover,
-.disabled:hover,
-input:disabled:hover,
-textarea:disabled:hover,
-select:disabled:hover {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%23ffffff' stroke-width='2' opacity='0.5'/%3E%3Cline x1='6' y1='6' x2='18' y2='18' stroke='%23ffffff' stroke-width='2' opacity='0.5'/%3E%3C/svg%3E") 12 12, not-allowed !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   7. WAIT/LOADING CURSOR
-   ═══════════════════════════════════════════════════════════ */
-
-/* Loading/Processing cursor */
-.loading,
-.processing,
-[aria-busy="true"] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%23ffffff' stroke-width='2' stroke-dasharray='15 5' opacity='0.7'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 12 12' to='360 12 12' dur='1s' repeatCount='indefinite'/%3E%3C/circle%3E%3C/svg%3E") 12 12, wait !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   8. CROSSHAIR CURSOR - Precision Selection
-   ═══════════════════════════════════════════════════════════ */
-
-/* Crosshair for precision tasks */
-.crosshair:hover,
-[precision]:hover {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='8' fill='none' stroke='%23ffffff' stroke-width='1.5'/%3E%3Cline x1='12' y1='2' x2='12' y2='8' stroke='%23ffffff' stroke-width='1.5'/%3E%3Cline x1='12' y1='16' x2='12' y2='22' stroke='%23ffffff' stroke-width='1.5'/%3E%3Cline x1='2' y1='12' x2='8' y2='12' stroke='%23ffffff' stroke-width='1.5'/%3E%3Cline x1='16' y1='12' x2='22' y2='12' stroke='%23ffffff' stroke-width='1.5'/%3E%3C/svg%3E") 12 12, crosshair !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   CURSOR TRANSITIONS - Smooth State Changes
-   ═══════════════════════════════════════════════════════════ */
-
-/* Smooth cursor transitions */
-* {
-  transition: cursor 0.15s ease;
+/* Pointer cursor for interactive elements */
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+.btn-primary,
+.btn-secondary,
+select {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3 L5 19 L9 15 L13 22 L15 21 L11 14 L17 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, pointer !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -145,15 +38,29 @@ select:disabled:hover {
 @media (prefers-reduced-motion: reduce) {
   * {
     cursor: auto !important;
-    transition: none !important;
   }
 }
 
 /* Respect high contrast mode */
 @media (prefers-contrast: high) {
-  body,
-  button:not(:hover),
-  a:not(:hover) {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4' fill='%23ffffff' stroke='%23000000' stroke-width='2'/%3E%3C/svg%3E") 8 8, auto !important;
+  * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3 L5 19 L9 15 L13 22 L15 21 L11 14 L17 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto !important;
   }
+}
+
+/* Disabled cursor */
+button:disabled,
+[disabled],
+.disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Wait/Loading cursor */
+.loading,
+.processing,
+[aria-busy="true"] {
+  cursor: wait !important;
 }
