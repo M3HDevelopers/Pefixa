@@ -255,9 +255,9 @@ export function TopNav() {
           </button>
 
           {searchOpen && (
-            <div className={`fixed inset-0 z-[100] flex items-start justify-center pt-20 ${searchClosing ? 'animate-fade-out' : 'animate-fade'}`}>
-              <div className="absolute inset-0 bg-black/70 backdrop-blur-md cursor-pointer" onClick={closeSearch} />
-              <div className={`relative w-[500px] mega-menu z-10 ${searchClosing ? 'animate-dropdown-out' : 'animate-dropdown'}`} onClick={e => e.stopPropagation()}>
+            <div className={`fixed inset-0 z-50 flex items-start justify-center pt-20 ${searchClosing ? 'animate-fade-out' : 'animate-fade'}`} onClick={closeSearch}>
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+              <div className={`relative w-[500px] mega-menu ${searchClosing ? 'animate-dropdown-out' : 'animate-dropdown'}`} onClick={e => e.stopPropagation()}>
                 <div className="p-3 border-b border-[#1a1a1a]">
                   <div className="relative">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
