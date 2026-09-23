@@ -56,9 +56,6 @@ export function HomePage() {
 
   return (
     <div className="relative overflow-hidden">
-      {/* Particles background */}
-      <ParticlesBackground />
-      
       {/* Ambient background gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-[120px]" />
@@ -67,7 +64,12 @@ export function HomePage() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-8">
         {/* Hero Section */}
-        <section className="pt-24 pb-20 text-center relative">
+        <section className="pt-24 pb-20 text-center relative overflow-hidden">
+          {/* Particles only in Hero section */}
+          <div className="absolute inset-0 pointer-events-none">
+            <ParticlesBackground />
+          </div>
+          
           <RevealSection>
             <div className="inline-flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-full px-4 py-1.5 text-[11px] font-medium text-[#888] mb-6">
               <Sparkles size={11} className="text-white" />
@@ -567,7 +569,13 @@ export function HomePage() {
         </RevealSection>
 
         {/* Final CTA */}
-        <RevealSection className="py-20 border-t border-[#1a1a1a] text-center">
+        <RevealSection className="py-20 border-t border-[#1a1a1a] text-center relative overflow-hidden">
+          {/* Particles only in CTA section */}
+          <div className="absolute inset-0 pointer-events-none">
+            <ParticlesBackground />
+          </div>
+          
+          <div className="relative z-10">
           <h2 className="text-5xl font-bold text-white mb-4">Ready to get started?</h2>
           <p className="text-[#888] text-[16px] mb-8 max-w-xl mx-auto">
             Join thousands of professionals who trust Pefixa for their PDF processing needs
@@ -577,6 +585,7 @@ export function HomePage() {
             Start Processing PDFs Now
           </Link>
           <p className="text-[11px] text-[#555] mt-4">No sign-up required • Free forever • 286+ tools</p>
+          </div>
         </RevealSection>
 
         {/* MASSIVE FOOTER */}
