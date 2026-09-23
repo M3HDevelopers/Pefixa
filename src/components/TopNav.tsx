@@ -309,14 +309,14 @@ export function TopNav() {
           className="fixed left-0 right-0 z-40 animate-dropdown"
           style={{ top: '56px' }}
         >
-          <div className="max-w-[1800px] mx-auto px-6">
-            <div className="mega-menu flex" style={{ height: '480px' }}>
+          <div className="max-w-[1400px] mx-auto px-6">
+            <div className="mega-menu flex" style={{ height: '420px' }}>
               {/* Categories Column */}
-              <div className="w-[260px] border-r border-[#1a1a1a] flex flex-col">
-                <div className="px-4 py-3 border-b border-[#1a1a1a]">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">Categories</p>
+              <div className="w-[220px] border-r border-[#1a1a1a] flex flex-col">
+                <div className="px-3 py-2 border-b border-[#1a1a1a]">
+                  <p className="text-[9px] uppercase tracking-[0.15em] text-[#555] font-semibold">Categories</p>
                 </div>
-                <div className="flex-1 overflow-y-auto py-2">
+                <div className="flex-1 overflow-y-auto py-1.5">
                   {categories.map(cat => {
                     const tools = getToolsByCategory(cat.slug);
                     const isActive = activeCategory === cat.slug;
@@ -329,25 +329,25 @@ export function TopNav() {
                           navigate(`/tools?category=${cat.slug}`); 
                           setMegaMenuOpen(false); 
                         }}
-                        className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
+                        className={`mega-menu-item w-full flex items-center gap-2 px-3 py-1.5 text-left ${
                           isActive ? 'bg-[#141414]' : ''
                         }`}
                       >
-                        <div className={`icon-box w-8 h-8 shrink-0 ${
+                        <div className={`icon-box w-6 h-6 shrink-0 ${
                           isActive ? 'bg-white border-white' : ''
                         }`}>
-                          <CatIcon size={14} className={isActive ? 'text-black' : 'text-[#888]'} />
+                          <CatIcon size={11} className={isActive ? 'text-black' : 'text-[#888]'} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-[12px] font-medium truncate ${
+                          <p className={`text-[11px] font-medium truncate ${
                             isActive ? 'text-white' : 'text-[#ccc]'
                           }`}>
                             {cat.title}
                           </p>
-                          <p className="text-[10px] text-[#555]">{tools.length} tools</p>
+                          <p className="text-[9px] text-[#555]">{tools.length} tools</p>
                         </div>
                         <ChevronRight 
-                          size={12} 
+                          size={10} 
                           className={isActive ? 'text-white' : 'text-[#404040]'} 
                         />
                       </button>
@@ -358,12 +358,12 @@ export function TopNav() {
 
               {/* Tools Column */}
               <div className="flex-1 flex flex-col min-w-0">
-                <div className="px-4 py-3 border-b border-[#1a1a1a]">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#555] font-semibold">
+                <div className="px-3 py-2 border-b border-[#1a1a1a]">
+                  <p className="text-[9px] uppercase tracking-[0.15em] text-[#555] font-semibold">
                     {categories.find(c => c.slug === activeCategory)?.title}
                   </p>
                 </div>
-                <div className="flex-1 overflow-y-auto py-2">
+                <div className="flex-1 overflow-y-auto py-1.5">
                   {activeCatTools.map(tool => {
                     const ToolIcon = getToolIcon(tool.slug);
                     const isToolActive = activeTool === tool.slug;
@@ -376,24 +376,24 @@ export function TopNav() {
                       >
                         <button
                           onClick={() => selectTool(tool.slug)}
-                          className={`mega-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-left ${
+                          className={`mega-menu-item w-full flex items-center gap-2 px-3 py-1.5 text-left ${
                             isToolActive ? 'bg-[#141414]' : ''
                           }`}
                         >
-                          <div className={`icon-box w-8 h-8 shrink-0 ${
+                          <div className={`icon-box w-6 h-6 shrink-0 ${
                             isToolActive ? 'bg-white border-white' : ''
                           }`}>
-                            <ToolIcon size={14} className={isToolActive ? 'text-black' : 'text-[#888]'} />
+                            <ToolIcon size={11} className={isToolActive ? 'text-black' : 'text-[#888]'} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className={`text-[12px] font-medium truncate ${
+                            <p className={`text-[11px] font-medium truncate ${
                               isToolActive ? 'text-white' : 'text-[#ccc]'
                             }`}>
                               {tool.title}
                             </p>
-                            <p className="text-[10px] text-[#555] truncate">{tool.description}</p>
+                            <p className="text-[9px] text-[#555] truncate">{tool.description}</p>
                           </div>
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium shrink-0 ${
+                          <span className={`text-[8px] px-1.5 py-0.5 rounded font-medium shrink-0 ${
                             tool.capability === 'browser-ready' ? 'badge-ready' :
                             tool.capability === 'browser-partial' ? 'badge-partial' :
                             tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
@@ -404,7 +404,7 @@ export function TopNav() {
                           </span>
                           {tool.options.length > 0 && (
                             <ChevronRight 
-                              size={11} 
+                              size={10} 
                               className={`text-[#404040] shrink-0 ${
                                 isToolActive ? 'text-white' : ''
                               }`} 
@@ -414,14 +414,14 @@ export function TopNav() {
                       </div>
                     );
                   })}
-                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
+                  <div className="px-3 py-2 border-t border-[#1a1a1a]">
                     <Link
                       to={`/tools?category=${activeCategory}`}
                       onClick={() => setMegaMenuOpen(false)}
-                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                      className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
                     >
                       View all {activeCatTools.length} tools 
-                      <ChevronRight size={10} />
+                      <ChevronRight size={9} />
                     </Link>
                   </div>
                 </div>
@@ -429,31 +429,31 @@ export function TopNav() {
 
               {/* Tool Details Submenu */}
               {activeToolDef && activeToolDef.options.length > 0 && (
-                <div className="w-[240px] border-l border-[#1a1a1a] bg-[#0a0a0a] animate-submenu overflow-y-auto">
-                  <div className="px-4 py-3 border-b border-[#1a1a1a]">
-                    <p className="text-[12px] font-semibold text-white">{activeToolDef.title}</p>
-                    <p className="text-[10px] text-[#555] mt-0.5">{activeToolDef.description}</p>
+                <div className="w-[200px] border-l border-[#1a1a1a] bg-[#0a0a0a] animate-submenu overflow-y-auto">
+                  <div className="px-3 py-2 border-b border-[#1a1a1a]">
+                    <p className="text-[11px] font-semibold text-white">{activeToolDef.title}</p>
+                    <p className="text-[9px] text-[#555] mt-0.5">{activeToolDef.description}</p>
                   </div>
-                  <div className="px-4 py-2">
-                    <p className="text-[9px] uppercase tracking-wider text-[#555] font-semibold mb-2">Options</p>
+                  <div className="px-3 py-1.5">
+                    <p className="text-[8px] uppercase tracking-wider text-[#555] font-semibold mb-1.5">Options</p>
                     {activeToolDef.options.slice(0, 6).map(opt => (
-                      <div key={opt.key} className="py-1.5 text-[11px]">
+                      <div key={opt.key} className="py-1 text-[10px]">
                         <span className="text-[#666]">{opt.label}: </span>
                         <span className="text-[#aaa]">{String(opt.default)}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
+                  <div className="px-3 py-2 border-t border-[#1a1a1a]">
                     <Link
                       to={`/tools/${activeToolDef.slug}`}
                       onClick={() => { 
                         setMegaMenuOpen(false); 
                         setActiveTool(null); 
                       }}
-                      className="text-[11px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                      className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
                     >
                       Open full tool 
-                      <ChevronRight size={10} />
+                      <ChevronRight size={9} />
                     </Link>
                   </div>
                 </div>
