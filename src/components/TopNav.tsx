@@ -31,8 +31,6 @@ export function TopNav() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || '');
-  const [activeTool, setActiveTool] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const menuTimeoutRef = useRef<number | undefined>(undefined);
   const activeMenuRef = useRef<HTMLDivElement>(null);
@@ -56,7 +54,6 @@ export function TopNav() {
       if (activeMenuRef.current && !activeMenuRef.current.contains(e.target as Node) &&
           activeTabRef.current && !activeTabRef.current.contains(e.target as Node)) {
         setActiveMenu(null);
-        setActiveTool(null);
       }
     };
     document.addEventListener('mousedown', handleClick);
@@ -69,7 +66,6 @@ export function TopNav() {
       if (e.key === 'Escape') {
         setSearchOpen(false);
         setActiveMenu(null);
-        setActiveTool(null);
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
@@ -88,48 +84,21 @@ export function TopNav() {
       menuTimeoutRef.current = undefined;
     }
     setActiveMenu(menuType);
-    
-    // Set default category for this menu
-    if (menuType === 'convert-from') {
-      setActiveCategory('convert-from');
-    } else if (menuType === 'convert-to') {
-      setActiveCategory('convert-to');
-    } else if (menuType === 'all') {
-      setActiveCategory(categories[0]?.slug || '');
-    }
   };
 
   const handleTabLeave = () => {
     menuTimeoutRef.current = window.setTimeout(() => {
       setActiveMenu(null);
-      setActiveTool(null);
       menuTimeoutRef.current = undefined;
     }, 100);
-  };
-
-  const handleCategoryEnter = (slug: string) => {
-    setActiveCategory(slug);
-    setActiveTool(null);
-  };
-
-  const handleToolEnter = (slug: string) => {
-    setActiveTool(slug);
-  };
-
-  const handleToolLeave = () => {
-    setActiveTool(null);
   };
 
   const selectTool = (slug: string) => {
     setSearchOpen(false);
     setSearchQuery('');
     setActiveMenu(null);
-    setActiveTool(null);
     navigate(`/tools/${slug}`);
   };
-
-  const activeCatTools = activeCategory ? getToolsByCategory(activeCategory) : [];
-  const activeToolDef = activeTool ? toolRegistry.find(t => t.slug === activeTool) : null;
 
   // Get tools for specific category
   const getToolsForMenu = (menuType: string) => {
@@ -335,154 +304,86 @@ export function TopNav() {
           style={{ top: '56px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
-            <div className="mega-menu flex" style={{ height: '420px' }}>
-              {/* Categories Column */}
-              <div className="w-[220px] border-r border-[#1a1a1a] flex flex-col">
-                <div className="px-3 py-2 border-b border-[#1a1a1a]">
-                  <p className="text-[9px] uppercase tracking-[0.15em] text-[#555] font-semibold">Categories</p>
+            <div className="mega-menu max-h-[550px] overflow-y-auto">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-[14px] font-semibold text-white mb-1">All Tools</h3>
+                    <p className="text-[11px] text-[#888]">286+ PDF tools organized by category</p>
+                  </div>
+                  <Link
+                    to="/tools"
+                    onClick={() => setActiveMenu(null)}
+                    className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
+                  >
+                    View all tools <ChevronRight size={9} />
+                  </Link>
                 </div>
-                <div className="flex-1 overflow-y-auto py-1.5">
+
+                {/* Categories Grid */}
+                <div className="space-y-4">
                   {categories.map(cat => {
                     const tools = getToolsByCategory(cat.slug);
-                    const isActive = activeCategory === cat.slug;
                     const CatIcon = getToolIcon(cat.slug);
+                    
                     return (
-                      <button
-                        key={cat.slug}
-                        onMouseEnter={() => handleCategoryEnter(cat.slug)}
-                        onClick={() => { 
-                          navigate(`/tools?category=${cat.slug}`); 
-                          setActiveMenu(null); 
-                        }}
-                        className={`mega-menu-item w-full flex items-center gap-2 px-3 py-1.5 text-left ${
-                          isActive ? 'bg-[#141414]' : ''
-                        }`}
-                      >
-                        <div className={`icon-box w-6 h-6 shrink-0 ${
-                          isActive ? 'bg-white border-white' : ''
-                        }`}>
-                          <CatIcon size={11} className={isActive ? 'text-black' : 'text-[#888]'} />
+                      <div key={cat.slug}>
+                        {/* Category Header */}
+                        <div className="flex items-center justify-between mb-2 pb-2 border-b border-[#1a1a1a]">
+                          <div className="flex items-center gap-2">
+                            <div className="icon-box w-6 h-6">
+                              <CatIcon size={11} className="text-[#888]" />
+                            </div>
+                            <h4 className="text-[12px] font-semibold text-white">{cat.title}</h4>
+                            <span className="text-[9px] text-[#555]">({tools.length})</span>
+                          </div>
+                          <Link
+                            to={`/tools?category=${cat.slug}`}
+                            onClick={() => setActiveMenu(null)}
+                            className="text-[9px] text-[#888] hover:text-white inline-flex items-center gap-1"
+                          >
+                            View all <ChevronRight size={8} />
+                          </Link>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-[11px] font-medium truncate ${
-                            isActive ? 'text-white' : 'text-[#ccc]'
-                          }`}>
-                            {cat.title}
-                          </p>
-                          <p className="text-[9px] text-[#555]">{tools.length} tools</p>
+
+                        {/* Tools Grid - Show first 8 tools */}
+                        <div className="grid grid-cols-4 gap-1.5">
+                          {tools.slice(0, 8).map(tool => {
+                            const ToolIcon = getToolIcon(tool.slug);
+                            return (
+                              <button
+                                key={tool.slug}
+                                onClick={() => selectTool(tool.slug)}
+                                className="mega-menu-item flex items-center gap-2 px-2 py-1.5 text-left rounded-md"
+                              >
+                                <div className="icon-box w-5 h-5 shrink-0">
+                                  <ToolIcon size={10} className="text-[#888]" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-[10px] font-medium text-[#ccc] truncate">{tool.title}</p>
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
-                        <ChevronRight 
-                          size={10} 
-                          className={isActive ? 'text-white' : 'text-[#404040]'} 
-                        />
-                      </button>
+
+                        {/* Show more link if there are more tools */}
+                        {tools.length > 8 && (
+                          <div className="mt-1.5">
+                            <Link
+                              to={`/tools?category=${cat.slug}`}
+                              onClick={() => setActiveMenu(null)}
+                              className="text-[9px] text-[#666] hover:text-white"
+                            >
+                              + {tools.length - 8} more tools
+                            </Link>
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
               </div>
-
-              {/* Tools Column */}
-              <div className="flex-1 flex flex-col min-w-0">
-                <div className="px-3 py-2 border-b border-[#1a1a1a]">
-                  <p className="text-[9px] uppercase tracking-[0.15em] text-[#555] font-semibold">
-                    {categories.find(c => c.slug === activeCategory)?.title}
-                  </p>
-                </div>
-                <div className="flex-1 overflow-y-auto py-1.5">
-                  {activeCatTools.map(tool => {
-                    const ToolIcon = getToolIcon(tool.slug);
-                    const isToolActive = activeTool === tool.slug;
-                    return (
-                      <div
-                        key={tool.slug}
-                        onMouseEnter={() => handleToolEnter(tool.slug)}
-                        onMouseLeave={handleToolLeave}
-                        className="relative"
-                      >
-                        <button
-                          onClick={() => selectTool(tool.slug)}
-                          className={`mega-menu-item w-full flex items-center gap-2 px-3 py-1.5 text-left ${
-                            isToolActive ? 'bg-[#141414]' : ''
-                          }`}
-                        >
-                          <div className={`icon-box w-6 h-6 shrink-0 ${
-                            isToolActive ? 'bg-white border-white' : ''
-                          }`}>
-                            <ToolIcon size={11} className={isToolActive ? 'text-black' : 'text-[#888]'} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-[11px] font-medium truncate ${
-                              isToolActive ? 'text-white' : 'text-[#ccc]'
-                            }`}>
-                              {tool.title}
-                            </p>
-                            <p className="text-[9px] text-[#555] truncate">{tool.description}</p>
-                          </div>
-                          <span className={`text-[8px] px-1.5 py-0.5 rounded font-medium shrink-0 ${
-                            tool.capability === 'browser-ready' ? 'badge-ready' :
-                            tool.capability === 'browser-partial' ? 'badge-partial' :
-                            tool.capability === 'ai-required' ? 'badge-ai' : 'badge-backend'
-                          }`}>
-                            {tool.capability === 'browser-ready' ? 'Local' :
-                             tool.capability === 'browser-partial' ? 'Hybrid' :
-                             tool.capability === 'ai-required' ? 'AI' : 'Cloud'}
-                          </span>
-                          {tool.options.length > 0 && (
-                            <ChevronRight 
-                              size={10} 
-                              className={`text-[#404040] shrink-0 ${
-                                isToolActive ? 'text-white' : ''
-                              }`} 
-                            />
-                          )}
-                        </button>
-                      </div>
-                    );
-                  })}
-                  <div className="px-3 py-2 border-t border-[#1a1a1a]">
-                    <Link
-                      to={`/tools?category=${activeCategory}`}
-                      onClick={() => setActiveMenu(null)}
-                      className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
-                    >
-                      View all {activeCatTools.length} tools 
-                      <ChevronRight size={9} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tool Details Submenu */}
-              {activeToolDef && activeToolDef.options.length > 0 && (
-                <div className="w-[200px] border-l border-[#1a1a1a] bg-[#0a0a0a] animate-submenu overflow-y-auto">
-                  <div className="px-3 py-2 border-b border-[#1a1a1a]">
-                    <p className="text-[11px] font-semibold text-white">{activeToolDef.title}</p>
-                    <p className="text-[9px] text-[#555] mt-0.5">{activeToolDef.description}</p>
-                  </div>
-                  <div className="px-3 py-1.5">
-                    <p className="text-[8px] uppercase tracking-wider text-[#555] font-semibold mb-1.5">Options</p>
-                    {activeToolDef.options.slice(0, 6).map(opt => (
-                      <div key={opt.key} className="py-1 text-[10px]">
-                        <span className="text-[#666]">{opt.label}: </span>
-                        <span className="text-[#aaa]">{String(opt.default)}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="px-3 py-2 border-t border-[#1a1a1a]">
-                    <Link
-                      to={`/tools/${activeToolDef.slug}`}
-                      onClick={() => { 
-                        setActiveMenu(null); 
-                        setActiveTool(null); 
-                      }}
-                      className="text-[10px] text-white hover:text-[#ccc] inline-flex items-center gap-1"
-                    >
-                      Open full tool 
-                      <ChevronRight size={9} />
-                    </Link>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
