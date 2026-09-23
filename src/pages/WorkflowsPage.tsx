@@ -51,7 +51,7 @@ export function WorkflowsPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
       <RevealSection>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 pr-36">
           <div>
             <h1 className="text-2xl font-bold text-white flex items-center gap-2">
               <GitBranch size={22} className="text-white" />

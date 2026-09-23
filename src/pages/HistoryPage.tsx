@@ -32,7 +32,7 @@ export function HistoryPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
       <RevealSection>
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 pr-36">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Processing History</h1>
             <p className="text-[13px] text-[#888]">{jobs.length} jobs in history</p>
