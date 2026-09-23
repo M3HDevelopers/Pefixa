@@ -147,14 +147,10 @@ export function TopNav() {
 
   return (
     <header 
-      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out ${
-        isScrolled 
-          ? 'top-0 h-14' 
-          : 'top-3 h-16'
-      }`}
+      className="fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out"
       style={{
-        backgroundColor: isScrolled ? 'rgba(0, 0, 0, 0.95)' : 'transparent',
-        backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+        backgroundColor: isScrolled ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.7)',
+        backdropFilter: 'blur(12px)',
         borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid transparent',
         boxShadow: isScrolled ? '0 4px 20px rgba(0, 0, 0, 0.3)' : 'none',
       }}
