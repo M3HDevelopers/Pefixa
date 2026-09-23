@@ -125,9 +125,9 @@ export function ParticlesBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 pointer-events-none"
+      className="absolute top-0 left-0 w-full h-full pointer-events-none"
       style={{
-        opacity: 0.6,
+        opacity: 0.5,
         mixBlendMode: 'screen',
       }}
     />
