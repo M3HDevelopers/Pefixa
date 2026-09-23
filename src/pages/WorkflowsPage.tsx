@@ -59,7 +59,7 @@ export function WorkflowsPage() {
             </h1>
             <p className="text-[13px] text-[#888]">Chain tools together for automated PDF processing</p>
           </div>
-          <button onClick={() => setShowCreate(!showCreate)} className="flex items-center gap-1 px-3 py-2 btn-primary text-[12px]">
+          <button onClick={() => setShowCreate(!showCreate)} className="flex items-center gap-1 px-3 py-2 btn-primary text-[12px] mr-32">
             <Plus size={13} />
             New Workflow
           </button>
