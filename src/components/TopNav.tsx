@@ -242,8 +242,8 @@ export function TopNav() {
           </button>
 
           {searchOpen && (
-            <div className="fixed inset-0 z-50 flex items-start justify-center pt-20" onClick={() => setSearchOpen(false)}>
-              <div className="absolute inset-0 bg-black/60" />
+            <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 animate-fade" onClick={() => setSearchOpen(false)}>
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
               <div className="relative w-[500px] mega-menu animate-dropdown" onClick={e => e.stopPropagation()}>
                 <div className="p-3 border-b border-[#1a1a1a]">
                   <div className="relative">

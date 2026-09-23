@@ -544,14 +544,14 @@ export function HomePage() {
                   <LiquidCard key={i} className="p-4 text-center relative overflow-hidden">
                     <div className="relative z-10">
                       <div className="flex items-center justify-center gap-1 mb-2 h-10">
-                        <div className="icon-box w-8 h-8" style={{ borderColor: tool.color + '40' }}>
-                          <Icon1 size={14} color={tool.color} />
+                        <div className="icon-box w-6 h-6" style={{ borderColor: tool.color + '30' }}>
+                          <Icon1 size={10} color={tool.color} />
+                        </div>
+                        <div className="icon-box w-9 h-9 -ml-2" style={{ borderColor: tool.color + '50' }}>
+                          <Icon2 size={16} color={tool.color} />
                         </div>
                         <div className="icon-box w-6 h-6 -ml-2" style={{ borderColor: tool.color + '30' }}>
-                          <Icon2 size={10} color={tool.color} />
-                        </div>
-                        <div className="icon-box w-5 h-5 -ml-1.5" style={{ borderColor: tool.color + '20' }}>
-                          <Icon3 size={8} color={tool.color} />
+                          <Icon3 size={10} color={tool.color} />
                         </div>
                       </div>
                       <p className="text-[11px] text-[#888]">{tool.name}</p>

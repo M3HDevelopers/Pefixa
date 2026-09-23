@@ -4,6 +4,7 @@ import { toolRegistry } from '../lib/tools/registry';
 import { Workflow, WorkflowStep } from '../types/workflow';
 import { v4 as uuidv4 } from 'uuid';
 import { Plus, Play, Trash2, ArrowRight, GitBranch, Save } from 'lucide-react';
+import { RevealSection } from '../components/RevealSection';
 
 const presetWorkflows: Workflow[] = [
   { id: 'preset-1', name: 'Prepare for Email', description: 'Compress and protect PDF', steps: [{ id: '1', toolSlug: 'compress-pdf', options: { level: 'recommended' }, order: 0 }, { id: '2', toolSlug: 'encrypt-pdf', options: {}, order: 1 }], createdAt: Date.now(), updatedAt: Date.now(), isPreset: true },
@@ -31,20 +32,22 @@ export function WorkflowsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10 animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <GitBranch size={22} className="text-white" />
-            Workflows
-          </h1>
-          <p className="text-[13px] text-[#888]">Chain tools together for automated PDF processing</p>
+    <div className="max-w-5xl mx-auto px-6 py-10">
+      <RevealSection>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+              <GitBranch size={22} className="text-white" />
+              Workflows
+            </h1>
+            <p className="text-[13px] text-[#888]">Chain tools together for automated PDF processing</p>
+          </div>
+          <button onClick={() => setShowCreate(!showCreate)} className="flex items-center gap-1 px-3 py-2 btn-primary text-[12px]">
+            <Plus size={13} />
+            New Workflow
+          </button>
         </div>
-        <button onClick={() => setShowCreate(!showCreate)} className="flex items-center gap-1 px-3 py-2 btn-primary text-[12px]">
-          <Plus size={13} />
-          New Workflow
-        </button>
-      </div>
+      </RevealSection>
 
       {showCreate && (
         <div className="mb-6 card p-4 animate-fade-in-up">
@@ -89,9 +92,10 @@ export function WorkflowsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {workflows.map(workflow => (
-          <div key={workflow.id} className="card p-4">
+      <RevealSection>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {workflows.map((workflow, index) => (
+            <div key={workflow.id} className="card p-4" style={{ animationDelay: `${index * 100}ms` }}>
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h3 className="font-medium text-white text-[13px]">{workflow.name}</h3>
@@ -123,7 +127,8 @@ export function WorkflowsPage() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      </RevealSection>
     </div>
   );
 }
