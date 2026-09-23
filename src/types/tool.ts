@@ -6,6 +6,8 @@ export type ToolCategory =
   | 'forms'
   | 'convert-from'
   | 'convert-to'
+  | 'pdf-to-office'
+  | 'office-to-pdf'
   | 'compress'
   | 'ocr'
   | 'security'

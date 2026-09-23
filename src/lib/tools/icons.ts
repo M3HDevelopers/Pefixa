@@ -13,7 +13,7 @@ import {
   FileEdit, Square, Radio, ListChecks, Calendar, FileSignature,
   // Convert
   FileText, FileSpreadsheet, Presentation, FileImage, FileCode,
-  FileOutput, Archive,
+  FileOutput, FileInput, Archive,
   // Compress
   Minimize2, Gauge, ImageDown, Palette, Trash2, Wrench, Maximize2,
   Move, Crop, Scan,
@@ -50,6 +50,8 @@ const categoryIcons: Record<string, LucideIcon> = {
   'organize': LayoutGrid,
   'edit': PenTool,
   'forms': FileEdit,
+  'pdf-to-office': FileOutput,
+  'office-to-pdf': FileInput,
   'convert-from': FileOutput,
   'convert-to': FilePlus2,
   'compress': Minimize2,
