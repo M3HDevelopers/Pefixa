@@ -88,7 +88,7 @@ export function PresetsPage() {
             </h1>
             <p className="text-[13px] text-[#888]">Save and reuse common tool configurations</p>
           </div>
-          <div className="flex gap-2 mr-32">
+          <div className="flex gap-2">
             <button
               onClick={importPresets}
               className="flex items-center gap-1 px-3 py-1.5 btn-secondary text-[11px]"

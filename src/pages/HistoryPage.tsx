@@ -40,7 +40,7 @@ export function HistoryPage() {
           {jobs.length > 0 && (
             <button 
               onClick={clearJobs} 
-              className="flex items-center gap-1 px-3 py-1.5 text-[11px] text-[#888] hover:text-white hover:bg-[#111] rounded-md transition-all mr-32"
+              className="flex items-center gap-1 px-3 py-1.5 text-[11px] text-[#888] hover:text-white hover:bg-[#111] rounded-md transition-all"
             >
               <Trash2 size={11} />
               Clear All
