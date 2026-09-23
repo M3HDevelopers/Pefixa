@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { toolRegistry } from '../lib/tools/registry';
 import { Workflow, WorkflowStep } from '../types/workflow';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, Play, Trash2, ArrowRight, GitBranch, Save } from 'lucide-react';
+import { Plus, Play, Trash2, ArrowRight, GitBranch, Save, FileText } from 'lucide-react';
 import { RevealSection } from '../components/RevealSection';
 
 const presetWorkflows: Workflow[] = [
@@ -17,6 +17,8 @@ export function WorkflowsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState('');
   const [newSteps, setNewSteps] = useState<WorkflowStep[]>([]);
+  const [runningWorkflow, setRunningWorkflow] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const createWorkflow = () => {
     if (!newName.trim()) return;
@@ -29,6 +31,21 @@ export function WorkflowsPage() {
 
   const addStep = (toolSlug: string) => {
     setNewSteps(prev => [...prev, { id: uuidv4(), toolSlug, options: {}, order: prev.length }]);
+  };
+
+  const runWorkflow = (workflowId: string) => {
+    setRunningWorkflow(workflowId);
+    // Simulate workflow execution
+    setTimeout(() => {
+      setRunningWorkflow(null);
+      alert('Workflow completed successfully!');
+    }, 2000);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setUploadedFiles(Array.from(e.target.files));
+    }
   };
 
   return (
@@ -95,40 +112,89 @@ export function WorkflowsPage() {
       <RevealSection>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {workflows.map((workflow, index) => (
-            <div key={workflow.id} className="card p-4" style={{ animationDelay: `${index * 100}ms` }}>
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <h3 className="font-medium text-white text-[13px]">{workflow.name}</h3>
-                <p className="text-[11px] text-[#555]">{workflow.description}</p>
+            <div key={workflow.id} className="card p-4 animate-fade" style={{ animationDelay: `${index * 100}ms` }}>
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h3 className="font-medium text-white text-[13px]">{workflow.name}</h3>
+                  <p className="text-[11px] text-[#555]">{workflow.description}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  {workflow.isPreset && <span className="text-[9px] px-1.5 py-0.5 badge-ready rounded-sm font-medium">Preset</span>}
+                  <button 
+                    onClick={() => setWorkflows(prev => prev.filter(w => w.id !== workflow.id))} 
+                    className="p-1 hover:bg-[#1a1a1a] rounded-sm transition-all"
+                  >
+                    <Trash2 size={11} className="text-[#666]" />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                {workflow.isPreset && <span className="text-[9px] px-1.5 py-0.5 badge-ready rounded-sm font-medium">Preset</span>}
-                <button onClick={() => setWorkflows(prev => prev.filter(w => w.id !== workflow.id))} className="p-1 hover:bg-[#1a1a1a] rounded-sm">
-                  <Trash2 size={11} className="text-[#444]" />
+              
+              {/* Workflow Steps */}
+              <div className="flex items-center gap-1 flex-wrap mt-3">
+                {workflow.steps.map((step, i) => {
+                  const tool = toolRegistry.find(t => t.slug === step.toolSlug);
+                  return (
+                    <div key={step.id} className="flex items-center gap-1">
+                      <span className="px-2 py-1 bg-[#111] border border-[#1f1f1f] rounded-sm text-[10px] text-[#888] font-medium">
+                        {tool?.title || step.toolSlug}
+                      </span>
+                      {i < workflow.steps.length - 1 && <ArrowRight size={9} className="text-[#333]" />}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Run Button */}
+              <div className="mt-3 flex items-center gap-2">
+                <button 
+                  onClick={() => runWorkflow(workflow.id)}
+                  disabled={runningWorkflow === workflow.id}
+                  className="flex items-center gap-1 px-3 py-1.5 btn-primary text-[11px] disabled:opacity-50"
+                >
+                  <Play size={10} className={runningWorkflow === workflow.id ? 'animate-spin' : ''} />
+                  {runningWorkflow === workflow.id ? 'Running...' : 'Run'}
                 </button>
               </div>
             </div>
-            <div className="flex items-center gap-1 flex-wrap mt-3">
-              {workflow.steps.map((step, i) => {
-                const tool = toolRegistry.find(t => t.slug === step.toolSlug);
-                return (
-                  <div key={step.id} className="flex items-center gap-1">
-                    <span className="px-2 py-1 bg-[#111] border border-[#1f1f1f] rounded-sm text-[10px] text-[#888] font-medium">{tool?.title || step.toolSlug}</span>
-                    {i < workflow.steps.length - 1 && <ArrowRight size={9} className="text-[#333]" />}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="mt-3 flex items-center gap-2">
-              <button className="flex items-center gap-1 px-3 py-1.5 btn-primary text-[11px]">
-                <Play size={10} />
-                Run
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
         </div>
       </RevealSection>
-    </div>
+
+      {/* File Upload Section */}
+      {runningWorkflow && (
+        <RevealSection className="mt-6">
+          <div className="card p-6 animate-fade">
+            <h3 className="text-white font-semibold mb-4">Upload Files for Workflow</h3>
+            <div className="border-2 border-dashed border-[#333] rounded-lg p-8 text-center hover:border-[#555] transition-colors">
+              <input
+                type="file"
+                multiple
+                accept=".pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="workflow-upload"
+              />
+              <label htmlFor="workflow-upload" className="cursor-pointer">
+                <p className="text-[#888] mb-2">Click to upload PDF files</p>
+                <p className="text-[#555] text-[11px]">or drag and drop here</p>
+              </label>
+            </div>
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4">
+                <p className="text-white text-sm mb-2">Uploaded Files:</p>
+                <div className="space-y-2">
+                  {uploadedFiles.map((file, i) => (
+                    <div key={i} className="flex items-center gap-2 p-2 bg-[#111] rounded">
+                      <FileText size={14} className="text-[#888]" />
+                      <span className="text-[#ccc] text-sm flex-1">{file.name}</span>
+                      <span className="text-[#666] text-xs">{(file.size / 1024).toFixed(1)} KB</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </RevealSection>
+      )}    </div>
   );
 }
