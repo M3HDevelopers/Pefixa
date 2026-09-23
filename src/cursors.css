@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════════════════════════
+   DEFAULT CURSOR - With White Outline for Visibility
+   ═══════════════════════════════════════════════════════════ */
+
+/* Default arrow cursor with white fill and black outline - visible on both light and dark backgrounds */
+* {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3 L5 19 L9 15 L13 22 L15 21 L11 14 L17 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto !important;
+}
+
+/* Text cursor for input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+textarea,
+[contenteditable] {
+  cursor: text !important;
+}
+
+/* Pointer cursor for interactive elements */
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+.btn-primary,
+.btn-secondary,
+select {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3 L5 19 L9 15 L13 22 L15 21 L11 14 L17 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, pointer !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACCESSIBILITY - Respect User Preferences
+   ═══════════════════════════════════════════════════════════ */
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    cursor: auto !important;
+  }
+}
+
+/* Respect high contrast mode */
+@media (prefers-contrast: high) {
+  * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3 L5 19 L9 15 L13 22 L15 21 L11 14 L17 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto !important;
+  }
+}
+
+/* Disabled cursor */
+button:disabled,
+[disabled],
+.disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Wait/Loading cursor */
+.loading,
+.processing,
+[aria-busy="true"] {
+  cursor: wait !important;
+}
