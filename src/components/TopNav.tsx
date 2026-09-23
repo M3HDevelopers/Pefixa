@@ -48,6 +48,7 @@ export function TopNav() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const menuTimeoutRef = useRef<number | undefined>(undefined);
   const activeMenuRef = useRef<HTMLDivElement>(null);
@@ -102,6 +103,16 @@ export function TopNav() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
+  // Scroll detection for navbar state
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleTabEnter = (menuType: string) => {
     if (menuTimeoutRef.current !== undefined) {
       clearTimeout(menuTimeoutRef.current);
@@ -135,8 +146,18 @@ export function TopNav() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 top-bar">
-      <div className="flex items-center h-14 px-6 max-w-[1800px] mx-auto">
+    <header 
+      className="fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out"
+      style={{
+        backgroundColor: isScrolled ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.7)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid transparent',
+        boxShadow: isScrolled ? '0 4px 20px rgba(0, 0, 0, 0.3)' : 'none',
+      }}
+    >
+      <div className={`flex items-center px-6 transition-all duration-500 ease-out ${
+        isScrolled ? 'h-14 max-w-[1800px]' : 'h-16 max-w-[2000px]'
+      } mx-auto`}>
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 mr-8">
           <img src="/pefixa-logo.svg" alt="Pefixa" className="w-9 h-9" />
@@ -221,8 +242,8 @@ export function TopNav() {
           </button>
 
           {searchOpen && (
-            <div className="fixed inset-0 z-50 flex items-start justify-center pt-20" onClick={() => setSearchOpen(false)}>
-              <div className="absolute inset-0 bg-black/60" />
+            <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 animate-fade" onClick={() => setSearchOpen(false)}>
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
               <div className="relative w-[500px] mega-menu animate-dropdown" onClick={e => e.stopPropagation()}>
                 <div className="p-3 border-b border-[#1a1a1a]">
                   <div className="relative">
@@ -324,8 +345,8 @@ export function TopNav() {
           ref={activeMenuRef}
           onMouseEnter={() => handleTabEnter('all')}
           onMouseLeave={handleTabLeave}
-          className="fixed left-0 right-0 z-40 animate-dropdown"
-          style={{ top: '56px' }}
+          className="fixed left-0 right-0 z-[60] animate-dropdown"
+          style={{ top: isScrolled ? '56px' : '64px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
             <div className="mega-menu max-h-[480px] overflow-y-auto">
@@ -396,8 +417,8 @@ export function TopNav() {
           ref={activeMenuRef}
           onMouseEnter={() => handleTabEnter('convert-from')}
           onMouseLeave={handleTabLeave}
-          className="fixed left-0 right-0 z-40 animate-dropdown"
-          style={{ top: '56px' }}
+          className="fixed left-0 right-0 z-[60] animate-dropdown"
+          style={{ top: isScrolled ? '56px' : '64px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
             <div className="mega-menu">
@@ -447,8 +468,8 @@ export function TopNav() {
           ref={activeMenuRef}
           onMouseEnter={() => handleTabEnter('convert-to')}
           onMouseLeave={handleTabLeave}
-          className="fixed left-0 right-0 z-40 animate-dropdown"
-          style={{ top: '56px' }}
+          className="fixed left-0 right-0 z-[60] animate-dropdown"
+          style={{ top: isScrolled ? '56px' : '64px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
             <div className="mega-menu">
