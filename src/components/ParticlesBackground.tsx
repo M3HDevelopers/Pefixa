@@ -22,11 +22,14 @@ export function ParticlesBackground() {
     if (!ctx) return;
 
     const resize = () => {
+      if (!canvas) return;
       const parent = canvas.parentElement;
       if (parent) {
         const rect = parent.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+        if (rect.width > 0 && rect.height > 0) {
+          canvas.width = rect.width;
+          canvas.height = rect.height;
+        }
       }
     };
     resize();
@@ -65,7 +68,7 @@ export function ParticlesBackground() {
 
     // Optimized animation loop
     const animate = () => {
-      if (!ctx || !canvas) return;
+      if (!ctx || !canvas || !canvas.parentElement) return;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -137,12 +140,16 @@ export function ParticlesBackground() {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    // Start animation
+    animationRef.current = requestAnimationFrame(animate);
 
+    // Cleanup
     return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
       window.removeEventListener('resize', debouncedResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationRef.current);
       clearTimeout(resizeTimeout);
     };
   }, []);
