@@ -147,13 +147,19 @@ export function TopNav() {
 
   return (
     <header 
-      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out ${
         isScrolled 
-          ? 'top-0 h-14 bg-black border-b border-white/10' 
-          : 'top-2 h-16 bg-transparent'
+          ? 'top-0 h-14' 
+          : 'top-3 h-16'
       }`}
+      style={{
+        backgroundColor: isScrolled ? 'rgba(0, 0, 0, 0.95)' : 'transparent',
+        backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+        borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid transparent',
+        boxShadow: isScrolled ? '0 4px 20px rgba(0, 0, 0, 0.3)' : 'none',
+      }}
     >
-      <div className={`flex items-center px-6 transition-all duration-300 ${
+      <div className={`flex items-center px-6 transition-all duration-500 ease-out ${
         isScrolled ? 'h-14 max-w-[1800px]' : 'h-16 max-w-[2000px]'
       } mx-auto`}>
         {/* Logo */}
@@ -343,8 +349,8 @@ export function TopNav() {
           ref={activeMenuRef}
           onMouseEnter={() => handleTabEnter('all')}
           onMouseLeave={handleTabLeave}
-          className="fixed left-0 right-0 z-40 animate-dropdown"
-          style={{ top: '56px' }}
+          className="fixed left-0 right-0 z-[60] animate-dropdown"
+          style={{ top: isScrolled ? '56px' : '64px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
             <div className="mega-menu max-h-[480px] overflow-y-auto">
@@ -415,8 +421,8 @@ export function TopNav() {
           ref={activeMenuRef}
           onMouseEnter={() => handleTabEnter('convert-from')}
           onMouseLeave={handleTabLeave}
-          className="fixed left-0 right-0 z-40 animate-dropdown"
-          style={{ top: '56px' }}
+          className="fixed left-0 right-0 z-[60] animate-dropdown"
+          style={{ top: isScrolled ? '56px' : '64px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
             <div className="mega-menu">
@@ -466,8 +472,8 @@ export function TopNav() {
           ref={activeMenuRef}
           onMouseEnter={() => handleTabEnter('convert-to')}
           onMouseLeave={handleTabLeave}
-          className="fixed left-0 right-0 z-40 animate-dropdown"
-          style={{ top: '56px' }}
+          className="fixed left-0 right-0 z-[60] animate-dropdown"
+          style={{ top: isScrolled ? '56px' : '64px' }}
         >
           <div className="max-w-[1400px] mx-auto px-6">
             <div className="mega-menu">
