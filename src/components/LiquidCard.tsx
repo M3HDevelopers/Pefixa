@@ -1,123 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
+import { useRef, useState, ReactNode } from 'react';
 
 interface LiquidCardProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
 export function LiquidCard({ children, className = '' }: LiquidCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const fillRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const animationRef = useRef<gsap.core.Tween | null>(null);
 
-  useEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
 
-    const handleMouseEnter = (e: MouseEvent) => {
-      if (!card || !fillRef.current) return;
-      
-      setIsHovered(true);
-      
-      const rect = card.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      
-      // Kill any existing animation
-      if (animationRef.current) {
-        animationRef.current.kill();
-      }
-      
-      // Set fill origin
-      fillRef.current.style.left = `${x}%`;
-      fillRef.current.style.top = `${y}%`;
-      
-      // Water drop fill animation - more visible
-      animationRef.current = gsap.fromTo(fillRef.current, 
-        {
-          scale: 0,
-          opacity: 0
-        },
-        {
-          scale: 3,
-          opacity: 1,
-          duration: 0.6,
-          ease: 'power3.out'
-        }
-      );
-    };
-
-    const handleMouseLeave = () => {
-      setIsHovered(false);
-      
-      if (fillRef.current) {
-        if (animationRef.current) {
-          animationRef.current.kill();
-        }
-        
-        animationRef.current = gsap.to(fillRef.current, {
-          scale: 0,
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.inOut',
-          onComplete: () => {
-            if (fillRef.current) {
-              gsap.set(fillRef.current, { scale: 0, opacity: 0 });
-            }
-          }
-        });
-      }
-    };
-
-    const handleMouseOut = (e: MouseEvent) => {
-      const relatedTarget = e.relatedTarget as Node;
-      if (!card || !relatedTarget) return;
-      
-      if (!card.contains(relatedTarget)) {
-        handleMouseLeave();
-      }
-    };
-
-    card.addEventListener('mouseenter', handleMouseEnter);
-    card.addEventListener('mouseleave', handleMouseLeave);
-    card.addEventListener('mouseout', handleMouseOut);
-
-    return () => {
-      card.removeEventListener('mouseenter', handleMouseEnter);
-      card.removeEventListener('mouseleave', handleMouseLeave);
-      card.removeEventListener('mouseout', handleMouseOut);
-    };
-  }, []);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   return (
     <div
       ref={cardRef}
-      className={`liquid-card relative overflow-hidden ${className}`}
+      className={`relative overflow-hidden ${className}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{
-        isolation: 'isolate',
-        background: isHovered ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        transition: 'background 0.2s ease, border-color 0.2s ease'
+        background: isHovered ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        transition: 'background 0.2s ease, border-color 0.2s ease',
+        borderRadius: '8px',
       }}
     >
-      {/* Clean fill effect from entry point */}
-      <div
-        ref={fillRef}
-        className="absolute pointer-events-none"
-        style={{
-          width: '100%',
-          height: '100%',
-          background: 'rgba(255, 255, 255, 0.15)',
-          borderRadius: '50%',
-          transform: 'translate(-50%, -50%) scale(0)',
-          opacity: 0,
-          willChange: 'transform, opacity'
-        }}
-      />
-      
-      {/* Content */}
+      {/* Simple background change on hover - NO complex animations */}
       <div className="relative z-10">
         {children}
       </div>
