@@ -35,12 +35,7 @@
     width: 100%;
   }
 
-  /* Top Navigation Bar */
-  .top-bar {
-    background-color: #000000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-  }
+  /* Top Navigation Bar - Dynamic styling handled in component */
 
   /* Cards */
   .card {

@@ -48,6 +48,7 @@ export function TopNav() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const menuTimeoutRef = useRef<number | undefined>(undefined);
   const activeMenuRef = useRef<HTMLDivElement>(null);
@@ -102,6 +103,16 @@ export function TopNav() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
+  // Scroll detection for navbar state
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleTabEnter = (menuType: string) => {
     if (menuTimeoutRef.current !== undefined) {
       clearTimeout(menuTimeoutRef.current);
@@ -135,8 +146,16 @@ export function TopNav() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 top-bar">
-      <div className="flex items-center h-14 px-6 max-w-[1800px] mx-auto">
+    <header 
+      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'top-0 h-14 bg-black border-b border-white/10' 
+          : 'top-2 h-16 bg-transparent'
+      }`}
+    >
+      <div className={`flex items-center px-6 transition-all duration-300 ${
+        isScrolled ? 'h-14 max-w-[1800px]' : 'h-16 max-w-[2000px]'
+      } mx-auto`}>
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 mr-8">
           <img src="/pefixa-logo.svg" alt="Pefixa" className="w-9 h-9" />
