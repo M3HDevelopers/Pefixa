@@ -94,8 +94,8 @@ export function LiquidCard({ children, className = '' }: LiquidCardProps) {
       className={`liquid-card relative overflow-hidden ${className}`}
       style={{
         isolation: 'isolate',
-        background: isHovered ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: isHovered ? '#1a1a1a' : '#0a0a0a',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
         transition: 'background 0.2s ease, border-color 0.2s ease',
         borderRadius: '8px',
       }}
