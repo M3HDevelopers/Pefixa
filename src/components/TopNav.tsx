@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categories } from '../lib/tools/categories';
 import { getToolsByCategory, searchTools, toolRegistry } from '../lib/tools/registry';
@@ -36,7 +36,14 @@ export function TopNav() {
   const activeMenuRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLDivElement>(null);
 
-  const searchResults = searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 6) : [];
+  const searchResults = useMemo(
+    () => searchQuery.length > 1 ? searchTools(searchQuery).slice(0, 6) : [],
+    [searchQuery]
+  );
+
+  // Cache tools for each menu type
+  const convertFromTools = useMemo(() => getToolsByCategory('convert-from'), []);
+  const convertToTools = useMemo(() => getToolsByCategory('convert-to'), []);
 
   // Lock body scroll when menu is open
   useEffect(() => {
@@ -100,12 +107,12 @@ export function TopNav() {
     navigate(`/tools/${slug}`);
   };
 
-  // Get tools for specific category
+  // Get tools for specific category (using cached values)
   const getToolsForMenu = (menuType: string) => {
     if (menuType === 'convert-from') {
-      return getToolsByCategory('convert-from');
+      return convertFromTools;
     } else if (menuType === 'convert-to') {
-      return getToolsByCategory('convert-to');
+      return convertToTools;
     }
     return [];
   };
