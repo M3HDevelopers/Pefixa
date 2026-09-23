@@ -108,6 +108,18 @@ export function HomePage() {
       <div className="relative z-10 max-w-7xl mx-auto px-8">
         {/* Hero Section */}
         <section className="pt-24 pb-20 text-center relative overflow-hidden">
+          {/* Logo at the top center */}
+          <div className="mb-12 flex justify-center">
+            <div className="relative">
+              <img 
+                src="/pefixa-logo.svg" 
+                alt="Pefixa Logo" 
+                className="w-32 h-32 animate-fade"
+              />
+              <div className="absolute inset-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -z-10" />
+            </div>
+          </div>
+
           <RevealSection>
             <div className="inline-flex items-center gap-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-full px-4 py-1.5 text-[11px] font-medium text-[#888] mb-6">
               <Sparkles size={11} className="text-white" />
