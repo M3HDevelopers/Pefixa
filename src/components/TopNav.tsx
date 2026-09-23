@@ -97,7 +97,7 @@ export function TopNav() {
     menuTimeoutRef.current = window.setTimeout(() => {
       setActiveMenu(null);
       menuTimeoutRef.current = undefined;
-    }, 100);
+    }, 300); // Increased from 100ms to 300ms for better UX
   };
 
   const selectTool = (slug: string) => {

@@ -58,7 +58,7 @@ export function HomePage() {
     <div className="relative overflow-hidden">
       {/* Particles Background - Scrolls with content, behind everything */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <ParticlesBackground />
+        <ParticlesBackground key="particles" />
       </div>
 
       {/* Ambient background gradients */}

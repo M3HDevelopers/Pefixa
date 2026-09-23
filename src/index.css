@@ -12,6 +12,29 @@
 }
 
 @layer components {
+  /* Nav Tab - Animated Underline */
+  .nav-tab {
+    position: relative;
+    transition: color 0.2s ease;
+  }
+
+  .nav-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ffffff, #888888);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+  }
+
+  .nav-tab:hover::after,
+  .nav-tab.active::after {
+    width: 100%;
+  }
+
   /* Top Navigation Bar */
   .top-bar {
     background-color: #000000;
@@ -84,10 +107,11 @@
   }
 
   .mega-menu-item {
-    transition: background-color 0.15s ease;
+    transition: background-color 0.1s ease;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    will-change: background-color;
   }
 
   .mega-menu-item:hover {
@@ -98,6 +122,7 @@
     flex-shrink: 0;
     width: 24px;
     height: 24px;
+    transition: none; /* Disable transition for performance */
   }
 
   /* Icon Box */
